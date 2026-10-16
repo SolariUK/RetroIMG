@@ -60,8 +60,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     convert.add_argument(
-        "--amiga-mode", choices=("bitmap", "constrained"), default="bitmap",
-        help="Amiga constraint: bitmap allows unrestricted palette use; constrained selects a legal OCS/ECS screen palette",
+        "--amiga-mode", choices=("bitmap", "constrained", "ehb", "ham"), default="bitmap",
+        help="Amiga constraint: bitmap is unrestricted; constrained selects a screen palette; ehb and ham use six-bit low-resolution graphics codes",
     )
     convert.add_argument(
         "--colours", type=int,

@@ -13,7 +13,12 @@ retroimg/
         c64.py               # Multicolour cells and shared-background optimisation
         cpc.py               # Global screen inks and pen-indexed images
         bbc.py               # Steady physical colours and logical pixel mappings
-        amiga.py             # Adaptive RGB12 register palettes and indexed screens
+        amiga/
+            __init__.py      # Public Amiga API (existing import paths retained)
+            indexed.py       # Standard adaptive RGB12 register palettes
+            ehb.py           # Linked full/half-bright palette fitting and codes
+            ham.py           # Stateful greedy HAM6 encoding and decoding
+            common.py        # Fixed register-table and code-grid validation
     constraints/
         cells.py             # Generic two-colour cell fitting, optional legal pairs
         shared_background.py # Generic local sets with an image-wide shared colour
@@ -62,9 +67,9 @@ For example, Spectrum supplies shared-brightness candidate pairs to the generic
 cell fitter; C64 uses the shared-background fitter; CPC and BBC use whole-image
 palette selection. The hardware rules do not live inside those reusable algorithms.
 
-Each target currently fits comfortably in one module. A target can become a
-subpackage if its modes grow substantially, without requiring that extra
-structure for every simpler target. There is no plugin framework or mandatory
+Simpler targets remain single modules. Amiga is a subpackage because indexed,
+EHB and HAM have distinct representations and fitting rules. Its public API
+remains `retroimg.targets.amiga`, so existing Python callers keep their imports. There is no plugin framework or mandatory
 base class: the registry's adapter contract is an RGB image, palette and dither
 setting returning an `IndexedImage`.
 
@@ -77,6 +82,7 @@ from retroimg.targets.c64 import optimise_c64_multicolour, rasterize_c64_multico
 from retroimg.targets.cpc import optimise_cpc, rasterize_cpc
 from retroimg.targets.bbc import optimise_bbc, rasterize_bbc
 from retroimg.targets.amiga import optimise_amiga, rasterize_amiga
+from retroimg.targets.amiga import optimise_ehb, rasterize_ehb, optimise_ham, rasterize_ham
 
 from retroimg.constraints.cells import quantize_cells
 from retroimg.constraints.shared_background import fit_shared_background
@@ -132,9 +138,30 @@ screen palettes do not carry this metadata and use ordinary weighted-distance
 lookup. The existing fixed-palette selector retains its original fitting
 behaviour, with its histogram implementation moved to the shared module.
 
-EHB and HAM require separate target representations and fitting strategies;
-standard indexed output must not be presented as either. They are deferred,
-along with AGA and interlaced/overscan modes.
+`AmigaEHBImage` retains 32 physical registers and six-bit codes. The EHB fitter
+reuses adaptive RGB-grid palette seeds and frequency-weighted sampling, then
+refines base registers jointly against full- and half-bright assignments. The
+Amiga-specific four-bit truncation rule stays in the target. The 64-entry
+raster palette preserves the exact register/half-bright slot relationship.
+
+`AmigaHAMImage` retains 16 physical registers and six-bit HAM6 codes. Encoding is
+greedy in scan order; it compares base entries and the nearest legal change for
+each channel. Decoding is a separate function that begins each scanline from
+register 0. The raw raster uses the complete RGB12 space, not the 64 HAM codes
+as if they were colour indices. A model validator checks register/code ranges
+before rasterisation. These representations support a future native exporter
+without claiming that the existing PNG previews are native Amiga files.
+
+The generic quantiser accepts an optional `pixel_lookup(x, y, rgb)` callback
+returning a palette index. HAM supplies a stateful lookup that returns the
+actual displayed RGB12 index and retains its selected code separately. Shared
+Floyd–Steinberg diffusion therefore uses decoded colours, while the target owns
+all scanline state. Existing callers keep the same default lookup and output.
+No machine-specific logic is added to the shared diffusion algorithm.
+
+AGA/HAM8 and interlaced/overscan modes remain deferred. More expensive HAM
+whole-row searches can be explored later, without replacing the bounded greedy
+mode or compromising its valid hardware representation.
 
 Hardware exporters and future optional CRT post-processing remain separate
 concerns; neither is implemented by these target adapters.

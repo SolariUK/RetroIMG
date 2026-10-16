@@ -1,7 +1,7 @@
 # Visual comparison gallery
 
 `generate_gallery.py` runs real source images through Teletext, Spectrum, C64,
-CPC, BBC Micro and standard Amiga conversion. It produces individual PNGs, labelled JPEG comparison
+CPC, BBC Micro and Amiga indexed/EHB/HAM6 conversion. It produces individual PNGs, labelled JPEG comparison
 sheets, reproduction commands, JSON settings/checksums, and offline HTML and
 Markdown indexes. It is a visual integration run, separate from the fast pytest
 suite. It uses the installed converter and Pillow, with no additional dependencies.
@@ -89,7 +89,7 @@ commands from the gallery directory, or adjust the output paths.
 
 ## Comparison matrix
 
-Each source gets the same 78 neutral conversions:
+Each source gets the same 86 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
@@ -98,14 +98,14 @@ Each source gets the same 78 neutral conversions:
 | C64 | Unrestricted bitmap/multicolour constraints, each with no dither and Floyd–Steinberg; unrestricted Teletext/Spectrum palette swaps |
 | CPC | Modes 0/1/2, unrestricted/constrained, each with no dither and Floyd–Steinberg |
 | BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
-| Amiga | PAL lores 2/4/8/16/32 colours and hires 2/4/8/16, each with no dither and Floyd–Steinberg; unrestricted lores/hires with both dither settings; C64/CPC palette swaps; constrained NTSC lores/hires with dithering |
+| Amiga | PAL lores 2/4/8/16/32 colours and hires 2/4/8/16, each with no dither and Floyd–Steinberg; unrestricted lores/hires with both dither settings; C64/CPC palette swaps; constrained NTSC lores/hires with dithering; PAL/NTSC EHB and HAM6, each with no dither and Floyd–Steinberg |
 
-Each source marked `adjusted` in the catalogue also gets 42 constrained examples
+Each source marked `adjusted` in the catalogue also gets 50 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. Both the local-only mountain landscape and the bundled lush
 landscape have these adjustments. With the current nine-source catalogue, the
-full local run produces 786 converted PNGs and 54 comparison sheets; the
-public-only run produces 588 converted PNGs and 42 sheets.
+full local run produces 874 converted PNGs and 54 comparison sheets; the
+public-only run produces 652 converted PNGs and 42 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because
@@ -114,9 +114,9 @@ pairs, which are excluded from static output. Use `--family bbc` for a BBC-only
 run (218 local PNGs or 164 public PNGs with the current catalogue).
 
 `--family amiga --public-only` uses all seven bundled sources and generates
-202 Amiga PNGs plus seven comparison sheets. PAL examples are 640x512 previews;
+266 Amiga PNGs plus seven comparison sheets. PAL examples are 640x512 previews;
 NTSC examples are 640x400. Only the lush landscape receives the additional
-Amiga hue +20 / green gain 1.15 comparisons. Experimental output stays outside
+Amiga hue +20 / green gain 1.15 comparisons, including EHB/HAM6. Experimental output stays outside
 the repository; no complete generated gallery is committed.
 
 Photos use `cover` fitting; the diagnostic chart uses `contain` so the complete
@@ -134,7 +134,13 @@ that PNG colours belong to its selected palette. Constrained examples also check
   the whole image. Merely checking each cell independently is insufficient.
 - CPC: at most 16, 4 or 2 colours across the entire image, according to mode.
 - BBC: at most 2, 4, 8, 2 or 4 steady colours for modes 0, 1, 2, 4 or 5.
-- Amiga: at most the selected screen-colour count and legal four-bit RGB channels.
+- Amiga indexed: at most the selected screen-colour count and legal four-bit RGB channels.
+- EHB: all 64 palette slots have legal precision and the upper 32 are exactly the
+  hardware-rounded half-bright counterparts of the lower 32.
+- HAM6: the target validates its register/code model before independent decoding;
+  the gallery checks the decoded RGB12 raster. PNG colour counts alone cannot
+  establish whether an image is encodable in HAM. Unit tests verify known codes,
+  scanline resets and greedy choices against an exhaustive 64-code oracle.
 
 These checks establish structural validity, not visual quality or historical
 hardware-file compatibility. The normal pytest suite additionally covers the
@@ -144,3 +150,12 @@ bundled files against catalogue checksums and dimensions; full photographic
 conversions run separately from pytest. Reference checksums describe the bundled
 files; external source overrides are allowed and their actual checksums are
 recorded in each gallery manifest.
+
+## Conversion timings
+
+Each output entry in `manifest.json` includes `elapsed_seconds`, measured around
+file conversion (preparation, fitting, logical conversion and PNG saving).
+These wall-clock timings are informational and vary with machine and system
+load; they are not deterministic output data or benchmark guarantees. Use the
+same source, geometry, adjustments and dither when comparing modes. PAL lores
+standard 32-colour, EHB and HAM6 examples provide that comparison directly.

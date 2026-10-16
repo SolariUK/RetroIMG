@@ -8,6 +8,7 @@ from retroimg.model import IndexedImage, Palette, RGB
 from retroimg.colour_spaces import RGBGrid
 
 RGB_WEIGHTS = (3, 4, 2)
+PixelLookup = Callable[[int, int, tuple[float, float, float]], int]
 
 
 def colour_distance(a: tuple[float, float, float], b: RGB) -> float:
@@ -27,11 +28,12 @@ def nearest_index(rgb: tuple[float, float, float], palette: Palette) -> int:
     return _colour_lookup(palette)(rgb)
 
 
-def quantize_none(image: Image.Image, palette: Palette) -> IndexedImage:
+def quantize_none(image: Image.Image, palette: Palette, *, pixel_lookup: PixelLookup | None = None) -> IndexedImage:
     image = image.convert("RGB")
-    lookup = _colour_lookup(palette)
+    nearest = _colour_lookup(palette)
+    lookup = pixel_lookup if pixel_lookup is not None else lambda x, y, rgb: nearest(rgb)
     pixels = tuple(
-        tuple(lookup(image.getpixel((x, y))) for x in range(image.width))
+        tuple(lookup(x, y, image.getpixel((x, y))) for x in range(image.width))
         for y in range(image.height)
     )
     out = IndexedImage(image.width, image.height, palette, pixels)
@@ -39,13 +41,14 @@ def quantize_none(image: Image.Image, palette: Palette) -> IndexedImage:
     return out
 
 
-def quantize_floyd_steinberg(image: Image.Image, palette: Palette) -> IndexedImage:
+def quantize_floyd_steinberg(image: Image.Image, palette: Palette, *, pixel_lookup: PixelLookup | None = None) -> IndexedImage:
     image = image.convert("RGB")
     w, h = image.size
     work = [[list(map(float, image.getpixel((x, y)))) for x in range(w)] for y in range(h)]
     result = [[0] * w for _ in range(h)]
     values = palette.rgb_values()
-    lookup = _colour_lookup(palette)
+    nearest = _colour_lookup(palette)
+    lookup = pixel_lookup if pixel_lookup is not None else lambda x, y, rgb: nearest(rgb)
 
     def add_error(x: int, y: int, err: tuple[float, float, float], scale: float) -> None:
         if 0 <= x < w and 0 <= y < h:
@@ -55,7 +58,7 @@ def quantize_floyd_steinberg(image: Image.Image, palette: Palette) -> IndexedIma
     for y in range(h):
         for x in range(w):
             old = tuple(work[y][x])
-            idx = lookup(old)
+            idx = lookup(x, y, old)
             new = values[idx]
             result[y][x] = idx
             err = tuple(old[c] - new[c] for c in range(3))
@@ -69,9 +72,11 @@ def quantize_floyd_steinberg(image: Image.Image, palette: Palette) -> IndexedIma
     return out
 
 
-def quantize(image: Image.Image, palette: Palette, dither: str = "none") -> IndexedImage:
+def quantize(image: Image.Image, palette: Palette, dither: str = "none", *,
+             pixel_lookup: PixelLookup | None = None) -> IndexedImage:
+    """Quantise with an optional position-aware lookup; diffusion stays shared."""
     if dither == "none":
-        return quantize_none(image, palette)
+        return quantize_none(image, palette, pixel_lookup=pixel_lookup)
     if dither == "floyd-steinberg":
-        return quantize_floyd_steinberg(image, palette)
+        return quantize_floyd_steinberg(image, palette, pixel_lookup=pixel_lookup)
     raise ValueError(f"unknown dither mode: {dither}")

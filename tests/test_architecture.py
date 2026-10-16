@@ -25,6 +25,8 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
 @pytest.mark.parametrize('profile,option,mode', [
     *[(f'amiga-{resolution}{suffix}', 'amiga_mode', 'constrained')
       for resolution in ('lores', 'hires') for suffix in ('', '-ntsc')],
+    *[(f'amiga-lores{suffix}', 'amiga_mode', mode)
+      for suffix in ('', '-ntsc') for mode in ('ehb', 'ham')],
     ('teletext', 'teletext_mode', 'mosaic'),
     ('spectrum', 'spectrum_mode', 'attributes'),
     ('c64-multicolour', 'c64_mode', 'multicolour'),

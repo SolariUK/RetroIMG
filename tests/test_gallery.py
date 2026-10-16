@@ -12,8 +12,8 @@ from retroimg.palettes import get_palette
 
 
 def test_example_matrix_covers_all_modes_and_adjustments():
-    assert sum(len(variants_for(family)) for family in FAMILIES) == 78
-    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 120
+    assert sum(len(variants_for(family)) for family in FAMILIES) == 86
+    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 136
     for family in FAMILIES:
         variants = variants_for(family, adjusted=True)
         assert len({variant.slug for variant in variants}) == len(variants)
@@ -106,5 +106,5 @@ def test_catalogue_gallery_totals():
     def output_count(sources):
         return sum(len(variants_for(family, source.get('adjusted', False)))
                    for source in sources for family in FAMILIES)
-    assert output_count(catalog) == 786
-    assert output_count(PUBLIC_SOURCES) == 588
+    assert output_count(catalog) == 874
+    assert output_count(PUBLIC_SOURCES) == 652

@@ -13,6 +13,7 @@ from html import escape
 import json
 from pathlib import Path
 import shlex
+from time import perf_counter
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
@@ -93,6 +94,13 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                 dict(profile_name="c64-multicolour", c64_mode="bitmap", palette_name=palette, scale=2), (640, 400))
 
     if family == "amiga":
+        for mode in ("ehb", "ham"):
+            for suffix, size in (("", (640, 512)), ("-ntsc", (640, 400))):
+                for dither in ("none", "floyd-steinberg"):
+                    ending = "-dither" if dither != "none" else ""
+                    label = "Floyd-Steinberg" if ending else "no dither"
+                    add(f"{mode}{suffix}{ending}", f"{mode.upper()} / {'NTSC' if suffix else 'PAL'} / {label}",
+                        dict(profile_name=f"amiga-lores{suffix}", amiga_mode=mode, dither=dither, scale=2), size)
         for palette in ("c64", "cpc"):
             add(f"lores-bitmap-{palette}", f"lores unrestricted / {palette} palette",
                 dict(profile_name="amiga-lores", palette_name=palette, scale=2), (640, 512))
@@ -115,7 +123,7 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                            options.get("c64_mode") == "multicolour" or
                            options.get("cpc_mode") == "constrained" or
                            options.get("bbc_mode") == "constrained" or
-                           options.get("amiga_mode") == "constrained")
+                           options.get("amiga_mode") in {"constrained", "ehb", "ham"})
             if constrained and not any(key in options for key in ("palette_name", "width", "saturation")):
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
@@ -129,6 +137,13 @@ def check_constraints(image: IndexedImage, options: dict) -> None:
         page_from_indexed(image)
     if options.get("spectrum_mode") == "attributes":
         spectrum_from_indexed(image)
+    if options.get("amiga_mode") in {"ehb", "ham"}:
+        if any(channel % 17 for rgb in image.palette.rgb_values() for channel in rgb):
+            raise AssertionError("Amiga 4-bit channel precision violated")
+        if options["amiga_mode"] == "ehb":
+            values = image.palette.rgb_values()
+            if len(values) != 64 or any(values[i + 32] != tuple((v // 17 >> 1) * 17 for v in values[i]) for i in range(32)):
+                raise AssertionError("Amiga EHB linked half-bright palette violated")
     if options.get("amiga_mode") == "constrained":
         limit = options.get("colours", 16 if "hires" in options["profile_name"] else 32)
         used = {index for row in image.pixels for index in row}
@@ -290,7 +305,9 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
             for index, variant in enumerate(variants):
                 options = dict(variant.options, fit=source["fit"])
                 dst = target / (variant.slug + ".png")
+                started = perf_counter()
                 indexed = convert_file(path, dst, **options)
+                elapsed = perf_counter() - started
                 check_constraints(indexed, options)
                 with Image.open(dst) as rendered:
                     if rendered.size != variant.size:
@@ -307,7 +324,7 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
                 commands.extend([f"## {variant.label}", "", "```bash", command, "```", ""])
                 manifest["outputs"].append(dict(
                     source=source["id"], family=family, label=variant.label, png=relative,
-                    settings=options, preview_size=list(variant.size), logical_size=[indexed.width, indexed.height],
+                    settings=options, elapsed_seconds=round(elapsed, 6), preview_size=list(variant.size), logical_size=[indexed.width, indexed.height],
                     palette=indexed.palette.name, colours_used=len(colours),
                     sha256=sha256(dst.read_bytes()).hexdigest(), command=command,
                 ))
