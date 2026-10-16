@@ -85,7 +85,7 @@ def page_from_indexed(image: IndexedImage) -> TeletextPage:
 def quantize_teletext_mosaic(
     image: Image.Image, palette: Palette, dither: str = "none"
 ) -> IndexedImage:
-    """Compatibility raster API for the explicit Teletext page optimiser."""
+    """Raster adapter for the explicit Teletext page optimiser."""
     return rasterize_teletext(optimise_teletext_mosaic(image, palette, dither))
 
 
@@ -102,7 +102,7 @@ def optimise_teletext_mosaic(
 
 
 def constrain_teletext_mosaic(image: IndexedImage) -> IndexedImage:
-    """Compatibility entry point for callers with an already indexed raster.
+    """Constrain an already indexed raster to Teletext mosaic cells.
 
     Conversion should use quantize_teletext_mosaic with the RGB source to avoid
     losing colour information before optimisation.

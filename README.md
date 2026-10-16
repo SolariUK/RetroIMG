@@ -436,10 +436,10 @@ render_indexed(rasterize_teletext(page), scale=6).save("preview.png")
 
 Machine-specific code lives in `retroimg.targets`, and reusable fitting
 algorithms live in `retroimg.constraints`. The [architecture notes](docs/architecture.md)
-describe the module boundaries and how to add another target. Earlier imports
-such as `retroimg.c64`, `retroimg.cellfit`, Teletext functions from
-`retroimg.constraints`, and `rasterize_*` functions from `retroimg.render`
-remain available through compatibility exports.
+describe the module boundaries and how to add another target. Import machine
+models, optimisers and rasterisers from `retroimg.targets.<machine>`, generic
+fitters from the appropriate `retroimg.constraints` module, and preview
+rendering from `retroimg.render`.
 
 Palette definitions, profile geometry, colour coexistence constraints, logical
 representations and renderers remain separate. The generic cell optimiser has

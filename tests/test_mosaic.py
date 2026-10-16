@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 from PIL import Image
 
-from retroimg.constraints import quantize_teletext_mosaic
+from retroimg.targets.teletext import quantize_teletext_mosaic
 from retroimg.convert import convert_file
 from retroimg.model import Colour, Palette
 from retroimg.palettes import get_palette
@@ -26,7 +26,7 @@ class MosaicTests(unittest.TestCase):
                               colour_distance(sample, values[b])) for sample in samples)
                       for a, b in combinations_with_replacement(range(len(values)), 2))
         self.assertEqual(error, optimum)
-        from retroimg.constraints import constrain_teletext_mosaic
+        from retroimg.targets.teletext import constrain_teletext_mosaic
         old = constrain_teletext_mosaic(quantize(source, palette))
         old_error = sum(colour_distance(sample, values[index])
                         for sample, index in zip(samples, sum(old.pixels, ())))

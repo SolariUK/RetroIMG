@@ -1,18 +1,10 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
 
 from PIL import Image
 
 from retroimg.model import IndexedImage
-
-
-if TYPE_CHECKING:
-    from retroimg.targets.teletext import TeletextPage
-    from retroimg.targets.spectrum import SpectrumImage
-    from retroimg.targets.c64 import C64MulticolourImage
-    from retroimg.targets.cpc import CPCImage
 
 
 def render_indexed(
@@ -42,27 +34,3 @@ def render_indexed(
         preview_height = max(1, round(out.height * scale * max(1.0, 1.0 / pixel_aspect)))
         out = out.resize((preview_width, preview_height), resample)
     return out
-
-
-def rasterize_teletext(page: TeletextPage) -> IndexedImage:
-    """Compatibility entry point; prefer retroimg.targets.teletext.rasterize_teletext."""
-    from retroimg.targets.teletext import rasterize_teletext as implementation
-    return implementation(page)
-
-
-def rasterize_spectrum(image: SpectrumImage) -> IndexedImage:
-    """Compatibility entry point; prefer retroimg.targets.spectrum.rasterize_spectrum."""
-    from retroimg.targets.spectrum import rasterize_spectrum as implementation
-    return implementation(image)
-
-
-def rasterize_c64_multicolour(image: C64MulticolourImage) -> IndexedImage:
-    """Compatibility entry point; prefer retroimg.targets.c64.rasterize_c64_multicolour."""
-    from retroimg.targets.c64 import rasterize_c64_multicolour as implementation
-    return implementation(image)
-
-
-def rasterize_cpc(image: CPCImage) -> IndexedImage:
-    """Compatibility entry point; prefer retroimg.targets.cpc.rasterize_cpc."""
-    from retroimg.targets.cpc import rasterize_cpc as implementation
-    return implementation(image)

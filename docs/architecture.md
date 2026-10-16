@@ -16,7 +16,7 @@ retroimg/
         cells.py             # Generic two-colour cell fitting, optional legal pairs
         shared_background.py # Generic local sets with an image-wide shared colour
         global_palette.py    # Generic whole-image selection from a fixed palette
-        __init__.py          # Shared entry point and lazy legacy Teletext forwarding
+        __init__.py          # Package description
     palettes/                # Named RGB colour definitions
     profiles/                # Geometry, default palette, constraint-model identifiers
     model.py                 # Shared Palette, Geometry, TargetProfile, IndexedImage
@@ -29,9 +29,9 @@ retroimg/
     cli.py                   # Command-line argument handling
 ```
 
-Root-level `teletext.py`, `spectrum.py`, `c64.py`, `cpc.py`, `cellfit.py` and
-`palettefit.py` are small compatibility modules. Implementations live in the
-packages above; the old files do not contain separate copies of algorithms.
+Machine modules live only under `targets`, and fitting implementations live
+only under `constraints`. The package root contains the shared conversion,
+image preparation, rendering, registry and CLI modules.
 
 ## Dependencies and conversion flow
 
@@ -77,12 +77,11 @@ from retroimg.constraints.global_palette import select_palette_indices
 from retroimg.render import render_indexed
 ```
 
-Earlier public import paths remain supported. Compatibility target modules
-re-export the same class/function objects. The earlier Teletext functions in
-`retroimg.constraints` and rasterisers in `retroimg.render` forward lazily to
-the target modules, preventing circular imports and keeping generic imports
-independent of machines. Existing CLI flags, defaults and output behaviour are
-preserved; unrestricted palette/profile combinations remain available.
+Use these module paths for Python callers. Machine models, optimisers and
+rasterisers belong to their target module; preview rendering belongs to
+`retroimg.render`. Each implementation has a single module location. CLI flags,
+defaults and output behaviour are preserved; unrestricted palette/profile
+combinations remain available.
 
 ## Adding a target
 
@@ -104,8 +103,8 @@ implemented by this restructuring.
 
 ## Refactor verification
 
-The fast regression suite includes legacy import compatibility and a fresh
-interpreter check that shared modules do not load target implementations.
+The fast regression suite includes a fresh-interpreter check that shared
+modules do not load target implementations, along with mode registry checks.
 For visual verification, regenerate the gallery into a new directory using
 the same sources and compare source checksums, settings and output PNG hashes
 in the two `manifest.json` files. Matching PNG hashes establish byte-for-byte

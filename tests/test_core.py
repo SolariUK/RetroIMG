@@ -21,7 +21,7 @@ def test_quantize_indexes_are_valid():
     result = quantize(image, get_palette("teletext"), dither="none")
     result.validate()
 
-from retroimg.constraints import constrain_teletext_mosaic
+from retroimg.targets.teletext import constrain_teletext_mosaic
 from retroimg.model import IndexedImage
 
 
