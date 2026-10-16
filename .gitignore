@@ -1,0 +1,24 @@
+# Python environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build and distribution artifacts
+build/
+dist/
+*.zip
+
+# Local images, generated galleries and editor settings
+scratchpad/
+gallery*/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

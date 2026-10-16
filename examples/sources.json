@@ -1,0 +1,32 @@
+[
+  {
+    "id": "picard", "file": "picard.jpg", "title": "Picard portrait", "fit": "cover",
+    "public": false, "credit": "User-supplied image",
+    "rights": "Local comparison only; redistribution rights have not been established.",
+    "source": null
+  },
+  {
+    "id": "landscape1", "file": "landscape1.jpg", "title": "Mountain landscape", "fit": "cover",
+    "public": false, "credit": "User-supplied image",
+    "rights": "Local comparison only; redistribution rights have not been established.",
+    "source": null, "adjusted": true
+  },
+  {
+    "id": "macaws", "file": "macaws.jpg", "title": "Blue-and-yellow macaws", "fit": "cover",
+    "public": true, "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg"
+  },
+  {
+    "id": "city-night", "file": "city-night.jpg", "title": "Stockholm at night", "fit": "cover",
+    "public": true, "credit": "Martin Eklund (Teadrinker), 27 October 2012",
+    "rights": "CC0 1.0 Universal Public Domain Dedication.",
+    "source": "https://commons.wikimedia.org/wiki/File:City_silhouette_at_night.jpg"
+  },
+  {
+    "id": "diagnostic-chart", "file": "diagnostic-chart.png", "title": "Diagnostic chart", "fit": "contain",
+    "public": true, "credit": "Generated locally for retroimg using Pillow",
+    "rights": "Locally generated gradients, patterns and text; no third-party source imagery.",
+    "source": null
+  }
+]

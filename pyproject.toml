@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retroimg"
+version = "0.2.0"
+description = "Convert modern images to constrained retro display palettes and geometries."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["Pillow>=10.0"]
+
+[project.scripts]
+retroimg = "retroimg.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["retroimg*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
