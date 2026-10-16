@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from retroimg.convert import convert_file
@@ -9,7 +10,7 @@ from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 
 
-def build_parser() -> argparse.ArgumentParser:
+def build_parser(*, conversion_defaults: dict | None = None) -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Convert images to constrained retro display styles.")
     sub = p.add_subparsers(dest="command", required=True)
 
@@ -79,10 +80,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="selected screen-colour limit for Amiga constrained mode: 2/4/8/16/32 (hires maximum 16; default is the profile maximum)",
     )
 
+    convert.add_argument("--preset", help="built-in/user preset ID or JSON file; explicit conversion flags override it")
+    convert.add_argument("--presets-dir", type=Path, help="user preset directory (default: platform config directory)")
+    if conversion_defaults is not None:
+        convert.set_defaults(**conversion_defaults)
+
     guided = sub.add_parser("guided", help="build a conversion command interactively")
     guided.add_argument("input", type=Path, nargs="?", help="input image (prompted when omitted)")
     guided.add_argument("output", type=Path, nargs="?", help="output image (prompted when omitted)")
     guided.add_argument("--print-only", action="store_true", help="show the command without converting")
+
+    guided.add_argument("--preset", help="start from a preset ID or JSON file")
+    guided.add_argument("--presets-dir", type=Path, help="directory for user presets")
+    presets = sub.add_parser("presets", help="list built-in and user presets")
+    presets.add_argument("--presets-dir", type=Path, help="directory for user presets")
 
     sub.add_parser("palettes", help="list available palettes")
     sub.add_parser("profiles", help="list available target profiles")
@@ -90,11 +101,37 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> None:
+    argv = sys.argv[1:] if argv is None else argv
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "presets":
+        from retroimg.presets import list_presets
+        entries, errors = list_presets(parser, args.presets_dir)
+        for entry in entries:
+            print(f"{entry.identifier}: {entry.name} - {entry.description}")
+        for error in errors:
+            print(error, file=sys.stderr)
+        return
+    if args.command == "convert" and args.preset:
+        from retroimg.presets import load_preset
+        from retroimg.settings import default_settings, merge_settings
+        try:
+            preset = load_preset(args.preset, parser, args.presets_dir)
+            defaults = default_settings(parser)
+            marker = object()
+            explicit = vars(build_parser(conversion_defaults={key: marker for key in defaults}).parse_args(argv))
+            overrides = {key: explicit[key] for key in defaults if explicit[key] is not marker}
+            for key, value in merge_settings(preset.settings, overrides, defaults).items():
+                setattr(args, key, value)
+        except ValueError as exc:
+            parser.error(str(exc))
     if args.command == "guided":
         from retroimg.guided import run_guided
-        arguments = run_guided(args.input, args.output, parser=parser, print_only=args.print_only)
+        try:
+            arguments = run_guided(args.input, args.output, parser=parser, print_only=args.print_only,
+                                   preset_reference=args.preset, presets_dir=args.presets_dir)
+        except ValueError as exc:
+            parser.error(str(exc))
         if arguments is not None:
             try:
                 main(arguments)

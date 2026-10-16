@@ -36,7 +36,9 @@ retroimg guided
 retroimg guided /path/to/image.jpg output.png --print-only
 ```
 
-Choose a machine and profile, then step through conversion constraints, palette,
+Start fresh or load a named preset. A loaded preset opens at the summary, where
+you can convert immediately or revise it. Starting fresh lets you choose a
+machine and profile, then step through conversion constraints, palette,
 resolution and fitting, dithering, optional colour adjustments and preview scale.
 Menus accept their numbered choices or named values. Matrix sizes and screen
 colour counts accept the actual values shown. Press Enter for a default, or
@@ -60,6 +62,42 @@ or, on Windows, PowerShell.
 The guide only builds arguments and delegates to the existing `convert` command.
 Normal CLI usage and image conversion are unchanged, and there are no additional
 dependencies.
+
+## Presets
+
+The guide offers a list of built-in and user presets, showing each name and
+description. At the final review, choose **Save as a new preset** to name your
+settings. A loaded user preset also offers **Update loaded preset**, with an
+explicit confirmation. Built-in presets can be saved as user copies.
+
+Presets store conversion settings separately from input/output paths. List or
+apply them directly:
+
+```bash
+retroimg presets
+
+# Built-in macaws example: CPC mode 1, Bayer 2x2, saturation 1.1, blue gain 1.5
+retroimg guided /path/to/image.jpg output.png --preset builtin:cpc-macaws-bayer2
+retroimg convert /path/to/image.jpg output.png --preset builtin:cpc-macaws-bayer2
+
+# Explicit flags override saved settings, including neutral values
+retroimg convert /path/to/image.jpg output.png \
+    --preset builtin:cpc-macaws-bayer2 --blue-gain 1.0
+
+# Load a shared JSON file
+retroimg convert /path/to/image.jpg output.png --preset /path/to/my-style.json
+```
+
+The other built-in examples are `builtin:c64-landscape-green` and
+`builtin:teletext-mosaic-bayer4`. Colour adjustments are source-dependent;
+these examples provide starting points for experimentation.
+
+User presets live in `$XDG_CONFIG_HOME/retroimg/presets` or
+`~/.config/retroimg/presets` on Linux, and `%APPDATA%\retroimg\presets` on Windows.
+Use `--presets-dir /path/to/presets` with `guided`, `convert` or `presets` to
+choose another directory. Listing and loading do not create it; saving does.
+The versioned JSON format, naming and override rules are described in
+[preset documentation](docs/presets.md).
 
 ## Teletext
 

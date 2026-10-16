@@ -41,6 +41,8 @@ retroimg/
     convert.py               # Shared file conversion pipeline
     cli.py                   # Command-line argument handling
     guided.py                # Optional interactive builder for ordinary convert arguments
+    settings.py              # Portable option validation and shared UI constraint hints
+    presets.py               # Versioned JSON presets, built-ins and user storage
 ```
 
 Machine modules live only under `targets`, and fitting implementations live
@@ -261,3 +263,33 @@ Ctrl-C cancels, and the final review offers conversion, revision or command-only
 output. Revisions preserve compatible defaults and discard inapplicable flags.
 Existing outputs require explicit replacement before returning conversion
 arguments. None of these review/path checks alter the noninteractive converter.
+
+## Preset boundary
+
+`presets.py` handles built-in definitions, JSON loading, user-file discovery and
+saving. The version-1 document has a name, optional description and conversion
+settings. Input/output paths, nested preset references and unknown settings are
+rejected. Built-ins are code data and need no packaging resources or writable
+installation directory. Only an explicit guide save/update writes a preset.
+New saves use exclusive creation; updates replace a complete temporary file.
+
+`settings.py` shares the guide's existing palette/dimension hints and validates
+preset settings against profile/palette registries, mode adapters and existing
+Amiga limits. It checks types, finite values, dependent options and dimensions
+without processing an image. Target implementations retain final authority.
+Normalization pins implicit palette, Bayer size, screen-colour count and Atari
+band height. Compact snapshots contain applicable flags and neutral colour
+values, keeping presets portable and independent of image paths.
+
+The CLI parses explicit overrides with sentinel defaults, so an explicitly
+supplied neutral value still overrides a saved non-neutral value. This also
+preserves argparse's supported flag abbreviations. Inherited options made
+inapplicable by a profile/mode/dither change are cleared; invalid explicit
+combinations still fail validation. The existing conversion branch receives the
+merged settings. Image conversion, target optimisation and rendering are unchanged.
+
+The guide may start from a catalogued or explicit preset, show its summary,
+revise it, save a new copy, or explicitly update a loaded user file. Printed
+commands expand settings and remain usable without the preset file. User storage
+uses the platform config directory, with a `--presets-dir` override for local or
+portable collections. Invalid catalog files are reported and skipped.

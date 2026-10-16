@@ -19,20 +19,14 @@ from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
+from retroimg.settings import CELL_DIMENSIONS, REQUIRED_PALETTES
+from retroimg.presets import list_presets, load_preset, preset_directory, preset_slug, save_preset
 
 # Presentation and input hints only. Target adapters remain the authority on
 # constraints; the wizard does not fit palettes, quantise, render or save images.
 FAMILY_LABELS = {
     'teletext': 'Teletext', 'spectrum': 'ZX Spectrum', 'c64': 'Commodore 64',
     'cpc': 'Amstrad CPC', 'bbc': 'BBC Micro', 'amiga': 'Amiga', 'atari2600': 'Atari 2600',
-}
-REQUIRED_PALETTES = {
-    'spectrum_mode': ('spectrum',), 'c64_mode': ('c64',), 'cpc_mode': ('cpc',),
-    'bbc_mode': ('bbc',), 'amiga_mode': ('amiga',),
-    'atari_mode': ('atari2600-ntsc', 'atari2600-pal'),
-}
-CELL_DIMENSIONS = {
-    'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-multicolour': (4, 8),
 }
 MODE_HELP = {
     'bitmap': 'unrestricted palette conversion',
@@ -334,9 +328,30 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     ui.write(f'  Preview: {preview[0]}x{preview[1]} (scale {scale})')
 
 
+def _save_new_preset(ui: Prompts, directory: Path, options: dict, parser, loaded):
+    while True:
+        suggested = loaded.name + ' copy' if loaded is not None else ''
+        name = ui.answer(f'Preset name [{suggested}]: ') or suggested
+        if not name:
+            ui.write('Enter a non-empty preset name.')
+            continue
+        description = ui.answer('Preset description (optional): ')
+        path = directory / (preset_slug(name) + '.json')
+        try:
+            saved = save_preset(path, name, description, options, parser)
+            ui.write(f'Saved preset: {path}')
+            return saved
+        except FileExistsError:
+            ui.write('A user preset with that filename already exists. Choose another name; no file replaced.')
+        except (OSError, ValueError) as exc:
+            ui.write(f'Could not save preset: {exc}')
+            return None
+
+
 def run_guided(input_path: Path | None, output_path: Path | None, *,
                parser: argparse.ArgumentParser, print_only: bool = False,
-               ui: Prompts | None = None) -> list[str] | None:
+               ui: Prompts | None = None, preset_reference: str | None = None,
+               presets_dir: Path | None = None) -> list[str] | None:
     """Return confirmed convert arguments, or None after printing/cancellation."""
     ui = Prompts() if ui is None else ui
     ui.write('retroimg guided command builder\nPress Enter for defaults. Enter q at any prompt to cancel.')
@@ -344,9 +359,21 @@ def run_guided(input_path: Path | None, output_path: Path | None, *,
         source = _input_path(ui, input_path)
         output = _output_path(ui, output_path, source)
         defaults = vars(parser.parse_args(['convert', str(source), str(output)]))
-        previous = None
+        directory = preset_directory() if presets_dir is None else presets_dir.expanduser()
+        loaded = None
+        if preset_reference:
+            loaded = load_preset(preset_reference, parser, directory)
+        elif ui.choice('Starting point', [('fresh', 'Start fresh'), ('load', 'Load a preset')], 'fresh') == 'load':
+            entries, errors = list_presets(parser, directory)
+            for error in errors:
+                ui.write('Skipping unavailable preset: ' + error)
+            selected = ui.choice('Preset', [(entry.identifier, f'{entry.name} [{entry.identifier}] - {entry.description}')
+                                            for entry in entries], entries[0].identifier)
+            loaded = next(entry for entry in entries if entry.identifier == selected)
+        options = dict(loaded.settings) if loaded else collect_options(ui, defaults)
+        if loaded:
+            ui.write(f'Loaded preset: {loaded.name}. {loaded.description}')
         while True:
-            options = collect_options(ui, defaults, previous)
             arguments = build_convert_arguments(source, output, options)
             parsed = vars(parser.parse_args(arguments))
             get_profile_quantizer(PROFILES[parsed['profile']], colours=parsed['colours'],
@@ -356,22 +383,37 @@ def run_guided(input_path: Path | None, output_path: Path | None, *,
             shell = 'PowerShell' if os.name == 'nt' else 'POSIX shell'
             ui.write(f'\nEquivalent command ({shell}):\n' + format_command(arguments))
             if print_only:
-                ui.write('Command only; no output written.')
+                ui.write('Command only; no image written.')
                 return None
-            action = ui.choice('Next action', [
-                ('convert', 'Convert now'), ('edit', 'Revise settings'),
-                ('command', 'Keep the command only'), ('cancel', 'Cancel'),
-            ], 'convert')
+            actions = [('convert', 'Convert now'), ('edit', 'Revise settings'),
+                       ('command', 'Keep the command only'), ('cancel', 'Cancel'),
+                       ('save', 'Save as a new preset')]
+            if loaded is not None and loaded.path is not None:
+                actions.append(('update', f'Update loaded preset: {loaded.name}'))
+            action = ui.choice('Next action', actions, 'convert')
             if action == 'edit':
-                previous = options
+                options = collect_options(ui, defaults, options)
+                continue
+            if action == 'save':
+                saved = _save_new_preset(ui, directory, options, parser, loaded)
+                if saved is not None:
+                    loaded = saved
+                continue
+            if action == 'update':
+                if ui.yes_no(f'Update {loaded.name} at {loaded.path}?'):
+                    try:
+                        loaded = save_preset(loaded.path, loaded.name, loaded.description, options, parser, replace=True)
+                        ui.write(f'Updated preset: {loaded.path}')
+                    except (OSError, ValueError) as exc:
+                        ui.write(f'Could not update preset: {exc}')
                 continue
             if action == 'convert':
                 if output.exists() and not ui.yes_no('Output already exists. Replace it?'):
-                    ui.write('No output written.')
+                    ui.write('No image written.')
                     return None
                 return arguments
-            ui.write('Command only; no output written.' if action == 'command' else 'Cancelled; no output written.')
+            ui.write('Command only; no image written.' if action == 'command' else 'Cancelled; no image written.')
             return None
     except (GuidedCancelled, EOFError, KeyboardInterrupt):
-        ui.write('\nCancelled; no output written.')
+        ui.write('\nCancelled; no image written.')
         return None
