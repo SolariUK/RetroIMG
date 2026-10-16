@@ -79,7 +79,11 @@ CPC = _palette(
     ),
 )
 
-PALETTES = {p.name: p for p in (TELETEXT, C64, SPECTRUM, CPC)}
+# BBC physical colour numbers 0..7 use the same ideal RGB primaries as
+# Teletext. Keep a separate named palette so target identity stays independent.
+BBC = Palette("bbc", TELETEXT.colours, "BBC Micro eight steady physical colours, ideal RGB levels 0/255.")
+
+PALETTES = {p.name: p for p in (TELETEXT, C64, SPECTRUM, CPC, BBC)}
 
 
 def get_palette(name: str) -> Palette:

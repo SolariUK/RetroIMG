@@ -12,6 +12,7 @@ retroimg/
         spectrum.py          # Ink/paper/BRIGHT cells and attribute optimisation
         c64.py               # Multicolour cells and shared-background optimisation
         cpc.py               # Global screen inks and pen-indexed images
+        bbc.py               # Steady physical colours and logical pixel mappings
     constraints/
         cells.py             # Generic two-colour cell fitting, optional legal pairs
         shared_background.py # Generic local sets with an image-wide shared colour
@@ -54,8 +55,8 @@ scale images, save files or add display effects. `render_indexed` handles the
 generic display step and has no knowledge of ink limits or cell patterns.
 
 For example, Spectrum supplies shared-brightness candidate pairs to the generic
-cell fitter; C64 uses the shared-background fitter; CPC uses whole-image palette
-selection. The hardware rules do not live inside those reusable algorithms.
+cell fitter; C64 uses the shared-background fitter; CPC and BBC use whole-image
+palette selection. The hardware rules do not live inside those reusable algorithms.
 
 Each target currently fits comfortably in one module. A target can become a
 subpackage if its modes grow substantially, without requiring that extra
@@ -70,6 +71,7 @@ from retroimg.targets.teletext import optimise_teletext_mosaic, rasterize_telete
 from retroimg.targets.spectrum import optimise_spectrum_attributes, rasterize_spectrum
 from retroimg.targets.c64 import optimise_c64_multicolour, rasterize_c64_multicolour
 from retroimg.targets.cpc import optimise_cpc, rasterize_cpc
+from retroimg.targets.bbc import optimise_bbc, rasterize_bbc
 
 from retroimg.constraints.cells import quantize_cells
 from retroimg.constraints.shared_background import fit_shared_background
@@ -97,9 +99,17 @@ combinations remain available.
    deterministic output and CLI integration. Extend the visual gallery matrix
    with neutral baselines and clearly labelled adjustments.
 
-The next planned target is BBC Micro bitmap modes. Hardware exporters and any
-future optional CRT post-processing remain separate concerns; neither is
-implemented by this restructuring.
+BBC bitmap modes use `BBCImage`, with a mode number, a tuple of steady physical
+colour numbers (`colours`) and a logical-colour-indexed pixel grid.
+`colours[logical]` maps a logical slot to physical colour 0..7; `rasterize_bbc`
+expands the mapping without scaling. `optimise_bbc` reuses the same global
+palette selector as CPC. The target owns its mode limits: 2/4/8/2/4 steady
+colours for modes 0/1/2/4/5. Mode 2's flashing slots are deliberately excluded
+from this static representation. There are no BBC-specific branches in the
+shared fitting algorithms, file pipeline or renderer.
+
+Hardware exporters and future optional CRT post-processing remain separate
+concerns; neither is implemented by these target adapters.
 
 ## Refactor verification
 

@@ -21,7 +21,7 @@ from retroimg.model import IndexedImage
 from retroimg.targets.spectrum import spectrum_from_indexed
 from retroimg.targets.teletext import page_from_indexed
 
-FAMILIES = ("teletext", "spectrum", "c64", "cpc")
+FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc")
 CATALOG = Path(__file__).with_name("sources.json")
 
 
@@ -54,6 +54,12 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             for mode in ("bitmap", "multicolour"):
                 add(mode + suffix, f"{mode.title()} / {label}",
                     dict(profile_name="c64-multicolour", c64_mode=mode, dither=dither, scale=2), (640, 400))
+        elif family == "bbc":
+            for constraint in ("bitmap", "constrained"):
+                for mode in (0, 1, 2, 4, 5):
+                    add(f"mode{mode}-{constraint}{suffix}", f"Mode {mode} / {constraint} / {label}",
+                        dict(profile_name=f"bbc-mode{mode}", bbc_mode=constraint, dither=dither,
+                             scale=1 if mode == 0 else 2), (640, 512))
         elif family == "cpc":
             for constraint in ("bitmap", "constrained"):
                 for mode in range(3):
@@ -76,6 +82,11 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             add(f"bitmap-{palette}", f"Unrestricted / {palette} palette",
                 dict(profile_name="c64-multicolour", c64_mode="bitmap", palette_name=palette, scale=2), (640, 400))
 
+    if family == "bbc":
+        for palette in ("cpc", "spectrum"):
+            add(f"mode1-bitmap-{palette}", f"Mode 1 unrestricted / {palette} palette",
+                dict(profile_name="bbc-mode1", palette_name=palette, scale=2), (640, 512))
+
     if adjusted:
         # Compare source adjustments separately from the neutral baseline.
         for variant in tuple(variants):
@@ -83,7 +94,8 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             constrained = (options.get("teletext_mode") == "mosaic" or
                            options.get("spectrum_mode") == "attributes" or
                            options.get("c64_mode") == "multicolour" or
-                           options.get("cpc_mode") == "constrained")
+                           options.get("cpc_mode") == "constrained" or
+                           options.get("bbc_mode") == "constrained")
             if constrained and not any(key in options for key in ("palette_name", "width", "saturation")):
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
@@ -97,6 +109,11 @@ def check_constraints(image: IndexedImage, options: dict) -> None:
         page_from_indexed(image)
     if options.get("spectrum_mode") == "attributes":
         spectrum_from_indexed(image)
+    if options.get("bbc_mode") == "constrained":
+        mode = int(options["profile_name"][-1])
+        used = {index for row in image.pixels for index in row}
+        if len(used) > {0: 2, 1: 4, 2: 8, 4: 2, 5: 4}[mode]:
+            raise AssertionError("BBC global colour limit violated")
     if options.get("cpc_mode") == "constrained":
         mode = int(options["profile_name"][-1])
         used = {index for row in image.pixels for index in row}
@@ -231,9 +248,10 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
             variants = variants_for(family, source.get("adjusted", False))
             target = directory / family
             target.mkdir()
-            columns = 3 if family == "cpc" else 2
+            columns = 5 if family == "bbc" else (3 if family == "cpc" else 2)
+            tile_height = max(450, max(variant.size[1] for variant in variants))
             rows = (len(variants) + columns - 1) // columns
-            sheet = Image.new("RGB", (640 * columns, 486 * rows), "#202020")
+            sheet = Image.new("RGB", (640 * columns, (tile_height + 36) * rows), "#202020")
             draw = ImageDraw.Draw(sheet)
             commands = [f"# {source['title']}: {family} comparisons", "", f"Fit: {source['fit']}. Neutral adjustments unless labelled.", ""]
             for index, variant in enumerate(variants):
@@ -248,8 +266,8 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
                     allowed = set(indexed.palette.rgb_values())
                     if colours is None or any(rgb not in allowed for _, rgb in colours):
                         raise AssertionError(f"preview contains off-palette colours: {dst}")
-                    x, y = (index % columns) * 640, (index // columns) * 486
-                    sheet.paste(rendered, (x + (640 - rendered.width) // 2, y + 36 + (450 - rendered.height) // 2))
+                    x, y = (index % columns) * 640, (index // columns) * (tile_height + 36)
+                    sheet.paste(rendered, (x + (640 - rendered.width) // 2, y + 36 + (tile_height - rendered.height) // 2))
                 draw.text((x + 8, y + 10), variant.label, fill="white", font=font)
                 relative = dst.relative_to(output).as_posix()
                 command = command_for(source, relative, options)

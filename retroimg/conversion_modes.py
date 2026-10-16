@@ -10,6 +10,7 @@ from PIL import Image
 from retroimg.targets.teletext import quantize_teletext_mosaic
 from retroimg.targets.c64 import quantize_c64_multicolour
 from retroimg.targets.cpc import quantize_cpc
+from retroimg.targets.bbc import BBC_COLOUR_LIMITS, quantize_bbc
 from retroimg.model import IndexedImage, Palette, TargetProfile
 from retroimg.quantize import quantize
 from retroimg.targets.spectrum import quantize_spectrum_attributes
@@ -17,6 +18,7 @@ from retroimg.targets.spectrum import quantize_spectrum_attributes
 Quantizer = Callable[[Image.Image, Palette, str], IndexedImage]
 
 CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
+    **{(f"bbc-mode{mode}", "constrained"): partial(quantize_bbc, mode=mode) for mode in BBC_COLOUR_LIMITS},
     ("teletext-mosaic", "mosaic"): quantize_teletext_mosaic,
     ("spectrum-attributes", "attributes"): quantize_spectrum_attributes,
     ("c64-multicolour", "multicolour"): quantize_c64_multicolour,
@@ -44,6 +46,8 @@ class ModeOption:
 
 
 MODE_OPTIONS = {
+    "bbc_mode": ModeOption("BBC", ("bitmap", "constrained"), tuple(f"bbc-mode{mode}" for mode in BBC_COLOUR_LIMITS),
+                           "bbc-mode0, bbc-mode1, bbc-mode2, bbc-mode4 or bbc-mode5"),
     "teletext_mode": ModeOption("Teletext", ("bitmap", "mosaic"), ("teletext-mosaic",), "teletext"),
     "spectrum_mode": ModeOption("Spectrum", ("bitmap", "attributes"), ("spectrum-attributes",), "spectrum"),
     "c64_mode": ModeOption("C64", ("bitmap", "multicolour"), ("c64-multicolour",), "c64-multicolour"),

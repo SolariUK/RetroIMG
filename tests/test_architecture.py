@@ -27,6 +27,7 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
     ('cpc-mode0', 'cpc_mode', 'constrained'),
     ('cpc-mode1', 'cpc_mode', 'constrained'),
     ('cpc-mode2', 'cpc_mode', 'constrained'),
+    *[(f'bbc-mode{mode}', 'bbc_mode', 'constrained') for mode in (0, 1, 2, 4, 5)],
 ])
 def test_registry_dispatch(profile, option, mode):
     target = get_profile(profile)

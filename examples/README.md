@@ -1,7 +1,7 @@
 # Visual comparison gallery
 
-`generate_gallery.py` runs real source images through Teletext, Spectrum, C64
-and CPC conversion. It produces individual PNGs, labelled JPEG comparison
+`generate_gallery.py` runs real source images through Teletext, Spectrum, C64,
+CPC and BBC Micro conversion. It produces individual PNGs, labelled JPEG comparison
 sheets, reproduction commands, JSON settings/checksums, and offline HTML and
 Markdown indexes. It is a visual integration run, separate from the fast pytest
 suite. It uses the installed converter and Pillow, with no additional dependencies.
@@ -68,13 +68,13 @@ which prevents stale local-only files from surviving in a public export. Open
 access is needed to browse the gallery. JPEG sheets are convenient overviews;
 use the linked PNGs to judge exact converted pixels.
 
-`--family` accepts `teletext`, `spectrum`, `c64`, `cpc` or `all`. The generated
+`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc` or `all`. The generated
 commands use placeholder source paths; replace `/path/to/filename` and run the
 commands from the gallery directory, or adjust the output paths.
 
 ## Comparison matrix
 
-Each source gets the same 30 neutral conversions:
+Each source gets the same 52 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
@@ -82,12 +82,19 @@ Each source gets the same 30 neutral conversions:
 | Spectrum | Unrestricted bitmap/attribute constraints, each with no dither and Floyd–Steinberg |
 | C64 | Unrestricted bitmap/multicolour constraints, each with no dither and Floyd–Steinberg; unrestricted Teletext/Spectrum palette swaps |
 | CPC | Modes 0/1/2, unrestricted/constrained, each with no dither and Floyd–Steinberg |
+| BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
 
-The source marked `adjusted` in the catalogue also gets 12 constrained examples
+The source marked `adjusted` in the catalogue also gets 22 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. With the current five-source catalogue, the full local run
-produces 162 converted PNGs and 20 comparison sheets; the public-only run
-produces 90 converted PNGs and 12 sheets.
+produces 282 converted PNGs and 25 comparison sheets; the public-only run
+produces 156 converted PNGs and 15 sheets.
+
+BBC previews are 640x512; comparison tiles expand to hold all rows without
+cropping. Mode 2's bitmap/constrained results match with the BBC palette because
+all eight steady colours fit. Its other eight hardware slots provide flashing
+pairs, which are excluded from static output. Use `--family bbc` for a BBC-only
+run (120 local PNGs or 66 public PNGs with the current catalogue).
 
 Photos use `cover` fitting; the diagnostic chart uses `contain` so the complete
 chart remains visible. Different target geometries can therefore crop photos
@@ -103,6 +110,7 @@ that PNG colours belong to its selected palette. Constrained examples also check
 - C64: at most four colours per 4x8 cell and a legal background shared across
   the whole image. Merely checking each cell independently is insufficient.
 - CPC: at most 16, 4 or 2 colours across the entire image, according to mode.
+- BBC: at most 2, 4, 8, 2 or 4 steady colours for modes 0, 1, 2, 4 or 5.
 
 These checks establish structural validity, not visual quality or historical
 hardware-file compatibility. The normal pytest suite additionally covers the

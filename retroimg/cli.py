@@ -54,6 +54,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="CPC constraint: bitmap allows unrestricted palette colours; constrained selects 16/4/2 global inks for cpc-mode0/1/2",
     )
 
+    convert.add_argument(
+        "--bbc-mode", choices=("bitmap", "constrained"), default="bitmap",
+        help="BBC constraint: bitmap allows unrestricted palette colours; constrained selects 2/4/8/2/4 steady colours for bbc-mode0/1/2/4/5",
+    )
+
     sub.add_parser("palettes", help="list available palettes")
     sub.add_parser("profiles", help="list available target profiles")
     return p
@@ -82,12 +87,13 @@ def main() -> None:
             spectrum_mode=args.spectrum_mode,
             c64_mode=args.c64_mode,
             cpc_mode=args.cpc_mode,
+            bbc_mode=args.bbc_mode,
         )
         print(
             f"Wrote {args.output}: {indexed.width}x{indexed.height}, "
             f"palette={indexed.palette.name}, profile={args.profile}, dither={args.dither}, "
             f"teletext-mode={args.teletext_mode}, spectrum-mode={args.spectrum_mode}, "
-            f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}"
+            f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}, bbc-mode={args.bbc_mode}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

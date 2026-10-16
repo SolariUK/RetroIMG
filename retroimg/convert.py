@@ -34,6 +34,7 @@ def convert_file(
     spectrum_mode: str = "bitmap",
     c64_mode: str = "bitmap",
     cpc_mode: str = "bitmap",
+    bbc_mode: str = "bitmap",
 ) -> IndexedImage:
     profile = get_profile(profile_name)
     palette = get_palette(palette_name or profile.default_palette)
@@ -48,7 +49,7 @@ def convert_file(
         raise ValueError("saturation must be positive")
     quantizer = get_profile_quantizer(
         profile, teletext_mode=teletext_mode, spectrum_mode=spectrum_mode,
-        c64_mode=c64_mode, cpc_mode=cpc_mode,
+        c64_mode=c64_mode, cpc_mode=cpc_mode, bbc_mode=bbc_mode,
     )
 
     with Image.open(input_path) as source:

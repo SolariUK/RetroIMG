@@ -48,7 +48,22 @@ CPC_PROFILES = tuple(
     for mode, width, aspect, limit in ((0, 160, 2.0, 16), (1, 320, 1.0, 4), (2, 640, 0.5, 2))
 )
 
-PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES)}
+BBC_PROFILES = tuple(
+    TargetProfile(
+        name=f"bbc-mode{mode}",
+        geometry=Geometry(width, 256, pixel_aspect=aspect),
+        default_palette="bbc",
+        description=f"BBC Micro mode {mode} geometry ({width}x256, {limit} steady colours).",
+        constraint_model=f"bbc-mode{mode}",
+        aspect_correct_preview=True,
+    )
+    for mode, width, aspect, limit in (
+        (0, 640, 0.5, 2), (1, 320, 1.0, 4), (2, 160, 2.0, 8),
+        (4, 320, 1.0, 2), (5, 160, 2.0, 4),
+    )
+)
+
+PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES)}
 
 
 def get_profile(name: str) -> TargetProfile:

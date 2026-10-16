@@ -12,8 +12,8 @@ from retroimg.palettes import get_palette
 
 
 def test_example_matrix_covers_all_modes_and_adjustments():
-    assert sum(len(variants_for(family)) for family in FAMILIES) == 30
-    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 42
+    assert sum(len(variants_for(family)) for family in FAMILIES) == 52
+    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 74
     for family in FAMILIES:
         variants = variants_for(family, adjusted=True)
         assert len({variant.slug for variant in variants}) == len(variants)
@@ -34,6 +34,7 @@ def test_c64_check_rejects_locally_legal_cells_without_shared_background():
     ('teletext', ((0, 1), (2, 0), (0, 0)), dict(teletext_mode='mosaic')),
     ('spectrum', ((2, 11) * 4,) * 8, dict(spectrum_mode='attributes')),
     ('cpc', ((0, 1, 2),), dict(profile_name='cpc-mode2', cpc_mode='constrained')),
+    ('bbc', ((0, 1, 2),), dict(profile_name='bbc-mode0', bbc_mode='constrained')),
 ])
 def test_checks_reject_constraint_violations(palette, pixels, settings):
     image = IndexedImage(len(pixels[0]), len(pixels), get_palette(palette), pixels)
