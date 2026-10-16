@@ -22,7 +22,7 @@ from retroimg.model import IndexedImage
 from retroimg.targets.spectrum import spectrum_from_indexed
 from retroimg.targets.teletext import page_from_indexed
 
-FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga")
+FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga", "atari2600")
 CATALOG = Path(__file__).with_name("sources.json")
 BUNDLED_SOURCES = Path(__file__).resolve().parents[1] / "samples" / "sources"
 
@@ -56,6 +56,12 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             for mode in ("bitmap", "multicolour"):
                 add(mode + suffix, f"{mode.title()} / {label}",
                     dict(profile_name="c64-multicolour", c64_mode=mode, dither=dither, scale=2), (640, 400))
+        elif family == "atari2600":
+            for standard, size in (("ntsc", (512, 384)), ("pal", (608, 456))):
+                for mode in ("bitmap", "playfield", "repeat", "mirror"):
+                    add(f"{standard}-{mode}{suffix}", f"{standard.upper()} / {mode} / {label}",
+                        dict(profile_name=f"atari2600-{standard}", atari_mode=mode,
+                             dither=dither, scale=2), size)
         elif family == "amiga":
             for resolution, limits in (("lores", (2, 4, 8, 16, 32)), ("hires", (2, 4, 8, 16))):
                 scale = 2 if resolution == "lores" else 1
@@ -93,6 +99,14 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             add(f"bitmap-{palette}", f"Unrestricted / {palette} palette",
                 dict(profile_name="c64-multicolour", c64_mode="bitmap", palette_name=palette, scale=2), (640, 400))
 
+    if family == "atari2600":
+        for standard, size in (("ntsc", (512, 384)), ("pal", (608, 456))):
+            add(f"{standard}-chunky", f"{standard.upper()} / playfield / 8-line blocks / dither",
+                dict(profile_name=f"atari2600-{standard}", atari_mode="playfield", atari_row_height=8,
+                     dither="floyd-steinberg", scale=2), size)
+            add(f"{standard}-bitmap-c64", f"{standard.upper()} / unrestricted C64 palette",
+                dict(profile_name=f"atari2600-{standard}", palette_name="c64", scale=2), size)
+
     if family == "amiga":
         for mode in ("ehb", "ham"):
             for suffix, size in (("", (640, 512)), ("-ntsc", (640, 400))):
@@ -123,7 +137,8 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                            options.get("c64_mode") == "multicolour" or
                            options.get("cpc_mode") == "constrained" or
                            options.get("bbc_mode") == "constrained" or
-                           options.get("amiga_mode") in {"constrained", "ehb", "ham"})
+                           options.get("amiga_mode") in {"constrained", "ehb", "ham"} or
+                           options.get("atari_mode") in {"playfield", "repeat", "mirror"})
             if constrained and not any(key in options for key in ("palette_name", "width", "saturation")):
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
@@ -133,6 +148,22 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
 def check_constraints(image: IndexedImage, options: dict) -> None:
     """Check actual output, including constraints shared across cells."""
     image.validate()
+    if options.get("atari_mode") in {"playfield", "repeat", "mirror"}:
+        height = options.get("atari_row_height", 2)
+        if image.width != 160 or image.palette.name not in {"atari2600-ntsc", "atari2600-pal"}:
+            raise AssertionError("Atari playfield width/palette violated")
+        for y in range(0, image.height, height):
+            band = image.pixels[y:y + height]
+            row = band[0]
+            if any(other != row for other in band) or len(set(row)) > 2:
+                raise AssertionError("Atari band pattern/colour constraint violated")
+            if any(len(set(row[x:x + 4])) > 1 for x in range(0, 160, 4)):
+                raise AssertionError("Atari four-clock blocks violated")
+            mode = options["atari_mode"]
+            if mode == "repeat" and row[:80] != row[80:]:
+                raise AssertionError("Atari repeated halves violated")
+            if mode == "mirror" and row[:80] != row[80:][::-1]:
+                raise AssertionError("Atari mirrored halves violated")
     if options.get("teletext_mode") == "mosaic":
         page_from_indexed(image)
     if options.get("spectrum_mode") == "attributes":
@@ -296,7 +327,7 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
             variants = variants_for(family, source.get("adjusted", False))
             target = directory / family
             target.mkdir()
-            columns = 5 if family == "bbc" else (3 if family in {"cpc", "amiga"} else 2)
+            columns = 5 if family == "bbc" else (3 if family in {"cpc", "amiga", "atari2600"} else 2)
             tile_height = max(450, max(variant.size[1] for variant in variants))
             rows = (len(variants) + columns - 1) // columns
             sheet = Image.new("RGB", (640 * columns, (tile_height + 36) * rows), "#202020")

@@ -13,6 +13,7 @@ def test_shared_modules_do_not_import_targets():
 import retroimg.render
 import retroimg.colour_spaces
 import retroimg.constraints.adaptive_palette
+import retroimg.constraints.binary_groups
 import retroimg.constraints.cells
 import retroimg.constraints.shared_background
 import retroimg.constraints.global_palette
@@ -27,6 +28,8 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
       for resolution in ('lores', 'hires') for suffix in ('', '-ntsc')],
     *[(f'amiga-lores{suffix}', 'amiga_mode', mode)
       for suffix in ('', '-ntsc') for mode in ('ehb', 'ham')],
+    *[(f'atari2600-{standard}', 'atari_mode', mode)
+      for standard in ('ntsc', 'pal') for mode in ('playfield', 'repeat', 'mirror')],
     ('teletext', 'teletext_mode', 'mosaic'),
     ('spectrum', 'spectrum_mode', 'attributes'),
     ('c64-multicolour', 'c64_mode', 'multicolour'),

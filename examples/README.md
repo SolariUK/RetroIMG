@@ -1,7 +1,7 @@
 # Visual comparison gallery
 
 `generate_gallery.py` runs real source images through Teletext, Spectrum, C64,
-CPC, BBC Micro and Amiga indexed/EHB/HAM6 conversion. It produces individual PNGs, labelled JPEG comparison
+CPC, BBC Micro, Amiga indexed/EHB/HAM6 and Atari 2600 conversion. It produces individual PNGs, labelled JPEG comparison
 sheets, reproduction commands, JSON settings/checksums, and offline HTML and
 Markdown indexes. It is a visual integration run, separate from the fast pytest
 suite. It uses the installed converter and Pillow, with no additional dependencies.
@@ -83,13 +83,13 @@ which prevents stale local-only files from surviving in a public export. Open
 access is needed to browse the gallery. JPEG sheets are convenient overviews;
 use the linked PNGs to judge exact converted pixels.
 
-`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga` or `all`. The generated
+`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga`, `atari2600` or `all`. The generated
 commands use placeholder source paths; replace `/path/to/filename` and run the
 commands from the gallery directory, or adjust the output paths.
 
 ## Comparison matrix
 
-Each source gets the same 86 neutral conversions:
+Each source gets the same 106 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
@@ -99,13 +99,14 @@ Each source gets the same 86 neutral conversions:
 | CPC | Modes 0/1/2, unrestricted/constrained, each with no dither and Floyd–Steinberg |
 | BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
 | Amiga | PAL lores 2/4/8/16/32 colours and hires 2/4/8/16, each with no dither and Floyd–Steinberg; unrestricted lores/hires with both dither settings; C64/CPC palette swaps; constrained NTSC lores/hires with dithering; PAL/NTSC EHB and HAM6, each with no dither and Floyd–Steinberg |
+| Atari 2600 | NTSC/PAL unrestricted bitmap, independent/repeated/mirrored playfields, all with no dither and Floyd–Steinberg; eight-line chunky playfields with dithering; unrestricted C64 palette swaps |
 
-Each source marked `adjusted` in the catalogue also gets 50 constrained examples
+Each source marked `adjusted` in the catalogue also gets 64 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. Both the local-only mountain landscape and the bundled lush
 landscape have these adjustments. With the current nine-source catalogue, the
-full local run produces 874 converted PNGs and 54 comparison sheets; the
-public-only run produces 652 converted PNGs and 42 sheets.
+full local run produces 1082 converted PNGs and 63 comparison sheets; the
+public-only run produces 806 converted PNGs and 49 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because
@@ -118,6 +119,12 @@ run (218 local PNGs or 164 public PNGs with the current catalogue).
 NTSC examples are 640x400. Only the lush landscape receives the additional
 Amiga hue +20 / green gain 1.15 comparisons, including EHB/HAM6. Experimental output stays outside
 the repository; no complete generated gallery is committed.
+
+`--family atari2600 --public-only` generates 154 PNGs and seven comparison
+sheets. NTSC previews are 512x384; PAL previews are 608x456. Playfield bands
+normally share two scanlines; the chunky examples share eight. The lush
+landscape includes hue +20 / green gain 1.15 variants. Palettes are independently
+generated idealised analogue colour approximations, described in the main README.
 
 Photos use `cover` fitting; the diagnostic chart uses `contain` so the complete
 chart remains visible. Different target geometries can therefore crop photos
@@ -134,6 +141,8 @@ that PNG colours belong to its selected palette. Constrained examples also check
   the whole image. Merely checking each cell independently is insufficient.
 - CPC: at most 16, 4 or 2 colours across the entire image, according to mode.
 - BBC: at most 2, 4, 8, 2 or 4 steady colours for modes 0, 1, 2, 4 or 5.
+- Atari playfield: at most two colours per band, identical pattern/colours on
+  shared scanlines, four-clock-wide blocks and the requested half symmetry.
 - Amiga indexed: at most the selected screen-colour count and legal four-bit RGB channels.
 - EHB: all 64 palette slots have legal precision and the upper 32 are exactly the
   hardware-rounded half-bright counterparts of the lower 32.

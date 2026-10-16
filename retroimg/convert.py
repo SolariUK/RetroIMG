@@ -36,6 +36,8 @@ def convert_file(
     cpc_mode: str = "bitmap",
     bbc_mode: str = "bitmap",
     amiga_mode: str = "bitmap",
+    atari_mode: str = "bitmap",
+    atari_row_height: int | None = None,
     colours: int | None = None,
 ) -> IndexedImage:
     profile = get_profile(profile_name)
@@ -52,7 +54,8 @@ def convert_file(
     quantizer = get_profile_quantizer(
         profile, teletext_mode=teletext_mode, spectrum_mode=spectrum_mode,
         c64_mode=c64_mode, cpc_mode=cpc_mode, bbc_mode=bbc_mode,
-        amiga_mode=amiga_mode, colours=colours,
+        amiga_mode=amiga_mode, atari_mode=atari_mode,
+        atari_row_height=atari_row_height, colours=colours,
     )
 
     with Image.open(input_path) as source:

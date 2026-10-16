@@ -7,6 +7,7 @@ from functools import partial
 
 from PIL import Image
 
+from retroimg.targets.atari2600 import PLAYFIELD_MODES, quantize_atari_playfield
 from retroimg.targets.teletext import quantize_teletext_mosaic
 from retroimg.targets.c64 import quantize_c64_multicolour
 from retroimg.targets.cpc import quantize_cpc
@@ -27,6 +28,8 @@ COLOUR_COUNT_QUANTIZERS = {
 
 CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
     **COLOUR_COUNT_QUANTIZERS,
+    **{("atari2600-playfield", mode): partial(quantize_atari_playfield, mode=mode)
+       for mode in PLAYFIELD_MODES},
     ("amiga-lores", "ehb"): quantize_ehb,
     ("amiga-lores", "ham"): quantize_ham,
     **{(f"bbc-mode{mode}", "constrained"): partial(quantize_bbc, mode=mode) for mode in BBC_COLOUR_LIMITS},
@@ -63,6 +66,8 @@ class ModeOption:
 
 
 MODE_OPTIONS = {
+    "atari_mode": ModeOption("Atari", ("bitmap", *PLAYFIELD_MODES), ("atari2600-playfield",),
+                             "atari2600-ntsc or atari2600-pal"),
     "amiga_mode": ModeOption("Amiga", ("bitmap", "constrained", "ehb", "ham"), ("amiga-lores", "amiga-hires"), "an amiga-* profile"),
     "bbc_mode": ModeOption("BBC", ("bitmap", "constrained"), tuple(f"bbc-mode{mode}" for mode in BBC_COLOUR_LIMITS),
                            "bbc-mode0, bbc-mode1, bbc-mode2, bbc-mode4 or bbc-mode5"),
@@ -74,7 +79,8 @@ MODE_OPTIONS = {
 }
 
 
-def get_profile_quantizer(profile: TargetProfile, *, colours: int | None = None, **modes: str) -> Quantizer:
+def get_profile_quantizer(profile: TargetProfile, *, colours: int | None = None,
+                          atari_row_height: int | None = None, **modes: str) -> Quantizer:
     """Validate supplied target options, then resolve a raster adapter."""
     unknown = modes.keys() - MODE_OPTIONS.keys()
     if unknown:
@@ -89,4 +95,11 @@ def get_profile_quantizer(profile: TargetProfile, *, colours: int | None = None,
         elif mode != "bitmap":
             flag = option.replace("_", "-")
             raise ValueError(f"--{flag} {mode} is only valid with --profile {spec.required_profiles}")
-    return get_quantizer(profile.constraint_model, selected, colours=colours)
+    adapter = get_quantizer(profile.constraint_model, selected, colours=colours)
+    if atari_row_height is not None:
+        if profile.constraint_model != "atari2600-playfield" or selected == "bitmap":
+            raise ValueError("--atari-row-height requires an Atari playfield mode")
+        if type(atari_row_height) is not int or atari_row_height <= 0:
+            raise ValueError("Atari row height must be a positive integer")
+        adapter = partial(adapter, row_height=atari_row_height)
+    return adapter

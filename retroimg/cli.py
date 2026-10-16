@@ -64,6 +64,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Amiga constraint: bitmap is unrestricted; constrained selects a screen palette; ehb and ham use six-bit low-resolution graphics codes",
     )
     convert.add_argument(
+        "--atari-mode", choices=("bitmap", "playfield", "repeat", "mirror"), default="bitmap",
+        help="Atari constraint: unrestricted bitmap, independent 40-block playfield, or repeated/mirrored 20-block halves",
+    )
+    convert.add_argument(
+        "--atari-row-height", type=int,
+        help="scanlines sharing one playfield pattern and colour pair (default: 2; requires an Atari playfield mode)",
+    )
+    convert.add_argument(
         "--colours", type=int,
         help="selected screen-colour limit for Amiga constrained mode: 2/4/8/16/32 (hires maximum 16; default is the profile maximum)",
     )
@@ -98,6 +106,8 @@ def main() -> None:
             cpc_mode=args.cpc_mode,
             bbc_mode=args.bbc_mode,
             amiga_mode=args.amiga_mode,
+            atari_mode=args.atari_mode,
+            atari_row_height=args.atari_row_height,
             colours=args.colours,
         )
         print(
@@ -105,7 +115,7 @@ def main() -> None:
             f"palette={indexed.palette.name}, profile={args.profile}, dither={args.dither}, "
             f"teletext-mode={args.teletext_mode}, spectrum-mode={args.spectrum_mode}, "
             f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}, bbc-mode={args.bbc_mode}, "
-            f"amiga-mode={args.amiga_mode}, palette-size={len(indexed.palette.colours)}"
+            f"amiga-mode={args.amiga_mode}, atari-mode={args.atari_mode}, palette-size={len(indexed.palette.colours)}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

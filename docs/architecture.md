@@ -12,6 +12,7 @@ retroimg/
         spectrum.py          # Ink/paper/BRIGHT cells and attribute optimisation
         c64.py               # Multicolour cells and shared-background optimisation
         cpc.py               # Global screen inks and pen-indexed images
+        atari2600.py          # Per-band TIA colour codes and playfield patterns
         bbc.py               # Steady physical colours and logical pixel mappings
         amiga/
             __init__.py      # Public Amiga API (existing import paths retained)
@@ -20,6 +21,7 @@ retroimg/
             ham.py           # Stateful greedy HAM6 encoding and decoding
             common.py        # Fixed register-table and code-grid validation
     constraints/
+        binary_groups.py     # Exact binary fitting for groups sharing one selector
         cells.py             # Generic two-colour cell fitting, optional legal pairs
         shared_background.py # Generic local sets with an image-wide shared colour
         global_palette.py    # Generic whole-image selection from a fixed palette
@@ -174,3 +176,30 @@ For visual verification, regenerate the gallery into a new directory using
 the same sources and compare source checksums, settings and output PNG hashes
 in the two `manifest.json` files. Matching PNG hashes establish byte-for-byte
 equality, including all palette, geometry, dithering and adjustment examples.
+
+## Atari visual playfields
+
+`AtariPlayfield` holds height, band height, mode, palette and validated rows.
+Each `AtariPlayfieldRow` holds even foreground/background TIA colour codes and
+20 or 40 logical pattern bits. Bit zero is leftmost; repeated/mirrored halves
+are expanded by the target rasteriser, followed by four-clock horizontal blocks
+and vertical band repetition. Logical patterns do not use PF register byte order.
+
+`fit_binary_groups` is target independent. Each group contains the original RGB
+samples that must share one output selector. It evaluates every distinct RGB
+pair using weighted sums and squared sums, preserving the full squared-error
+objective even for groups of different sizes. It returns the pair and unrounded
+group means. Atari defines groups from four-clock blocks, shared scanlines and,
+where applicable, matching positions in both halves. Dithering operates on a
+single strip of the independent bits with the selected pair; the target resets
+it per band so repeated/mirrored structure is retained. This intentionally
+restricts Floyd–Steinberg to horizontal propagation along that strip.
+
+`palettes/atari.py` owns independently generated idealised RGB approximations;
+the palette index maps to an even TIA register value. PAL duplicate grayscale
+banks remain present to preserve register ordering. Profiles own nominal
+NTSC/PAL dimensions and preview aspect. Unrestricted bitmap conversion still
+uses the generic quantiser, with palette mixing and custom sizes available.
+`--atari-row-height` is an optional adapter parameter validated by the mode
+registry and rejected outside Atari playfield modes. The shared file pipeline
+only forwards it. No timing kernel, native file or executable exporter is planned.

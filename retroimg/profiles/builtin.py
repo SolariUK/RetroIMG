@@ -36,6 +36,20 @@ SPECTRUM = TargetProfile(
     constraint_model="spectrum-attributes",
 )
 
+# Nominal active picture sizes, displayed at 4:3. Playfield adapters group
+# four colour clocks horizontally without changing the bitmap profile.
+ATARI_PROFILES = tuple(
+    TargetProfile(
+        name=f"atari2600-{standard}",
+        geometry=Geometry(160, height, pixel_aspect=height / 120),
+        default_palette=f"atari2600-{standard}",
+        description=f"Atari 2600 {standard.upper()} nominal active picture (160x{height}).",
+        constraint_model="atari2600-playfield",
+        aspect_correct_preview=True,
+    )
+    for standard, height in (("ntsc", 192), ("pal", 228))
+)
+
 CPC_PROFILES = tuple(
     TargetProfile(
         name=f"cpc-mode{mode}",
@@ -76,7 +90,7 @@ AMIGA_PROFILES = tuple(
     for resolution, width, aspect, limit in (("lores", 320, 1.0, 32), ("hires", 640, 0.5, 16))
 )
 
-PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES)}
+PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES, *ATARI_PROFILES)}
 
 
 def get_profile(name: str) -> TargetProfile:
