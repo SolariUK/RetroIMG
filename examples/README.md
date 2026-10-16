@@ -187,19 +187,27 @@ recorded in each gallery manifest.
 
 ## Curated repository samples
 
-`generate_samples.py` reuses the gallery converter, constraint checks and sheet
-renderer to publish three small comparisons: CPC macaws, Teletext colour portrait
-and C64 landscape. Each compares all five dither settings with neutral adjustments.
-It retains only JPEG sheets, source records, commands and checksums; individual
-PNG previews and intermediate galleries are temporary.
+`generate_samples.py` reuses the converter, mode variants and constraint checks
+to maintain eight 800×600 PNG panels with two-by-two layouts. Seven show a source
+photograph, no dither, Floyd–Steinberg and Bayer 4×4 for one representative mode
+per target family. The eighth shows CPC macaws with blue gain, brightness and
+contrast adjustments. This is a bounded documentation set rather than a full
+conversion matrix. It defaults to `samples/comparisons`.
 
 ```bash
-python examples/generate_samples.py --output-dir /path/to/new-sample-sheets
+python examples/generate_samples.py --replace
+
+# Alternatively, generate into a new directory
+python examples/generate_samples.py --output-dir /path/to/new-samples
 ```
 
 The committed selection is under [samples/comparisons](../samples/comparisons/README.md).
-JPEG sheets are for visual browsing; exact colour counts refer to the underlying
-PNG previews, not the compressed sheets. Source-image rights remain separately
+Only known sample files are refreshed, after successful generation. Unrelated
+files cause a refusal; failed conversion leaves existing panels intact. Individual
+PNG conversions are temporary and automatically removed. Converted thumbnails
+use nearest-neighbour fitting; source thumbnails use smooth fitting. Exact colour
+counts refer to underlying conversions rather than whole labelled panels.
+Source-image rights remain separately
 documented in [samples/README.md](../samples/README.md).
 
 ## Conversion timings

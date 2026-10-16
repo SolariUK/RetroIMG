@@ -2,19 +2,19 @@
 
 `sources/` contains the seven public-domain/CC0 or locally generated reference images used by the gallery. Keeping these modest source files in Git makes comparisons reproducible from a fresh checkout, without a download service or access to a developer scratchpad. The files total approximately 6 MB.
 
-The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. Large generated galleries, experimental conversions and verification reports belong in a temporary directory. [comparisons/](comparisons/README.md) holds three curated, labelled comparison sheets with settings, checksums and reproduction commands; individual converted PNGs remain temporary.
+The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. [comparisons/](comparisons/README.md) holds eight curated **800×600 PNG panels**, covering the seven target families and a macaws adjustment recipe. Each uses a two-by-two layout for GitHub and desktop viewing, with settings, checksums and reproduction commands. Intermediate conversions are automatically cleaned up; large galleries are optional development diagnostics.
 
 ## Generate examples
 
 Run from the project root with retroimg installed:
 
 ```bash
-python examples/generate_gallery.py \
-    --public-only \
-    --output-dir /path/to/new-public-gallery
+python examples/generate_samples.py --replace
 ```
 
-The source directory defaults to `samples/sources/`. Add `--family bbc` (or `teletext`, `spectrum`, `c64`, `cpc`, `amiga`, `atari2600`) for a smaller run. `--sources-dir` still accepts an external directory for local experiments. The output directory must be new.
+This refreshes only the known documentation artifacts in `samples/comparisons` and refuses directories with unrelated files. Use `--output-dir /path/to/new-samples` to generate elsewhere. Source images stay in `samples/sources`; only presentation thumbnails are resized. Panels use nearest-neighbour fitting for converted previews, so inspect individual regenerated PNGs when evaluating exact dither patterns.
+
+For an optional comprehensive gallery, use `python examples/generate_gallery.py --public-only --output-dir /path/to/new-gallery`. See [gallery documentation](../examples/README.md) for family/source filters. Avoid committing full galleries or accumulating them during routine sample refreshes.
 
 ## Image rights
 

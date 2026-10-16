@@ -101,7 +101,11 @@ def test_bundled_directory_contains_only_catalogued_public_assets():
         source['id'] for source in PUBLIC_SOURCES}
 
 
-@pytest.mark.parametrize('identifier', ['macaws-cpc', 'portrait-colour-teletext', 'lush-landscape-c64'])
+@pytest.mark.parametrize('identifier', [
+    'macaws-cpc', 'portrait-colour-teletext', 'lush-landscape-c64',
+    'lush-landscape-spectrum', 'macaws-bbc', 'portrait-colour-amiga',
+    'lush-landscape-atari2600', 'macaws-adjustments',
+])
 def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
     from hashlib import sha256
     import shlex
@@ -109,7 +113,7 @@ def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
 
     directory = CATALOG_PATH.parents[1] / 'samples' / 'comparisons'
     manifest = json.loads((directory / 'manifest.json').read_text(encoding='utf-8'))
-    entry = next(item for item in manifest['comparisons'] if item['sheet'] == identifier + '.jpg')
+    entry = next(item for item in manifest['comparisons'] if item['sheet'] == identifier + '.png')
     source = entry['source']
     original = next(item for item in PUBLIC_SOURCES if item['id'] == source['id'])
     assert source['public'] is True
@@ -118,12 +122,55 @@ def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
     sheet = directory / entry['sheet']
     assert sha256(sheet.read_bytes()).hexdigest() == entry['sha256']
     with Image.open(sheet) as image:
+        assert image.size == (800, 600)
+        assert image.format == 'PNG'
         image.verify()
-    assert len(entry['variants']) == 5
+    assert len(entry['variants']) == (3 if entry['show_source'] else 4)
     for variant in entry['variants']:
         arguments = build_parser().parse_args(shlex.split(variant['command'])[1:])
         assert arguments.input == Path('/path/to/image.jpg')
         assert arguments.dither == variant['settings']['dither']
+
+
+def test_curated_samples_are_bounded_and_cover_all_target_families():
+    from examples.generate_samples import selections
+
+    panels = selections()
+    assert len(panels) == 8
+    assert set(FAMILIES) <= {panel.family for panel in panels}
+    directory = CATALOG_PATH.parents[1] / 'samples' / 'comparisons'
+    assert {p.name for p in directory.iterdir()} == {
+        'README.md', 'manifest.json', *(panel.filename for panel in panels)}
+
+
+def test_sample_refresh_refuses_unmanaged_files(tmp_path):
+    from examples.generate_samples import generate_samples
+
+    directory = tmp_path / 'samples'
+    directory.mkdir()
+    precious = directory / 'my-photo.png'
+    precious.write_bytes(b'keep')
+    with pytest.raises(ValueError, match='exists'):
+        generate_samples(directory)
+    with pytest.raises(ValueError, match='unmanaged'):
+        generate_samples(directory, replace=True)
+    assert precious.read_bytes() == b'keep'
+
+
+def test_failed_sample_refresh_preserves_existing_panels(tmp_path, monkeypatch):
+    from examples import generate_samples as generator
+
+    directory = tmp_path / 'samples'
+    directory.mkdir()
+    existing = directory / 'macaws-cpc.png'
+    existing.write_bytes(b'previous panel')
+    def fail(*args, **kwargs):
+        raise OSError('conversion failed')
+    monkeypatch.setattr(generator, 'convert_file', fail)
+    with pytest.raises(OSError, match='conversion failed'):
+        generator.generate_samples(directory, replace=True)
+    assert existing.read_bytes() == b'previous panel'
+    assert list(tmp_path.iterdir()) == [directory]
 
 
 def test_catalogue_gallery_totals():

@@ -165,12 +165,20 @@ CRT/scanline effects and native hardware export are deferred.
 ## Example results
 
 The [sample comparisons](samples/comparisons/README.md) show selected conversions
-of the bundled public-domain/CC0 reference photographs. Each sheet has labels,
-source credits and reproduction commands.
+of the bundled public-domain/CC0 reference photographs. Eight **800×600** panels
+cover all target families and a macaws adjustment recipe. Each has readable
+labels, source credits and expandable reproduction commands.
 
-![CPC mode 1 dithering comparison](samples/comparisons/macaws-cpc.jpg)
+![CPC mode 1 source adjustments](samples/comparisons/macaws-adjustments.png)
 
-Generate a larger offline gallery from a fresh checkout:
+Refresh the documentation panels in `samples/comparisons`:
+
+```bash
+python examples/generate_samples.py --replace
+```
+
+Individual conversions are temporary; only the eight panels and their records
+are retained. Large galleries remain optional, for deliberate visual testing:
 
 ```bash
 python examples/generate_gallery.py --public-only --dither-comparison --output-dir /path/to/new-gallery
