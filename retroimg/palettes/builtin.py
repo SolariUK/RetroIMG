@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from retroimg.model import Colour, Palette
+from retroimg.colour_spaces import RGBGrid
 
 
 def _palette(name: str, description: str, colours: tuple[tuple[str, tuple[int, int, int]], ...]) -> Palette:
@@ -83,7 +84,10 @@ CPC = _palette(
 # Teletext. Keep a separate named palette so target identity stays independent.
 BBC = Palette("bbc", TELETEXT.colours, "BBC Micro eight steady physical colours, ideal RGB levels 0/255.")
 
-PALETTES = {p.name: p for p in (TELETEXT, C64, SPECTRUM, CPC, BBC)}
+AMIGA_RGB = RGBGrid(tuple(range(0, 256, 17)))
+AMIGA = AMIGA_RGB.palette("amiga", "Amiga OCS/ECS 4096-colour RGB space; 4 bits per channel.")
+
+PALETTES = {p.name: p for p in (TELETEXT, C64, SPECTRUM, CPC, BBC, AMIGA)}
 
 
 def get_palette(name: str) -> Palette:

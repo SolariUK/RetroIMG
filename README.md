@@ -3,7 +3,7 @@
 `retroimg` converts modern images into constrained retro-display styles.  The
 project deliberately separates target geometry, palette, quantisation and
 machine-specific constraints so that Teletext, Commodore 64, ZX Spectrum,
-Amstrad CPC, BBC Micro and future targets can share the same conversion pipeline.
+Amstrad CPC, BBC Micro, Amiga and future targets can share the same pipeline.
 
 ## Development install
 
@@ -353,6 +353,94 @@ relative geometry between modes, not a simulation of a particular PAL monitor.
 Flashing colours, raster palette changes, hardware screen-file export and CRT
 effects are not implemented.
 
+## Amiga OCS/ECS standard indexed modes
+
+The `amiga` palette describes the complete **4,096-colour RGB space**: four bits
+per channel, with ideal preview levels `0, 17, 34, …, 255`. Hardware colour words
+are `0xRGB`; for example, `0xF80` becomes RGB `(255, 136, 0)`. Individual screens
+select a small palette from this colour space. Channel precision and display
+limits follow the [Amiga graphics documentation](https://wiki.amigaos.net/wiki/Classic_Graphics_Primitives).
+
+| Profile | Standard | Logical raster | Relative pixel aspect | Constrained colour counts | Scale for matching previews |
+| --- | --- | --- | --- | --- | --- |
+| `amiga-lores` | PAL | 320x256 | 1:1 | 2, 4, 8, 16, 32 | 2 → 640x512 |
+| `amiga-hires` | PAL | 640x256 | 1:2 | 2, 4, 8, 16 | 1 → 640x512 |
+| `amiga-lores-ntsc` | NTSC | 320x200 | 1:1 | 2, 4, 8, 16, 32 | 2 → 640x400 |
+| `amiga-hires-ntsc` | NTSC | 640x200 | 1:2 | 2, 4, 8, 16 | 1 → 640x400 |
+
+As with the other targets, `--amiga-mode bitmap` is the default. It uses the
+whole selected palette without a screen-colour limit. With the built-in Amiga
+palette, every output channel has four-bit precision but an image can use more
+than 32 colours. This is an aesthetic option, not an encodable standard screen.
+Bitmap mode accepts palette swaps, including C64 and CPC colours.
+
+Use `--amiga-mode constrained` to fit a screen palette. `--colours` chooses the
+maximum count; it defaults to 32 for lores and 16 for hires. Counts must be powers
+of two from the table; a solid image may use fewer colours. Currently `--colours`
+is supported only by Amiga constrained conversion and is rejected in bitmap
+mode or with another target. Constrained Amiga conversion requires the built-in
+`amiga` palette. Custom width/height are allowed as visual experiments without
+cell alignment requirements.
+
+```bash
+# Default: unrestricted 4096-colour conversion in PAL low-resolution geometry
+retroimg convert /path/to/image.jpg amiga-free.png \
+    --profile amiga-lores --scale 2
+
+# Select up to 32 legal screen colours and dither within that palette
+retroimg convert /path/to/image.jpg amiga-32.png \
+    --profile amiga-lores --amiga-mode constrained --colours 32 \
+    --dither floyd-steinberg --scale 2
+
+# A four-colour low-resolution treatment, without dithering
+retroimg convert /path/to/image.jpg amiga-4.png \
+    --profile amiga-lores --amiga-mode constrained --colours 4 --scale 2
+
+# PAL high resolution supports up to 16 screen colours
+retroimg convert /path/to/image.jpg amiga-hires.png \
+    --profile amiga-hires --amiga-mode constrained --colours 16 \
+    --dither floyd-steinberg --scale 1
+
+# NTSC geometry with the existing hue and channel-gain controls
+retroimg convert /path/to/image.jpg amiga-ntsc.png \
+    --profile amiga-lores-ntsc --amiga-mode constrained \
+    --hue-shift 20 --green-gain 1.15 --dither floyd-steinberg --scale 2
+
+# Mix Amiga geometry with an unrestricted CPC palette
+retroimg convert /path/to/image.jpg amiga-cpc.png \
+    --profile amiga-lores --palette cpc --scale 2
+```
+
+### Adaptive screen palettes
+
+The reusable `fit_rgb_palette` fitter uses frequency-weighted RGB samples,
+weighted median-cut seeds, then up to 12 iterations of colour-cluster refinement.
+Cluster centres snap to the permitted channel levels. It fits the prepared RGB
+source, rather than an already quantised image. The result is deterministic for
+the same prepared input and settings; it is a heuristic, not a guaranteed global
+minimum. Sampling follows the shared 4096-sample histogram policy described in
+the CPC section. The Python fitter accepts `max_samples=None` for full-histogram
+fitting. There is no exhaustive search over all possible screen palettes.
+
+Palette selection precedes dithering. The full prepared source is quantised
+using only those selected colours, with Floyd–Steinberg diffusion across the
+whole image. Saturation, hue and gains apply before selection and can change the
+screen palette. No-dither and dithered runs with otherwise identical settings
+select the same register colours.
+
+Unrestricted regular RGB-grid quantisation uses exact per-channel nearest-level
+lookup rather than searching all 4096 entries per pixel. Ties select the lower
+index, matching exhaustive weighted RGB distance. High-resolution previews keep
+every logical column and stretch rows for relative aspect. As with CPC and BBC,
+this aspect convention preserves relative mode geometry without simulating a
+particular monitor.
+
+This milestone covers standard, non-interlaced, single-playfield indexed images
+and PNG previews. **EHB and HAM are separate future modes**: EHB needs 32 selected
+colours with linked half-bright counterparts; HAM needs a stateful pixel-code
+representation and optimiser. AGA, Copper palette changes, sprites, interlace,
+overscan, native IFF/ILBM export and CRT effects are also deferred.
+
 ## Palette/profile independence
 
 Palettes can be mixed with geometries for experimentation:
@@ -446,8 +534,9 @@ also changes other areas. All outputs still use the selected palette.
 
 The [example gallery runner](examples/README.md) compares the same sources across
 Teletext bitmap/mosaic, Spectrum bitmap/attributes, C64 bitmap/multicolour,
-all three CPC modes and BBC Micro modes 0/1/2/4/5. It includes unrestricted
-palette experiments, dithering, and labelled colour-adjustment examples.
+all three CPC modes, BBC Micro modes 0/1/2/4/5, and standard Amiga lores/hires
+colour counts. It includes unrestricted palette experiments, dithering, and
+labelled colour-adjustment examples.
 
 ```bash
 python examples/generate_gallery.py \
@@ -553,6 +642,14 @@ its mode, selected steady physical `colours`, and logical-colour-indexed pixels.
 `colours[logical]` maps each pixel's logical slot to a physical colour number;
 `rasterize_bbc` expands that mapping into the full BBC palette. Optimisation,
 logical mapping and preview rendering remain separate.
+
+`optimise_amiga` produces an `AmigaImage` with a resolution family, bitplane
+count, a tuple of 12-bit colour-register values and register-indexed pixels.
+`rasterize_amiga` returns an indexed image with that selected screen palette;
+it does not expand it into a 4096-entry palette. The model is independent of
+Amiga bitplane byte layout and native export. Full regular-grid palettes declare
+validated `rgb_levels` metadata, which allows the generic quantiser to use an
+exact per-channel lookup without target-specific branches.
 
 Future strict Teletext support should introduce a separate page encoding layer
 and CLI mode. It will need to account for row state, control-code cell positions,

@@ -12,8 +12,8 @@ from retroimg.palettes import get_palette
 
 
 def test_example_matrix_covers_all_modes_and_adjustments():
-    assert sum(len(variants_for(family)) for family in FAMILIES) == 52
-    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 74
+    assert sum(len(variants_for(family)) for family in FAMILIES) == 78
+    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 120
     for family in FAMILIES:
         variants = variants_for(family, adjusted=True)
         assert len({variant.slug for variant in variants}) == len(variants)
@@ -35,6 +35,8 @@ def test_c64_check_rejects_locally_legal_cells_without_shared_background():
     ('spectrum', ((2, 11) * 4,) * 8, dict(spectrum_mode='attributes')),
     ('cpc', ((0, 1, 2),), dict(profile_name='cpc-mode2', cpc_mode='constrained')),
     ('bbc', ((0, 1, 2),), dict(profile_name='bbc-mode0', bbc_mode='constrained')),
+    ('bbc', ((0, 1, 2),), dict(profile_name='amiga-lores', amiga_mode='constrained', colours=2)),
+    ('cpc', ((1,),), dict(profile_name='amiga-lores', amiga_mode='constrained', colours=32)),
 ])
 def test_checks_reject_constraint_violations(palette, pixels, settings):
     image = IndexedImage(len(pixels[0]), len(pixels), get_palette(palette), pixels)
@@ -104,5 +106,5 @@ def test_catalogue_gallery_totals():
     def output_count(sources):
         return sum(len(variants_for(family, source.get('adjusted', False)))
                    for source in sources for family in FAMILIES)
-    assert output_count(catalog) == 512
-    assert output_count(PUBLIC_SOURCES) == 386
+    assert output_count(catalog) == 786
+    assert output_count(PUBLIC_SOURCES) == 588

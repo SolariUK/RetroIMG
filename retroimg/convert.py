@@ -35,6 +35,8 @@ def convert_file(
     c64_mode: str = "bitmap",
     cpc_mode: str = "bitmap",
     bbc_mode: str = "bitmap",
+    amiga_mode: str = "bitmap",
+    colours: int | None = None,
 ) -> IndexedImage:
     profile = get_profile(profile_name)
     palette = get_palette(palette_name or profile.default_palette)
@@ -50,6 +52,7 @@ def convert_file(
     quantizer = get_profile_quantizer(
         profile, teletext_mode=teletext_mode, spectrum_mode=spectrum_mode,
         c64_mode=c64_mode, cpc_mode=cpc_mode, bbc_mode=bbc_mode,
+        amiga_mode=amiga_mode, colours=colours,
     )
 
     with Image.open(input_path) as source:

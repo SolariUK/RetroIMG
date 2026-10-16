@@ -13,14 +13,18 @@ retroimg/
         c64.py               # Multicolour cells and shared-background optimisation
         cpc.py               # Global screen inks and pen-indexed images
         bbc.py               # Steady physical colours and logical pixel mappings
+        amiga.py             # Adaptive RGB12 register palettes and indexed screens
     constraints/
         cells.py             # Generic two-colour cell fitting, optional legal pairs
         shared_background.py # Generic local sets with an image-wide shared colour
         global_palette.py    # Generic whole-image selection from a fixed palette
+        adaptive_palette.py  # Grid-snapped adaptive palette clustering
+        histogram.py         # Shared deterministic frequency-weighted RGB sampling
         __init__.py          # Package description
     palettes/                # Named RGB colour definitions
     profiles/                # Geometry, default palette, constraint-model identifiers
     model.py                 # Shared Palette, Geometry, TargetProfile, IndexedImage
+    colour_spaces.py         # Generic Cartesian RGB grids and exact nearest lookup
     quantize.py              # Palette quantisation and Floyd–Steinberg diffusion
     geometry.py              # Fitting and resizing
     adjustments.py           # Source saturation, hue rotation and RGB gains
@@ -72,10 +76,13 @@ from retroimg.targets.spectrum import optimise_spectrum_attributes, rasterize_sp
 from retroimg.targets.c64 import optimise_c64_multicolour, rasterize_c64_multicolour
 from retroimg.targets.cpc import optimise_cpc, rasterize_cpc
 from retroimg.targets.bbc import optimise_bbc, rasterize_bbc
+from retroimg.targets.amiga import optimise_amiga, rasterize_amiga
 
 from retroimg.constraints.cells import quantize_cells
 from retroimg.constraints.shared_background import fit_shared_background
 from retroimg.constraints.global_palette import select_palette_indices
+from retroimg.constraints.adaptive_palette import fit_rgb_palette
+from retroimg.colour_spaces import RGBGrid
 from retroimg.render import render_indexed
 ```
 
@@ -107,6 +114,27 @@ palette selector as CPC. The target owns its mode limits: 2/4/8/2/4 steady
 colours for modes 0/1/2/4/5. Mode 2's flashing slots are deliberately excluded
 from this static representation. There are no BBC-specific branches in the
 shared fitting algorithms, file pipeline or renderer.
+
+Amiga uses `fit_rgb_palette` to choose colours from an `RGBGrid`; weighted
+median-cut seeds and snapped cluster means avoid enumerating combinations of
+4096 candidates. The fitter contains no Amiga rules. `AmigaImage` validates
+lores/hires bitplane capacity, 12-bit register values and register-indexed pixels.
+Its rasteriser returns the selected palette and logical pixels. PAL/NTSC geometry
+lives in profiles, independently of the screen representation. `--colours` is
+passed through the registry's configurable-palette adapter map; the target
+validates allowed counts. No target rules are added to `convert_file`.
+
+A complete Cartesian `Palette` may declare `rgb_levels`. Validation requires
+sorted unique 8-bit levels and the full red-major RGB product in precisely that
+order. The shared quantiser then uses exact per-channel lookup, including lower
+index tie-breaking, for both plain quantisation and error diffusion. Selected
+screen palettes do not carry this metadata and use ordinary weighted-distance
+lookup. The existing fixed-palette selector retains its original fitting
+behaviour, with its histogram implementation moved to the shared module.
+
+EHB and HAM require separate target representations and fitting strategies;
+standard indexed output must not be presented as either. They are deferred,
+along with AGA and interlaced/overscan modes.
 
 Hardware exporters and future optional CRT post-processing remain separate
 concerns; neither is implemented by these target adapters.

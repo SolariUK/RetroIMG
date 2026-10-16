@@ -21,7 +21,7 @@ from retroimg.model import IndexedImage
 from retroimg.targets.spectrum import spectrum_from_indexed
 from retroimg.targets.teletext import page_from_indexed
 
-FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc")
+FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga")
 CATALOG = Path(__file__).with_name("sources.json")
 BUNDLED_SOURCES = Path(__file__).resolve().parents[1] / "samples" / "sources"
 
@@ -55,6 +55,15 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             for mode in ("bitmap", "multicolour"):
                 add(mode + suffix, f"{mode.title()} / {label}",
                     dict(profile_name="c64-multicolour", c64_mode=mode, dither=dither, scale=2), (640, 400))
+        elif family == "amiga":
+            for resolution, limits in (("lores", (2, 4, 8, 16, 32)), ("hires", (2, 4, 8, 16))):
+                scale = 2 if resolution == "lores" else 1
+                add(f"{resolution}-bitmap{suffix}", f"{resolution} / unrestricted / {label}",
+                    dict(profile_name=f"amiga-{resolution}", dither=dither, scale=scale), (640, 512))
+                for count in limits:
+                    add(f"{resolution}-{count}{suffix}", f"{resolution} / {count} colours / {label}",
+                        dict(profile_name=f"amiga-{resolution}", amiga_mode="constrained", colours=count,
+                             dither=dither, scale=scale), (640, 512))
         elif family == "bbc":
             for constraint in ("bitmap", "constrained"):
                 for mode in (0, 1, 2, 4, 5):
@@ -83,6 +92,15 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             add(f"bitmap-{palette}", f"Unrestricted / {palette} palette",
                 dict(profile_name="c64-multicolour", c64_mode="bitmap", palette_name=palette, scale=2), (640, 400))
 
+    if family == "amiga":
+        for palette in ("c64", "cpc"):
+            add(f"lores-bitmap-{palette}", f"lores unrestricted / {palette} palette",
+                dict(profile_name="amiga-lores", palette_name=palette, scale=2), (640, 512))
+        for resolution in ("lores", "hires"):
+            add(f"{resolution}-ntsc-dither", f"{resolution} / NTSC / constrained / Floyd-Steinberg",
+                dict(profile_name=f"amiga-{resolution}-ntsc", amiga_mode="constrained", dither="floyd-steinberg",
+                     scale=2 if resolution == "lores" else 1), (640, 400))
+
     if family == "bbc":
         for palette in ("cpc", "spectrum"):
             add(f"mode1-bitmap-{palette}", f"Mode 1 unrestricted / {palette} palette",
@@ -96,7 +114,8 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                            options.get("spectrum_mode") == "attributes" or
                            options.get("c64_mode") == "multicolour" or
                            options.get("cpc_mode") == "constrained" or
-                           options.get("bbc_mode") == "constrained")
+                           options.get("bbc_mode") == "constrained" or
+                           options.get("amiga_mode") == "constrained")
             if constrained and not any(key in options for key in ("palette_name", "width", "saturation")):
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
@@ -110,6 +129,13 @@ def check_constraints(image: IndexedImage, options: dict) -> None:
         page_from_indexed(image)
     if options.get("spectrum_mode") == "attributes":
         spectrum_from_indexed(image)
+    if options.get("amiga_mode") == "constrained":
+        limit = options.get("colours", 16 if "hires" in options["profile_name"] else 32)
+        used = {index for row in image.pixels for index in row}
+        if len(image.palette.colours) > limit or len(used) > limit:
+            raise AssertionError("Amiga screen colour limit violated")
+        if any(channel % 17 for rgb in image.palette.rgb_values() for channel in rgb):
+            raise AssertionError("Amiga 4-bit channel precision violated")
     if options.get("bbc_mode") == "constrained":
         mode = int(options["profile_name"][-1])
         used = {index for row in image.pixels for index in row}
@@ -255,7 +281,7 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
             variants = variants_for(family, source.get("adjusted", False))
             target = directory / family
             target.mkdir()
-            columns = 5 if family == "bbc" else (3 if family == "cpc" else 2)
+            columns = 5 if family == "bbc" else (3 if family in {"cpc", "amiga"} else 2)
             tile_height = max(450, max(variant.size[1] for variant in variants))
             rows = (len(variants) + columns - 1) // columns
             sheet = Image.new("RGB", (640 * columns, (tile_height + 36) * rows), "#202020")

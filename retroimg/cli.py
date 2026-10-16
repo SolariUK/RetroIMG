@@ -59,6 +59,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="BBC constraint: bitmap allows unrestricted palette colours; constrained selects 2/4/8/2/4 steady colours for bbc-mode0/1/2/4/5",
     )
 
+    convert.add_argument(
+        "--amiga-mode", choices=("bitmap", "constrained"), default="bitmap",
+        help="Amiga constraint: bitmap allows unrestricted palette use; constrained selects a legal OCS/ECS screen palette",
+    )
+    convert.add_argument(
+        "--colours", type=int,
+        help="selected screen-colour limit for Amiga constrained mode: 2/4/8/16/32 (hires maximum 16; default is the profile maximum)",
+    )
+
     sub.add_parser("palettes", help="list available palettes")
     sub.add_parser("profiles", help="list available target profiles")
     return p
@@ -88,12 +97,15 @@ def main() -> None:
             c64_mode=args.c64_mode,
             cpc_mode=args.cpc_mode,
             bbc_mode=args.bbc_mode,
+            amiga_mode=args.amiga_mode,
+            colours=args.colours,
         )
         print(
             f"Wrote {args.output}: {indexed.width}x{indexed.height}, "
             f"palette={indexed.palette.name}, profile={args.profile}, dither={args.dither}, "
             f"teletext-mode={args.teletext_mode}, spectrum-mode={args.spectrum_mode}, "
-            f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}, bbc-mode={args.bbc_mode}"
+            f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}, bbc-mode={args.bbc_mode}, "
+            f"amiga-mode={args.amiga_mode}, palette-size={len(indexed.palette.colours)}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

@@ -10,6 +10,7 @@ from PIL import Image
 from retroimg.targets.teletext import quantize_teletext_mosaic
 from retroimg.targets.c64 import quantize_c64_multicolour
 from retroimg.targets.cpc import quantize_cpc
+from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS, quantize_amiga
 from retroimg.targets.bbc import BBC_COLOUR_LIMITS, quantize_bbc
 from retroimg.model import IndexedImage, Palette, TargetProfile
 from retroimg.quantize import quantize
@@ -17,7 +18,15 @@ from retroimg.targets.spectrum import quantize_spectrum_attributes
 
 Quantizer = Callable[[Image.Image, Palette, str], IndexedImage]
 
+# These adapters accept an optional selected screen-colour count. Target
+# functions validate their own supported counts and precision.
+COLOUR_COUNT_QUANTIZERS = {
+    (f"amiga-{resolution}", "constrained"): partial(quantize_amiga, resolution=resolution)
+    for resolution in AMIGA_COLOUR_LIMITS
+}
+
 CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
+    **COLOUR_COUNT_QUANTIZERS,
     **{(f"bbc-mode{mode}", "constrained"): partial(quantize_bbc, mode=mode) for mode in BBC_COLOUR_LIMITS},
     ("teletext-mosaic", "mosaic"): quantize_teletext_mosaic,
     ("spectrum-attributes", "attributes"): quantize_spectrum_attributes,
@@ -26,7 +35,13 @@ CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
 }
 
 
-def get_quantizer(constraint_model: str, mode: str) -> Quantizer:
+def get_quantizer(constraint_model: str, mode: str, *, colours: int | None = None) -> Quantizer:
+    if colours is not None:
+        try:
+            adapter = COLOUR_COUNT_QUANTIZERS[constraint_model, mode]
+        except KeyError as exc:
+            raise ValueError("--colours requires a profile and constrained mode with a selectable screen palette (currently Amiga)") from exc
+        return partial(adapter, colours=colours)
     if mode == "bitmap":
         return quantize
     try:
@@ -46,6 +61,7 @@ class ModeOption:
 
 
 MODE_OPTIONS = {
+    "amiga_mode": ModeOption("Amiga", ("bitmap", "constrained"), ("amiga-lores", "amiga-hires"), "an amiga-* profile"),
     "bbc_mode": ModeOption("BBC", ("bitmap", "constrained"), tuple(f"bbc-mode{mode}" for mode in BBC_COLOUR_LIMITS),
                            "bbc-mode0, bbc-mode1, bbc-mode2, bbc-mode4 or bbc-mode5"),
     "teletext_mode": ModeOption("Teletext", ("bitmap", "mosaic"), ("teletext-mosaic",), "teletext"),
@@ -56,7 +72,7 @@ MODE_OPTIONS = {
 }
 
 
-def get_profile_quantizer(profile: TargetProfile, **modes: str) -> Quantizer:
+def get_profile_quantizer(profile: TargetProfile, *, colours: int | None = None, **modes: str) -> Quantizer:
     """Validate supplied target options, then resolve a raster adapter."""
     unknown = modes.keys() - MODE_OPTIONS.keys()
     if unknown:
@@ -71,4 +87,4 @@ def get_profile_quantizer(profile: TargetProfile, **modes: str) -> Quantizer:
         elif mode != "bitmap":
             flag = option.replace("_", "-")
             raise ValueError(f"--{flag} {mode} is only valid with --profile {spec.required_profiles}")
-    return get_quantizer(profile.constraint_model, selected)
+    return get_quantizer(profile.constraint_model, selected, colours=colours)

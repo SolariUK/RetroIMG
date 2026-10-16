@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import product
 from typing import Callable
 
 RGB = tuple[int, int, int]
@@ -17,6 +18,19 @@ class Palette:
     name: str
     colours: tuple[Colour, ...]
     description: str = ""
+
+    # Present only for a complete, red-major Cartesian palette. It enables
+    # exact per-channel nearest-colour lookup without a full palette search.
+    rgb_levels: tuple[int, ...] | None = None
+
+    def __post_init__(self) -> None:
+        if self.rgb_levels is not None:
+            levels = self.rgb_levels
+            if (not levels or any(type(v) is not int or not 0 <= v <= 255 for v in levels)
+                    or tuple(sorted(set(levels))) != levels):
+                raise ValueError("RGB levels must be sorted unique integers in 0..255")
+            if self.rgb_values() != tuple(product(levels, repeat=3)):
+                raise ValueError("RGB grid palette must contain the complete red-major Cartesian grid")
 
     def rgb_values(self) -> tuple[RGB, ...]:
         return tuple(c.rgb for c in self.colours)

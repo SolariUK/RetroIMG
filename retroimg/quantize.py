@@ -1,25 +1,37 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from PIL import Image
 
 from retroimg.model import IndexedImage, Palette, RGB
+from retroimg.colour_spaces import RGBGrid
+
+RGB_WEIGHTS = (3, 4, 2)
 
 
 def colour_distance(a: tuple[float, float, float], b: RGB) -> float:
     # Same simple weighted RGB metric as the IRC prototype.
     dr, dg, db = a[0] - b[0], a[1] - b[1], a[2] - b[2]
-    return 3 * dr * dr + 4 * dg * dg + 2 * db * db
+    return RGB_WEIGHTS[0] * dr * dr + RGB_WEIGHTS[1] * dg * dg + RGB_WEIGHTS[2] * db * db
+
+
+def _colour_lookup(palette: Palette) -> Callable[[tuple[float, float, float]], int]:
+    if palette.rgb_levels is not None:
+        return RGBGrid(palette.rgb_levels).nearest_index
+    values = palette.rgb_values()
+    return lambda rgb: min(range(len(values)), key=lambda i: colour_distance(rgb, values[i]))
 
 
 def nearest_index(rgb: tuple[float, float, float], palette: Palette) -> int:
-    values = palette.rgb_values()
-    return min(range(len(values)), key=lambda i: colour_distance(rgb, values[i]))
+    return _colour_lookup(palette)(rgb)
 
 
 def quantize_none(image: Image.Image, palette: Palette) -> IndexedImage:
     image = image.convert("RGB")
+    lookup = _colour_lookup(palette)
     pixels = tuple(
-        tuple(nearest_index(image.getpixel((x, y)), palette) for x in range(image.width))
+        tuple(lookup(image.getpixel((x, y))) for x in range(image.width))
         for y in range(image.height)
     )
     out = IndexedImage(image.width, image.height, palette, pixels)
@@ -33,6 +45,7 @@ def quantize_floyd_steinberg(image: Image.Image, palette: Palette) -> IndexedIma
     work = [[list(map(float, image.getpixel((x, y)))) for x in range(w)] for y in range(h)]
     result = [[0] * w for _ in range(h)]
     values = palette.rgb_values()
+    lookup = _colour_lookup(palette)
 
     def add_error(x: int, y: int, err: tuple[float, float, float], scale: float) -> None:
         if 0 <= x < w and 0 <= y < h:
@@ -42,7 +55,7 @@ def quantize_floyd_steinberg(image: Image.Image, palette: Palette) -> IndexedIma
     for y in range(h):
         for x in range(w):
             old = tuple(work[y][x])
-            idx = min(range(len(values)), key=lambda i: colour_distance(old, values[i]))
+            idx = lookup(old)
             new = values[idx]
             result[y][x] = idx
             err = tuple(old[c] - new[c] for c in range(3))

@@ -14,7 +14,7 @@ python examples/generate_gallery.py \
     --output-dir /path/to/new-public-gallery
 ```
 
-The source directory defaults to `samples/sources/`. Add `--family bbc` (or `teletext`, `spectrum`, `c64`, `cpc`) for a smaller run. `--sources-dir` still accepts an external directory for local experiments. The output directory must be new.
+The source directory defaults to `samples/sources/`. Add `--family bbc` (or `teletext`, `spectrum`, `c64`, `cpc`, `amiga`) for a smaller run. `--sources-dir` still accepts an external directory for local experiments. The output directory must be new.
 
 ## Image rights
 

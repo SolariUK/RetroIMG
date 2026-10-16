@@ -11,6 +11,8 @@ from retroimg.profiles import get_profile
 def test_shared_modules_do_not_import_targets():
     script = '''
 import retroimg.render
+import retroimg.colour_spaces
+import retroimg.constraints.adaptive_palette
 import retroimg.constraints.cells
 import retroimg.constraints.shared_background
 import retroimg.constraints.global_palette
@@ -21,6 +23,8 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
 
 
 @pytest.mark.parametrize('profile,option,mode', [
+    *[(f'amiga-{resolution}{suffix}', 'amiga_mode', 'constrained')
+      for resolution in ('lores', 'hires') for suffix in ('', '-ntsc')],
     ('teletext', 'teletext_mode', 'mosaic'),
     ('spectrum', 'spectrum_mode', 'attributes'),
     ('c64-multicolour', 'c64_mode', 'multicolour'),

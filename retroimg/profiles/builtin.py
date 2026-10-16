@@ -63,7 +63,20 @@ BBC_PROFILES = tuple(
     )
 )
 
-PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES)}
+AMIGA_PROFILES = tuple(
+    TargetProfile(
+        name=f"amiga-{resolution}{suffix}",
+        geometry=Geometry(width, height, pixel_aspect=aspect),
+        default_palette="amiga",
+        description=f"Amiga OCS/ECS {standard} {resolution} ({width}x{height}, up to {limit} selected colours).",
+        constraint_model=f"amiga-{resolution}",
+        aspect_correct_preview=True,
+    )
+    for standard, height, suffix in (("PAL", 256, ""), ("NTSC", 200, "-ntsc"))
+    for resolution, width, aspect, limit in (("lores", 320, 1.0, 32), ("hires", 640, 0.5, 16))
+)
+
+PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES)}
 
 
 def get_profile(name: str) -> TargetProfile:

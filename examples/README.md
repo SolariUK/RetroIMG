@@ -1,7 +1,7 @@
 # Visual comparison gallery
 
 `generate_gallery.py` runs real source images through Teletext, Spectrum, C64,
-CPC and BBC Micro conversion. It produces individual PNGs, labelled JPEG comparison
+CPC, BBC Micro and standard Amiga conversion. It produces individual PNGs, labelled JPEG comparison
 sheets, reproduction commands, JSON settings/checksums, and offline HTML and
 Markdown indexes. It is a visual integration run, separate from the fast pytest
 suite. It uses the installed converter and Pillow, with no additional dependencies.
@@ -83,13 +83,13 @@ which prevents stale local-only files from surviving in a public export. Open
 access is needed to browse the gallery. JPEG sheets are convenient overviews;
 use the linked PNGs to judge exact converted pixels.
 
-`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc` or `all`. The generated
+`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga` or `all`. The generated
 commands use placeholder source paths; replace `/path/to/filename` and run the
 commands from the gallery directory, or adjust the output paths.
 
 ## Comparison matrix
 
-Each source gets the same 52 neutral conversions:
+Each source gets the same 78 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
@@ -98,19 +98,26 @@ Each source gets the same 52 neutral conversions:
 | C64 | Unrestricted bitmap/multicolour constraints, each with no dither and Floyd–Steinberg; unrestricted Teletext/Spectrum palette swaps |
 | CPC | Modes 0/1/2, unrestricted/constrained, each with no dither and Floyd–Steinberg |
 | BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
+| Amiga | PAL lores 2/4/8/16/32 colours and hires 2/4/8/16, each with no dither and Floyd–Steinberg; unrestricted lores/hires with both dither settings; C64/CPC palette swaps; constrained NTSC lores/hires with dithering |
 
-Each source marked `adjusted` in the catalogue also gets 22 constrained examples
+Each source marked `adjusted` in the catalogue also gets 42 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. Both the local-only mountain landscape and the bundled lush
 landscape have these adjustments. With the current nine-source catalogue, the
-full local run produces 512 converted PNGs and 45 comparison sheets; the
-public-only run produces 386 converted PNGs and 35 sheets.
+full local run produces 786 converted PNGs and 54 comparison sheets; the
+public-only run produces 588 converted PNGs and 42 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because
 all eight steady colours fit. Its other eight hardware slots provide flashing
 pairs, which are excluded from static output. Use `--family bbc` for a BBC-only
 run (218 local PNGs or 164 public PNGs with the current catalogue).
+
+`--family amiga --public-only` uses all seven bundled sources and generates
+202 Amiga PNGs plus seven comparison sheets. PAL examples are 640x512 previews;
+NTSC examples are 640x400. Only the lush landscape receives the additional
+Amiga hue +20 / green gain 1.15 comparisons. Experimental output stays outside
+the repository; no complete generated gallery is committed.
 
 Photos use `cover` fitting; the diagnostic chart uses `contain` so the complete
 chart remains visible. Different target geometries can therefore crop photos
@@ -127,6 +134,7 @@ that PNG colours belong to its selected palette. Constrained examples also check
   the whole image. Merely checking each cell independently is insufficient.
 - CPC: at most 16, 4 or 2 colours across the entire image, according to mode.
 - BBC: at most 2, 4, 8, 2 or 4 steady colours for modes 0, 1, 2, 4 or 5.
+- Amiga: at most the selected screen-colour count and legal four-bit RGB channels.
 
 These checks establish structural validity, not visual quality or historical
 hardware-file compatibility. The normal pytest suite additionally covers the
