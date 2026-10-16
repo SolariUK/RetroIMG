@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.model import IndexedImage, Palette
 from retroimg.constraints.global_palette import select_palette_indices
 from retroimg.palettes.builtin import BBC
@@ -54,24 +56,23 @@ class BBCImage:
 
 
 def optimise_bbc(
-    image: Image.Image, palette: Palette = BBC, dither: str = "none", *, mode: int = 0
+    image: Image.Image, palette: Palette = BBC, dither: str = "none", *, mode: int = 0, bayer_size: int = 4
 ) -> BBCImage:
     """Select image-wide colours, then quantise/dither the full RGB source."""
     _validate_mode(mode)
     if palette != BBC:
         raise ValueError("BBC constrained mode requires the bbc palette")
-    if dither not in {"none", "floyd-steinberg"}:
-        raise ValueError(f"unknown dither mode: {dither}")
+    validate_dither(dither, bayer_size)
     colours = select_palette_indices(image, palette, BBC_COLOUR_LIMITS[mode])
     selected = Palette(palette.name, tuple(palette.colours[index] for index in colours))
-    indexed = quantize(image, selected, dither)
+    indexed = quantize(image, selected, dither, bayer_size=bayer_size)
     return BBCImage(image.width, image.height, mode, colours, indexed.pixels, palette)
 
 
 def quantize_bbc(
-    image: Image.Image, palette: Palette, dither: str = "none", *, mode: int = 0
+    image: Image.Image, palette: Palette, dither: str = "none", *, mode: int = 0, bayer_size: int = 4
 ) -> IndexedImage:
-    return rasterize_bbc(optimise_bbc(image, palette, dither, mode=mode))
+    return rasterize_bbc(optimise_bbc(image, palette, dither, mode=mode, bayer_size=bayer_size))
 
 
 def rasterize_bbc(image: BBCImage) -> IndexedImage:

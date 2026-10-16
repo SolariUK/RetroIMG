@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import bayer_threshold, ordered_index, validate_dither
+
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.model import IndexedImage, Palette
 from retroimg.palettes.builtin import AMIGA, AMIGA_RGB
@@ -40,21 +42,21 @@ class AmigaHAMImage:
 
 
 def optimise_ham(image: Image.Image, palette: Palette = AMIGA, dither: str = 'none', *,
-                 colours: int | None = None) -> AmigaHAMImage:
+                 colours: int | None = None, bayer_size: int = 4) -> AmigaHAMImage:
     """Choose the best immediate legal pixel; no whole-row state search.
 
-    A fixed previous colour makes each modify-channel operation separable:
+    In plain/FS mode a fixed previous colour makes each modification separable:
     only its nearest channel level need be tested. The resulting 19 choices
     (16 base entries and three modifications) give the same immediate minimum
     as all 64 codes, with lower code values breaking ties. This is greedy and
-    can trade later-pixel error for a better current-pixel match.
+    can trade later-pixel error for a better current-pixel match. Bayer instead
+    mixes decoded colours from all 64 legal codes using the ordered selector.
     """
     if palette != AMIGA:
         raise ValueError('Amiga HAM mode requires the amiga palette')
     if colours is not None:
         raise ValueError('--colours is not supported in HAM mode; it uses 16 base registers')
-    if dither not in {'none', 'floyd-steinberg'}:
-        raise ValueError(f'unknown dither mode: {dither}')
+    validate_dither(dither, bayer_size)
     selected = fit_rgb_palette(image, AMIGA_RGB, 16)
     registers = tuple(AMIGA_RGB.nearest_index(rgb) for rgb in selected)
     registers += (0,) * (16 - len(registers))
@@ -66,6 +68,14 @@ def optimise_ham(image: Image.Image, palette: Palette = AMIGA, dither: str = 'no
         nonlocal previous
         if x == 0:
             previous = registers[0]
+        if dither == "bayer":
+            # All 64 legal operations are available to the ordered mixer.
+            words = tuple(decode_ham_code(previous, registers, code) for code in range(64))
+            candidates = tuple(AMIGA.colours[word].rgb for word in words)
+            code = ordered_index(rgb, candidates, bayer_threshold(x, y, bayer_size))
+            codes[y][x] = code
+            previous = words[code]
+            return previous
         base = min(range(16), key=lambda i: colour_distance(rgb, values[i]))
         nearest = AMIGA_RGB.nearest_index(rgb)
         candidates = ((base, registers[base]),
@@ -77,7 +87,7 @@ def optimise_ham(image: Image.Image, palette: Palette = AMIGA, dither: str = 'no
         previous = word
         return word
 
-    quantize(image, AMIGA, dither, pixel_lookup=lookup)
+    quantize(image, AMIGA, dither, pixel_lookup=lookup, bayer_size=bayer_size)
     return AmigaHAMImage(image.width, image.height, registers, tuple(tuple(row) for row in codes))
 
 
@@ -94,5 +104,5 @@ def rasterize_ham(image: AmigaHAMImage) -> IndexedImage:
 
 
 def quantize_ham(image: Image.Image, palette: Palette, dither: str = 'none', *,
-                 colours: int | None = None) -> IndexedImage:
-    return rasterize_ham(optimise_ham(image, palette, dither, colours=colours))
+                 colours: int | None = None, bayer_size: int = 4) -> IndexedImage:
+    return rasterize_ham(optimise_ham(image, palette, dither, colours=colours, bayer_size=bayer_size))

@@ -5,16 +5,10 @@ from typing import Callable
 from PIL import Image
 
 from retroimg.model import IndexedImage, Palette, RGB
-from retroimg.colour_spaces import RGBGrid
+from retroimg.colour_spaces import RGBGrid, RGB_WEIGHTS, colour_distance
+from retroimg.ordered import bayer_threshold, ordered_lookup, validate_dither
 
-RGB_WEIGHTS = (3, 4, 2)
 PixelLookup = Callable[[int, int, tuple[float, float, float]], int]
-
-
-def colour_distance(a: tuple[float, float, float], b: RGB) -> float:
-    # Same simple weighted RGB metric as the IRC prototype.
-    dr, dg, db = a[0] - b[0], a[1] - b[1], a[2] - b[2]
-    return RGB_WEIGHTS[0] * dr * dr + RGB_WEIGHTS[1] * dg * dg + RGB_WEIGHTS[2] * db * db
 
 
 def _colour_lookup(palette: Palette) -> Callable[[tuple[float, float, float]], int]:
@@ -72,11 +66,31 @@ def quantize_floyd_steinberg(image: Image.Image, palette: Palette, *, pixel_look
     return out
 
 
+def quantize_bayer(image: Image.Image, palette: Palette, *, bayer_size: int = 4,
+                   bayer_origin: tuple[int, int] = (0, 0),
+                   pixel_lookup: PixelLookup | None = None) -> IndexedImage:
+    """Ordered rounding; custom lookups own their position-aware Bayer choice."""
+    validate_dither("bayer", bayer_size)
+    source = image.convert("RGB")
+    lookup = ordered_lookup(palette)
+    ox, oy = bayer_origin
+    pixels = tuple(tuple(
+        pixel_lookup(x, y, source.getpixel((x, y))) if pixel_lookup is not None
+        else lookup(source.getpixel((x, y)), bayer_threshold(x + ox, y + oy, bayer_size))
+        for x in range(source.width)) for y in range(source.height))
+    result = IndexedImage(source.width, source.height, palette, pixels)
+    result.validate()
+    return result
+
+
 def quantize(image: Image.Image, palette: Palette, dither: str = "none", *,
-             pixel_lookup: PixelLookup | None = None) -> IndexedImage:
-    """Quantise with an optional position-aware lookup; diffusion stays shared."""
+             pixel_lookup: PixelLookup | None = None, bayer_size: int = 4,
+             bayer_origin: tuple[int, int] = (0, 0)) -> IndexedImage:
+    """Quantise with shared diffusion or palette-aware ordered dithering."""
+    validate_dither(dither, bayer_size)
     if dither == "none":
         return quantize_none(image, palette, pixel_lookup=pixel_lookup)
     if dither == "floyd-steinberg":
         return quantize_floyd_steinberg(image, palette, pixel_lookup=pixel_lookup)
-    raise ValueError(f"unknown dither mode: {dither}")
+    return quantize_bayer(image, palette, pixel_lookup=pixel_lookup,
+                          bayer_size=bayer_size, bayer_origin=bayer_origin)

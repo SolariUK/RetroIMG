@@ -6,6 +6,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.constraints.binary_groups import fit_binary_groups
 from retroimg.model import IndexedImage, Palette
 from retroimg.palettes.atari import ATARI_NTSC, ATARI_PAL
@@ -67,7 +69,7 @@ def _selector(x: int, mode: str) -> int:
 
 def optimise_atari_playfield(image: Image.Image, palette: Palette = ATARI_NTSC,
                              dither: str = "none", *, mode: str = "playfield",
-                             row_height: int = 2) -> AtariPlayfield:
+                             row_height: int = 2, bayer_size: int = 4) -> AtariPlayfield:
     _check_mode(mode)
     if palette not in (ATARI_NTSC, ATARI_PAL):
         raise ValueError("Atari playfield requires an atari2600-ntsc or atari2600-pal palette")
@@ -75,8 +77,7 @@ def optimise_atari_playfield(image: Image.Image, palette: Palette = ATARI_NTSC,
         raise ValueError("Atari playfield requires a logical width of 160")
     if type(row_height) is not int or row_height <= 0:
         raise ValueError("Atari row height must be a positive integer")
-    if dither not in {"none", "floyd-steinberg"}:
-        raise ValueError(f"unknown dither mode: {dither}")
+    validate_dither(dither, bayer_size)
     source = image.convert("RGB")
     values = palette.rgb_values()
     rows = []
@@ -91,11 +92,12 @@ def optimise_atari_playfield(image: Image.Image, palette: Palette = ATARI_NTSC,
             selectors = tuple(min(range(2), key=lambda i: colour_distance(mean, values[pair[i]]))
                               for mean in means)
         else:
-            # Diffuse along the independent logical bits, never across bands.
+            # Dither the independent logical bits, retaining shared-block structure.
             strip = Image.new("RGB", (count, 1))
             strip.putdata([tuple(round(c) for c in mean) for mean in means])
             selected = Palette(palette.name, tuple(palette.colours[i] for i in pair))
-            selectors = quantize(strip, selected, dither).pixels[0]
+            selectors = quantize(strip, selected, dither, bayer_size=bayer_size,
+                                 bayer_origin=(0, y0 // row_height)).pixels[0]
         pattern = sum(bit << x for x, bit in enumerate(selectors))
         rows.append(AtariPlayfieldRow(pair[0] * 2, pair[1] * 2, pattern))
     return AtariPlayfield(image.height, row_height, mode, tuple(rows), palette)
@@ -112,6 +114,6 @@ def rasterize_atari_playfield(frame: AtariPlayfield) -> IndexedImage:
 
 
 def quantize_atari_playfield(image: Image.Image, palette: Palette, dither: str = "none", *,
-                            mode: str = "playfield", row_height: int = 2) -> IndexedImage:
+                            mode: str = "playfield", row_height: int = 2, bayer_size: int = 4) -> IndexedImage:
     return rasterize_atari_playfield(optimise_atari_playfield(
-        image, palette, dither, mode=mode, row_height=row_height))
+        image, palette, dither, mode=mode, row_height=row_height, bayer_size=bayer_size))

@@ -5,6 +5,8 @@ from itertools import combinations_with_replacement
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.model import IndexedImage, Palette
 from retroimg.quantize import colour_distance, quantize
 
@@ -16,14 +18,16 @@ def quantize_cells(
     cell_width: int,
     cell_height: int,
     dither: str = "none",
+    bayer_size: int = 4,
     allowed_pairs: tuple[tuple[int, int], ...] | None = None,
 ) -> IndexedImage:
     """Fit at most two colours per cell directly to the RGB source.
 
     Exhaustive unordered pair search minimises summed weighted RGB error.
     Equal scores retain palette order, making results reproducible. Dithering
-    uses only the selected pair and resets at each cell boundary, so errors
-    cannot leak into independently optimised neighbouring cells.
+    uses only the selected pair. Floyd–Steinberg resets at each cell boundary,
+    so errors cannot leak into independently optimised neighbouring cells.
+    Bayer retains global matrix phase across cell boundaries.
 
     Targets may supply legal palette-index pairs (including solid pairs).
     Candidate order breaks ties; by default all unordered pairs are searched.
@@ -36,8 +40,7 @@ def quantize_cells(
         raise ValueError("image dimensions must be divisible by cell dimensions")
     if not palette.colours:
         raise ValueError("palette must contain at least one colour")
-    if dither not in {"none", "floyd-steinberg"}:
-        raise ValueError(f"unknown dither mode: {dither}")
+    validate_dither(dither, bayer_size)
 
     source = image.convert("RGB")
     values = palette.rgb_values()
@@ -68,7 +71,8 @@ def quantize_cells(
                 name=palette.name,
                 colours=tuple(palette.colours[index] for index in pair),
             )
-            indexed = quantize(cell, local_palette, dither=dither)
+            indexed = quantize(cell, local_palette, dither=dither, bayer_size=bayer_size,
+                               bayer_origin=(x0, y0))
             for dy, row in enumerate(indexed.pixels):
                 for dx, index in enumerate(row):
                     result[y0 + dy][x0 + dx] = pair[index]

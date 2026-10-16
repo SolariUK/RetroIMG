@@ -108,3 +108,42 @@ def test_catalogue_gallery_totals():
                    for source in sources for family in FAMILIES)
     assert output_count(catalog) == 1082
     assert output_count(PUBLIC_SOURCES) == 806
+
+
+def test_dither_comparison_matrix_and_reproducible_options():
+    from examples.generate_gallery import dither_variants_for
+    total = 0
+    for family in FAMILIES:
+        variants = dither_variants_for(family)
+        assert all(variant.label.isascii() for variant in variants)  # Pillow 10 bitmap-font compatibility.
+        assert len({variant.slug for variant in variants}) == len(variants)
+        assert {v.options['dither'] for v in variants} == {'none', 'floyd-steinberg', 'bayer'}
+        assert {v.options['bayer_size'] for v in variants if v.options['dither'] == 'bayer'} == {2, 4, 8}
+        assert all('bayer_size' not in v.options for v in variants if v.options['dither'] != 'bayer')
+        total += len(variants)
+    assert total == 45
+
+
+@pytest.mark.parametrize('source_ids', [('missing',), ('picard',)])
+def test_selected_sources_reject_unknown_and_excluded_ids(tmp_path, source_ids):
+    from examples.generate_gallery import generate, BUNDLED_SOURCES
+    output = tmp_path / 'gallery'
+    with pytest.raises(ValueError, match='unknown or excluded'):
+        generate(BUNDLED_SOURCES, output, ('teletext',), True, source_ids=source_ids)
+    assert not output.exists()
+
+
+def test_selected_public_dither_gallery_runs_and_records_matrix_sizes(tmp_path):
+    from examples.generate_gallery import generate, BUNDLED_SOURCES
+    output = tmp_path / 'gallery'
+    manifest = generate(BUNDLED_SOURCES, output, ('teletext',), True,
+                        dither_comparison=True, source_ids=('diagnostic-chart',))
+    assert [source['id'] for source in manifest['sources']] == ['diagnostic-chart']
+    assert len(manifest['outputs']) == 5
+    assert {entry['settings']['bayer_size'] for entry in manifest['outputs']
+            if entry['settings']['dither'] == 'bayer'} == {2, 4, 8}
+    assert (output / 'index.html').is_file()
+    assert (output / 'diagnostic-chart/teletext/comparison.jpg').is_file()
+    commands = (output / 'diagnostic-chart/teletext/commands.md').read_text()
+    assert '--dither bayer --' in commands
+    assert '--bayer-size 8' in commands

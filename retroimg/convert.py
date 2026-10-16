@@ -5,6 +5,7 @@ from pathlib import Path
 from PIL import Image
 
 from retroimg.adjustments import adjust_colours
+from retroimg.ordered import validate_dither
 
 from retroimg.conversion_modes import get_profile_quantizer
 from retroimg.geometry import resize_to_geometry
@@ -24,6 +25,7 @@ def convert_file(
     height: int | None = None,
     fit: str = "cover",
     dither: str = "none",
+    bayer_size: int | None = None,
     saturation: float = 1.0,
     hue_shift: float = 0.0,
     red_gain: float = 1.0,
@@ -40,6 +42,9 @@ def convert_file(
     atari_row_height: int | None = None,
     colours: int | None = None,
 ) -> IndexedImage:
+    validate_dither(dither, 4 if bayer_size is None else bayer_size)
+    if bayer_size is not None and dither != "bayer":
+        raise ValueError("--bayer-size requires --dither bayer")
     profile = get_profile(profile_name)
     palette = get_palette(palette_name or profile.default_palette)
 
@@ -55,7 +60,7 @@ def convert_file(
         profile, teletext_mode=teletext_mode, spectrum_mode=spectrum_mode,
         c64_mode=c64_mode, cpc_mode=cpc_mode, bbc_mode=bbc_mode,
         amiga_mode=amiga_mode, atari_mode=atari_mode,
-        atari_row_height=atari_row_height, colours=colours,
+        atari_row_height=atari_row_height, colours=colours, bayer_size=bayer_size,
     )
 
     with Image.open(input_path) as source:

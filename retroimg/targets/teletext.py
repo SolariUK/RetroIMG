@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+
 from retroimg.constraints.cells import quantize_cells
 from retroimg.model import IndexedImage, Palette
 
@@ -83,21 +84,21 @@ def page_from_indexed(image: IndexedImage) -> TeletextPage:
 
 
 def quantize_teletext_mosaic(
-    image: Image.Image, palette: Palette, dither: str = "none"
+    image: Image.Image, palette: Palette, dither: str = "none", *, bayer_size: int = 4
 ) -> IndexedImage:
     """Raster adapter for the explicit Teletext page optimiser."""
-    return rasterize_teletext(optimise_teletext_mosaic(image, palette, dither))
+    return rasterize_teletext(optimise_teletext_mosaic(image, palette, dither, bayer_size=bayer_size))
 
 
 def optimise_teletext_mosaic(
-    image: Image.Image, palette: Palette, dither: str = "none"
+    image: Image.Image, palette: Palette, dither: str = "none", *, bayer_size: int = 4
 ) -> TeletextPage:
     """Fit RGB source and retain the resulting logical cell patterns."""
     if image.width % 2 or image.height % 3:
         raise ValueError(
             "teletext mosaic mode requires width divisible by 2 and height divisible by 3"
         )
-    indexed = quantize_cells(image, palette, cell_width=2, cell_height=3, dither=dither)
+    indexed = quantize_cells(image, palette, cell_width=2, cell_height=3, dither=dither, bayer_size=bayer_size)
     return page_from_indexed(indexed)
 
 

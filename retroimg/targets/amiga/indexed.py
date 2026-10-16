@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.model import IndexedImage, Palette
 from retroimg.palettes.builtin import AMIGA, AMIGA_RGB
@@ -62,17 +64,16 @@ class AmigaImage:
 
 def optimise_amiga(
     image: Image.Image, palette: Palette = AMIGA, dither: str = 'none', *,
-    resolution: str = 'lores', colours: int | None = None,
+    resolution: str = 'lores', colours: int | None = None, bayer_size: int = 4,
 ) -> AmigaImage:
     limit = _colour_count(resolution, colours)
     if palette != AMIGA:
         raise ValueError('Amiga constrained mode requires the amiga palette')
-    if dither not in {'none', 'floyd-steinberg'}:
-        raise ValueError(f'unknown dither mode: {dither}')
+    validate_dither(dither, bayer_size)
     selected = fit_rgb_palette(image, AMIGA_RGB, limit)
     registers = tuple(AMIGA_RGB.nearest_index(rgb) for rgb in selected)
     screen_palette = Palette('amiga', tuple(AMIGA.colours[value] for value in registers))
-    indexed = quantize(image, screen_palette, dither)
+    indexed = quantize(image, screen_palette, dither, bayer_size=bayer_size)
     return AmigaImage(image.width, image.height, resolution, limit.bit_length() - 1, registers, indexed.pixels)
 
 
@@ -82,6 +83,6 @@ def rasterize_amiga(image: AmigaImage) -> IndexedImage:
 
 def quantize_amiga(
     image: Image.Image, palette: Palette, dither: str = 'none', *,
-    resolution: str = 'lores', colours: int | None = None,
+    resolution: str = 'lores', colours: int | None = None, bayer_size: int = 4,
 ) -> IndexedImage:
-    return rasterize_amiga(optimise_amiga(image, palette, dither, resolution=resolution, colours=colours))
+    return rasterize_amiga(optimise_amiga(image, palette, dither, resolution=resolution, colours=colours, bayer_size=bayer_size))

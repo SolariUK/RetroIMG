@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.constraints.shared_background import fit_shared_background
 from retroimg.model import IndexedImage, Palette
 from retroimg.palettes.builtin import C64
@@ -56,7 +58,7 @@ class C64MulticolourImage:
 
 
 def optimise_c64_multicolour(
-    image: Image.Image, palette: Palette = C64, dither: str = "none"
+    image: Image.Image, palette: Palette = C64, dither: str = "none", *, bayer_size: int = 4
 ) -> C64MulticolourImage:
     """Choose the global background and three local colours per 4x8 cell.
 
@@ -67,8 +69,7 @@ def optimise_c64_multicolour(
         raise ValueError("C64 multicolour mode requires the c64 palette")
     if image.width <= 0 or image.height <= 0 or image.width % 4 or image.height % 8:
         raise ValueError("C64 multicolour mode requires positive width divisible by 4 and height by 8")
-    if dither not in {"none", "floyd-steinberg"}:
-        raise ValueError(f"unknown dither mode: {dither}")
+    validate_dither(dither, bayer_size)
     source = image.convert("RGB")
     fit = fit_shared_background(source, palette, cell_width=4, cell_height=8)
     rows = []
@@ -83,7 +84,8 @@ def optimise_c64_multicolour(
             ordered = tuple(sorted(set(slots)))
             local_palette = Palette(palette.name, tuple(palette.colours[i] for i in ordered))
             crop = source.crop((cx * 4, cy * 8, cx * 4 + 4, cy * 8 + 8))
-            indexed = quantize(crop, local_palette, dither)
+            indexed = quantize(crop, local_palette, dither, bayer_size=bayer_size,
+                               bayer_origin=(cx * 4, cy * 8))
             pattern = sum(slots.index(ordered[index]) << (2 * bit)
                           for bit, index in enumerate(index for row in indexed.pixels for index in row))
             cells.append(C64MulticolourCell(local, pattern))
@@ -92,9 +94,9 @@ def optimise_c64_multicolour(
 
 
 def quantize_c64_multicolour(
-    image: Image.Image, palette: Palette, dither: str = "none"
+    image: Image.Image, palette: Palette, dither: str = "none", *, bayer_size: int = 4
 ) -> IndexedImage:
-    return rasterize_c64_multicolour(optimise_c64_multicolour(image, palette, dither))
+    return rasterize_c64_multicolour(optimise_c64_multicolour(image, palette, dither, bayer_size=bayer_size))
 
 
 def rasterize_c64_multicolour(image: C64MulticolourImage) -> IndexedImage:

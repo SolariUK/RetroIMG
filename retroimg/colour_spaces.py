@@ -6,6 +6,15 @@ from itertools import product
 from retroimg.model import Colour, Palette, RGB
 
 
+RGB_WEIGHTS = (3, 4, 2)
+
+
+def colour_distance(a: tuple[float, float, float], b: RGB) -> float:
+    # Same simple weighted RGB metric as the IRC prototype.
+    dr, dg, db = a[0] - b[0], a[1] - b[1], a[2] - b[2]
+    return RGB_WEIGHTS[0] * dr * dr + RGB_WEIGHTS[1] * dg * dg + RGB_WEIGHTS[2] * db * db
+
+
 @dataclass(frozen=True)
 class RGBGrid:
     """Cartesian RGB grid with equal channel levels and red-major ordering."""

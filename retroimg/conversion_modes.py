@@ -80,7 +80,8 @@ MODE_OPTIONS = {
 
 
 def get_profile_quantizer(profile: TargetProfile, *, colours: int | None = None,
-                          atari_row_height: int | None = None, **modes: str) -> Quantizer:
+                          atari_row_height: int | None = None, bayer_size: int | None = None,
+                          **modes: str) -> Quantizer:
     """Validate supplied target options, then resolve a raster adapter."""
     unknown = modes.keys() - MODE_OPTIONS.keys()
     if unknown:
@@ -102,4 +103,6 @@ def get_profile_quantizer(profile: TargetProfile, *, colours: int | None = None,
         if type(atari_row_height) is not int or atari_row_height <= 0:
             raise ValueError("Atari row height must be a positive integer")
         adapter = partial(adapter, row_height=atari_row_height)
+    if bayer_size is not None:
+        adapter = partial(adapter, bayer_size=bayer_size)
     return adapter

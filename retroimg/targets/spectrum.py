@@ -6,6 +6,7 @@ from itertools import combinations_with_replacement
 
 from PIL import Image
 
+
 from retroimg.constraints.cells import quantize_cells
 from retroimg.model import IndexedImage, Palette
 from retroimg.palettes.builtin import SPECTRUM
@@ -99,27 +100,27 @@ def spectrum_from_indexed(image: IndexedImage) -> SpectrumImage:
 
 
 def optimise_spectrum_attributes(
-    image: Image.Image, palette: Palette = SPECTRUM, dither: str = "none"
+    image: Image.Image, palette: Palette = SPECTRUM, dither: str = "none", *, bayer_size: int = 4
 ) -> SpectrumImage:
     """Fit all legal shared-brightness pairs to RGB, then dither within cells.
 
     Without dithering the selected pair/pattern minimises weighted RGB error.
-    With dithering the pair is chosen by that same objective, then diffusion
-    uses only that pair and resets at every cell boundary.
+    With dithering the pair is chosen by that same objective. Floyd–Steinberg
+    resets at each cell; Bayer uses the pair with global logical matrix phase.
     """
     validate_spectrum_palette(palette)
     if image.width <= 0 or image.height <= 0 or image.width % 8 or image.height % 8:
         raise ValueError("Spectrum attribute mode requires positive dimensions divisible by 8")
     indexed = quantize_cells(image, palette, cell_width=8, cell_height=8,
-                             dither=dither, allowed_pairs=LEGAL_PAIRS)
+                             dither=dither, allowed_pairs=LEGAL_PAIRS, bayer_size=bayer_size)
     return spectrum_from_indexed(indexed)
 
 
 def quantize_spectrum_attributes(
-    image: Image.Image, palette: Palette, dither: str = "none"
+    image: Image.Image, palette: Palette, dither: str = "none", *, bayer_size: int = 4
 ) -> IndexedImage:
     """Raster adapter for the common conversion pipeline."""
-    return rasterize_spectrum(optimise_spectrum_attributes(image, palette, dither))
+    return rasterize_spectrum(optimise_spectrum_attributes(image, palette, dither, bayer_size=bayer_size))
 
 
 def rasterize_spectrum(image: SpectrumImage) -> IndexedImage:

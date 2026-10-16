@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 
 from retroimg.convert import convert_file
+from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 
@@ -20,7 +21,9 @@ def build_parser() -> argparse.ArgumentParser:
     convert.add_argument("--width", type=int)
     convert.add_argument("--height", type=int)
     convert.add_argument("--fit", choices=("cover", "contain", "stretch"), default="cover")
-    convert.add_argument("--dither", choices=("none", "floyd-steinberg"), default="none")
+    convert.add_argument("--dither", choices=DITHER_MODES, default="none")
+    convert.add_argument("--bayer-size", type=int, choices=BAYER_SIZES,
+                         help="Bayer matrix size (default: 4; requires --dither bayer)")
     convert.add_argument("--saturation", type=float, default=1.0)
     convert.add_argument("--hue-shift", type=float, default=0.0,
                          help="hue rotation in degrees; +120 maps red to green (default: 0)")
@@ -94,6 +97,7 @@ def main() -> None:
             height=args.height,
             fit=args.fit,
             dither=args.dither,
+            bayer_size=args.bayer_size,
             saturation=args.saturation,
             hue_shift=args.hue_shift,
             red_gain=args.red_gain,

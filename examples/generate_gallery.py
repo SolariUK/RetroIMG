@@ -7,6 +7,7 @@ sources or publishes files to a remote service.
 from __future__ import annotations
 
 import argparse
+from collections.abc import Sequence
 from dataclasses import dataclass
 from hashlib import sha256
 from html import escape
@@ -143,6 +144,34 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
     return variants
+
+
+# Representative modes for a compact cross-machine dithering comparison.
+DITHER_EXAMPLES = {
+    "teletext": ("mosaic",), "spectrum": ("attributes",),
+    "c64": ("multicolour",), "cpc": ("mode1-constrained",),
+    "bbc": ("mode0-constrained",), "amiga": ("lores-32", "ehb", "ham"),
+    "atari2600": ("ntsc-playfield",),
+}
+
+
+def dither_variants_for(family: str) -> list[Variant]:
+    """Hold source settings/palette limits fixed and compare five dithers."""
+    baselines = {variant.slug: variant for variant in variants_for(family)}
+    result = []
+    for slug in DITHER_EXAMPLES[family]:
+        base = baselines[slug]
+        label = base.label.removesuffix(" / no dither")
+        for dither, size, suffix, title in (
+            ("none", None, "none", "No dither"),
+            ("floyd-steinberg", None, "fs", "Floyd-Steinberg"),
+            *[("bayer", size, f"bayer{size}", f"Bayer {size}x{size}") for size in (2, 4, 8)],
+        ):
+            options = dict(base.options, dither=dither)
+            if size is not None:
+                options["bayer_size"] = size
+            result.append(Variant(f"{slug}-{suffix}", f"{label} / {title}", options, base.size))
+    return result
 
 
 def check_constraints(image: IndexedImage, options: dict) -> None:
@@ -298,9 +327,15 @@ def export_public_gallery(local: Path, output: Path, manifest: dict) -> None:
     write_indexes(output, public)
 
 
-def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_only: bool = False) -> dict:
+def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_only: bool = False, *,
+             dither_comparison: bool = False, source_ids: Sequence[str] | None = None) -> dict:
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     sources = [source for source in catalog if not public_only or source["public"]]
+    if source_ids is not None:
+        unknown = set(source_ids) - {source["id"] for source in sources}
+        if unknown:
+            raise ValueError("unknown or excluded source IDs: " + ", ".join(sorted(unknown)))
+        sources = [source for source in sources if source["id"] in source_ids]
     missing = [source["file"] for source in sources if not (sources_dir / source["file"]).is_file()]
     if missing:
         raise ValueError("missing source images: " + ", ".join(missing))
@@ -324,10 +359,11 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
             preview.save(directory / "source-preview.png")
         manifest["sources"].append(source)
         for family in families:
-            variants = variants_for(family, source.get("adjusted", False))
+            variants = (dither_variants_for(family) if dither_comparison
+                        else variants_for(family, source.get("adjusted", False)))
             target = directory / family
             target.mkdir()
-            columns = 5 if family == "bbc" else (3 if family in {"cpc", "amiga", "atari2600"} else 2)
+            columns = 5 if dither_comparison or family == "bbc" else (3 if family in {"cpc", "amiga", "atari2600"} else 2)
             tile_height = max(450, max(variant.size[1] for variant in variants))
             rows = (len(variants) + columns - 1) // columns
             sheet = Image.new("RGB", (640 * columns, (tile_height + 36) * rows), "#202020")
@@ -373,12 +409,17 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--output-dir", type=Path, required=True, help="new directory for generated files")
     parser.add_argument("--family", choices=("all", *FAMILIES), default="all")
     parser.add_argument("--public-only", action="store_true", help="exclude user-supplied sources without documented redistribution rights")
+    parser.add_argument("--dither-comparison", action="store_true",
+                        help="compare no dither, Floyd–Steinberg and Bayer 2/4/8 on representative modes")
+    parser.add_argument("--source", action="append", dest="source_ids",
+                        help="select a source ID from sources.json (repeatable; default: all eligible sources)")
     parser.add_argument("--public-output", type=Path, help="also copy public examples to a separate new directory")
     args = parser.parse_args(argv)
     if args.public_output is not None and args.public_output.exists():
         parser.error("--public-output must be a new directory")
     families = FAMILIES if args.family == "all" else (args.family,)
-    manifest = generate(args.sources_dir, args.output_dir, families, args.public_only)
+    manifest = generate(args.sources_dir, args.output_dir, families, args.public_only,
+                        dither_comparison=args.dither_comparison, source_ids=args.source_ids)
     if args.public_output is not None:
         export_public_gallery(args.output_dir, args.public_output, manifest)
     print(f"Done: {len(manifest['outputs'])} checked PNGs; index: {args.output_dir / 'index.html'}", flush=True)

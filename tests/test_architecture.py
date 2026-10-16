@@ -11,6 +11,7 @@ from retroimg.profiles import get_profile
 def test_shared_modules_do_not_import_targets():
     script = '''
 import retroimg.render
+import retroimg.ordered
 import retroimg.colour_spaces
 import retroimg.constraints.adaptive_palette
 import retroimg.constraints.binary_groups

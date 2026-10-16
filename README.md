@@ -641,6 +641,56 @@ to keep the whole source with padding, or `--fit stretch` to fill without
 preserving its aspect ratio. Dithering defaults to `none` in these examples
 unless explicitly enabled.
 
+## Dithering
+
+`--dither` accepts `none` (the default), `floyd-steinberg` and `bayer`.
+Floyd–Steinberg spreads quantisation error to neighbouring pixels. Bayer uses a
+repeating threshold matrix for a regular patterned texture, with no error
+diffusion. Both work with the existing source colour adjustments.
+
+Choose a **2x2, 4x4 or 8x8** matrix with `--bayer-size`; the default is 4x4.
+Larger matrices provide finer coverage increments over a larger repeating tile.
+They do not change the image resolution or preview scale. The option is rejected
+unless `--dither bayer` is selected.
+
+```bash
+# Bayer with the default 4x4 matrix
+retroimg convert /path/to/image.jpg cpc-bayer.png \
+    --profile cpc-mode0 --cpc-mode constrained --dither bayer --scale 2
+
+# Compare a larger matrix with the existing landscape adjustments
+retroimg convert /path/to/image.jpg c64-bayer8.png \
+    --profile c64-multicolour --c64-mode multicolour \
+    --dither bayer --bayer-size 8 --hue-shift 20 --green-gain 1.15 --scale 2
+
+# Smaller pattern, retaining Teletext cell constraints
+retroimg convert /path/to/image.jpg teletext-bayer2.png \
+    --profile teletext --teletext-mode mosaic --dither bayer --bayer-size 2 --scale 6
+
+# HAM6 uses legal, state-dependent colour choices
+retroimg convert /path/to/image.jpg amiga-ham-bayer.png \
+    --profile amiga-lores --amiga-mode ham --dither bayer --scale 2
+```
+
+For an arbitrary palette, ordered conversion finds the nearest colour, then
+chooses its best mixing partner by projecting the source RGB onto the segments
+joining it to other available colours. The matrix chooses between that pair
+according to the mixing proportion. This uses retroimg's weighted RGB error;
+it is a nearest-anchor heuristic, not an exhaustive search of every colour pair.
+Equally accurate mixtures prefer closer colours. Complete regular RGB grids,
+such as unrestricted Amiga RGB12, instead use ordered rounding between adjacent
+levels independently for each channel.
+
+Target palette fitting stays the same: Bayer assigns pixels using the selected
+cell/screen colours. A cell fitted to a single colour remains solid. Teletext,
+Spectrum and C64 retain global logical matrix coordinates across cell boundaries.
+Atari applies the matrix to its independent block bits and band number, then
+expands shared scanlines and repeated/mirrored halves. HAM evaluates the 64 legal
+codes at each pixel using the held colour, then makes its ordered choice; it
+remains greedy and may show colour fringes. All outputs retain their mode's
+colour and pattern constraints. Existing `none` and Floyd–Steinberg conversion
+remain unchanged.
+
 ## Source colour adjustments
 
 Optional adjustments apply after resizing and before palette/cell optimisation
@@ -682,6 +732,17 @@ dithering, and labelled colour-adjustment examples.
 python examples/generate_gallery.py \
     --output-dir /path/to/new-gallery \
     --public-only
+```
+
+For a focused dithering comparison (none, Floyd–Steinberg, Bayer 2/4/8):
+
+```bash
+python examples/generate_gallery.py --public-only --dither-comparison \
+    --output-dir /path/to/new-dither-gallery
+
+# Limit the run to one source and target family
+python examples/generate_gallery.py --public-only --dither-comparison \
+    --family cpc --source lush-landscape --output-dir /path/to/new-cpc-dither-gallery
 ```
 
 Use a new output directory and the project's Python environment. Public

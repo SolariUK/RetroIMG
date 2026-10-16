@@ -31,7 +31,8 @@ retroimg/
     palettes/                # Named RGB colour definitions
     profiles/                # Geometry, default palette, constraint-model identifiers
     model.py                 # Shared Palette, Geometry, TargetProfile, IndexedImage
-    colour_spaces.py         # Generic Cartesian RGB grids and exact nearest lookup
+    colour_spaces.py         # Cartesian RGB grids and shared weighted RGB metric
+    ordered.py               # Bayer matrices and palette-aware ordered selection
     quantize.py              # Palette quantisation and Floyd–Steinberg diffusion
     geometry.py              # Fitting and resizing
     adjustments.py           # Source saturation, hue rotation and RGB gains
@@ -203,3 +204,32 @@ uses the generic quantiser, with palette mixing and custom sizes available.
 `--atari-row-height` is an optional adapter parameter validated by the mode
 registry and rejected outside Atari playfield modes. The shared file pipeline
 only forwards it. No timing kernel, native file or executable exporter is planned.
+
+## Ordered dithering
+
+`ordered.py` owns Bayer ranks, centered thresholds, and palette-aware ordered
+selection. A nearest-colour anchor is paired with the available colour whose
+weighted-RGB segment projection best reconstructs the source. Equal errors
+prefer smaller colour separation, then palette order. Index ordering fixes
+threshold orientation when the nearest anchor changes. Complete RGB grids use
+per-channel rounding between adjacent legal levels. Both quantisation paths
+share the weighted metric constants from `colour_spaces.py`; the existing
+`quantize.colour_distance` and `quantize.RGB_WEIGHTS` imports remain valid.
+
+`quantize_bayer` takes `bayer_size` and a logical `bayer_origin`. Cell adapters
+supply crop origins, preserving matrix phase across boundaries without changing
+palette selection. Atari uses the independent bit coordinate and band index,
+then expands its model normally. No diffusion crosses cells or alters patterns.
+Bayer sizes are limited to 2, 4 and 8, with 4 the default. CLI/API file conversion
+rejects an explicit `bayer_size` for another dither before opening the input.
+The registry binds this optional quantiser keyword without knowing the algorithm.
+
+A custom `pixel_lookup` overrides generic ordered selection and receives the
+original RGB and local position; it owns its Bayer choice. HAM supplies such a
+lookup, enumerating all 64 legal codes from the current held colour and applying
+the shared ordered selector to their decoded RGBs. It retains the chosen code
+and updates held state, resetting at each scanline. Plain/FS HAM keeps its
+previous nearest-channel fast path and output. Bayer uses no error buffer.
+
+All dithering belongs to logical conversion. Preview scaling and future CRT
+post-processing remain independent.

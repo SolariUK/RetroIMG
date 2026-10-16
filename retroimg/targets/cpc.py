@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.model import IndexedImage, Palette
 from retroimg.constraints.global_palette import select_palette_indices
 from retroimg.palettes.builtin import CPC
@@ -53,24 +55,23 @@ class CPCImage:
 
 
 def optimise_cpc(
-    image: Image.Image, palette: Palette = CPC, dither: str = "none", *, mode: int = 0
+    image: Image.Image, palette: Palette = CPC, dither: str = "none", *, mode: int = 0, bayer_size: int = 4
 ) -> CPCImage:
     """Select image-wide inks, then quantise/dither the full RGB source."""
     _validate_mode(mode)
     if palette != CPC:
         raise ValueError("CPC constrained mode requires the cpc palette")
-    if dither not in {"none", "floyd-steinberg"}:
-        raise ValueError(f"unknown dither mode: {dither}")
+    validate_dither(dither, bayer_size)
     inks = select_palette_indices(image, palette, CPC_COLOUR_LIMITS[mode])
     selected = Palette(palette.name, tuple(palette.colours[index] for index in inks))
-    indexed = quantize(image, selected, dither)
+    indexed = quantize(image, selected, dither, bayer_size=bayer_size)
     return CPCImage(image.width, image.height, mode, inks, indexed.pixels, palette)
 
 
 def quantize_cpc(
-    image: Image.Image, palette: Palette, dither: str = "none", *, mode: int = 0
+    image: Image.Image, palette: Palette, dither: str = "none", *, mode: int = 0, bayer_size: int = 4
 ) -> IndexedImage:
-    return rasterize_cpc(optimise_cpc(image, palette, dither, mode=mode))
+    return rasterize_cpc(optimise_cpc(image, palette, dither, mode=mode, bayer_size=bayer_size))
 
 
 def rasterize_cpc(image: CPCImage) -> IndexedImage:

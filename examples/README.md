@@ -87,6 +87,31 @@ use the linked PNGs to judge exact converted pixels.
 commands use placeholder source paths; replace `/path/to/filename` and run the
 commands from the gallery directory, or adjust the output paths.
 
+## Dithering comparisons
+
+The optional `--dither-comparison` matrix compares no dithering, Floyd–Steinberg,
+and Bayer 2x2/4x4/8x8 with otherwise identical conversion settings. It selects
+Teletext mosaic, Spectrum attributes, C64 multicolour, CPC mode 1, BBC mode 0,
+Amiga lores 32-colour/EHB/HAM6, and Atari NTSC independent playfields. Each
+comparison sheet has five columns, one per dithering setting. These runs use
+neutral source adjustments so the dithering difference is easy to compare.
+
+```bash
+python examples/generate_gallery.py --public-only --dither-comparison \
+    --output-dir /path/to/new-dither-gallery
+
+# Source IDs come from sources.json; --source may be repeated
+python examples/generate_gallery.py --public-only --dither-comparison \
+    --family cpc --source lush-landscape --source portrait-colour \
+    --output-dir /path/to/new-cpc-dither-gallery
+```
+
+The complete public dithering run generates 315 PNGs and 49 comparison sheets
+from the seven bundled sources. The normal gallery matrix below remains
+unchanged. `--source` also works for normal gallery runs. Unknown IDs and IDs
+excluded by `--public-only` are rejected. Bayer matrix sizes and exact CLI
+commands are retained in the output manifest and reproduction commands.
+
 ## Comparison matrix
 
 Each source gets the same 106 neutral conversions:

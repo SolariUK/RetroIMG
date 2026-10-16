@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from retroimg.ordered import validate_dither
+
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.constraints.histogram import rgb_histogram
 from retroimg.model import IndexedImage, Palette
@@ -100,15 +102,14 @@ def fit_ehb_registers(image: Image.Image, *, max_samples: int | None = 4096,
 
 
 def optimise_ehb(image: Image.Image, palette: Palette = AMIGA, dither: str = 'none', *,
-                 colours: int | None = None) -> AmigaEHBImage:
+                 colours: int | None = None, bayer_size: int = 4) -> AmigaEHBImage:
     if palette != AMIGA:
         raise ValueError('Amiga EHB mode requires the amiga palette')
     if colours is not None:
         raise ValueError('--colours is not supported in EHB mode; it uses 32 linked base registers')
-    if dither not in {'none', 'floyd-steinberg'}:
-        raise ValueError(f'unknown dither mode: {dither}')
+    validate_dither(dither, bayer_size)
     registers = fit_ehb_registers(image)
-    indexed = quantize(image, _palette(registers), dither)
+    indexed = quantize(image, _palette(registers), dither, bayer_size=bayer_size)
     return AmigaEHBImage(image.width, image.height, registers, indexed.pixels)
 
 
@@ -117,5 +118,5 @@ def rasterize_ehb(image: AmigaEHBImage) -> IndexedImage:
 
 
 def quantize_ehb(image: Image.Image, palette: Palette, dither: str = 'none', *,
-                 colours: int | None = None) -> IndexedImage:
-    return rasterize_ehb(optimise_ehb(image, palette, dither, colours=colours))
+                 colours: int | None = None, bayer_size: int = 4) -> IndexedImage:
+    return rasterize_ehb(optimise_ehb(image, palette, dither, colours=colours, bayer_size=bayer_size))
