@@ -6,15 +6,16 @@ from PIL import Image
 import pytest
 
 from retroimg.adjustments import adjust_colours
-from retroimg.c64 import C64MulticolourCell, C64MulticolourImage, optimise_c64_multicolour
-from retroimg.cellfit import fit_shared_background
+from retroimg.targets.c64 import C64MulticolourCell, C64MulticolourImage, optimise_c64_multicolour
+from retroimg.constraints.shared_background import fit_shared_background
 from retroimg.convert import convert_file
 from retroimg.geometry import resize_to_geometry
 from retroimg.model import Colour, Geometry, IndexedImage, Palette
 from retroimg.palettes import get_palette
 from retroimg.profiles import get_profile
 from retroimg.quantize import colour_distance, quantize
-from retroimg.render import rasterize_c64_multicolour, render_indexed
+from retroimg.targets.c64 import rasterize_c64_multicolour
+from retroimg.render import render_indexed
 
 PALETTE = get_palette("c64")
 VALUES = PALETTE.rgb_values()

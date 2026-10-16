@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
 from PIL import Image
 
 from retroimg.model import IndexedImage
-from retroimg.teletext import TeletextPage
-from retroimg.spectrum import SpectrumImage, spectrum_index
-from retroimg.c64 import C64MulticolourImage
-from retroimg.cpc import CPCImage
+
+
+if TYPE_CHECKING:
+    from retroimg.targets.teletext import TeletextPage
+    from retroimg.targets.spectrum import SpectrumImage
+    from retroimg.targets.c64 import C64MulticolourImage
+    from retroimg.targets.cpc import CPCImage
 
 
 def render_indexed(
@@ -41,49 +45,24 @@ def render_indexed(
 
 
 def rasterize_teletext(page: TeletextPage) -> IndexedImage:
-    """Expand logical cell patterns without scaling or display effects."""
-    pixels = []
-    for cells in page.cells:
-        for dy in range(3):
-            row = []
-            for cell in cells:
-                for dx in range(2):
-                    bit = dy * 2 + dx
-                    row.append(cell.foreground if cell.pattern & (1 << bit) else cell.background)
-            pixels.append(tuple(row))
-    return IndexedImage(page.columns * 2, page.rows * 3, page.palette, tuple(pixels))
+    """Compatibility entry point; prefer retroimg.targets.teletext.rasterize_teletext."""
+    from retroimg.targets.teletext import rasterize_teletext as implementation
+    return implementation(page)
 
 
 def rasterize_spectrum(image: SpectrumImage) -> IndexedImage:
-    """Expand static ink/paper patterns without scaling or display effects."""
-    pixels = []
-    for cells in image.cells:
-        for dy in range(8):
-            row = []
-            for cell in cells:
-                ink = spectrum_index(cell.ink, cell.bright)
-                paper = spectrum_index(cell.paper, cell.bright)
-                row.extend(ink if cell.pattern & (1 << (dy * 8 + dx)) else paper
-                           for dx in range(8))
-            pixels.append(tuple(row))
-    return IndexedImage(image.columns * 8, image.rows * 8, image.palette, tuple(pixels))
+    """Compatibility entry point; prefer retroimg.targets.spectrum.rasterize_spectrum."""
+    from retroimg.targets.spectrum import rasterize_spectrum as implementation
+    return implementation(image)
 
 
 def rasterize_c64_multicolour(image: C64MulticolourImage) -> IndexedImage:
-    """Expand two-bit selectors to a logical raster, retaining wide pixels."""
-    pixels = []
-    for cells in image.cells:
-        for dy in range(8):
-            row = []
-            for cell in cells:
-                colours = (image.background, *cell.colours)
-                row.extend(colours[(cell.pattern >> (2 * (dy * 4 + dx))) & 3]
-                           for dx in range(4))
-            pixels.append(tuple(row))
-    return IndexedImage(image.columns * 4, image.rows * 8, image.palette, tuple(pixels))
+    """Compatibility entry point; prefer retroimg.targets.c64.rasterize_c64_multicolour."""
+    from retroimg.targets.c64 import rasterize_c64_multicolour as implementation
+    return implementation(image)
 
 
 def rasterize_cpc(image: CPCImage) -> IndexedImage:
-    """Map screen pens to firmware palette indices, without display scaling."""
-    pixels = tuple(tuple(image.inks[pen] for pen in row) for row in image.pixels)
-    return IndexedImage(image.width, image.height, image.palette, pixels)
+    """Compatibility entry point; prefer retroimg.targets.cpc.rasterize_cpc."""
+    from retroimg.targets.cpc import rasterize_cpc as implementation
+    return implementation(image)

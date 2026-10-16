@@ -423,9 +423,9 @@ Python callers can retain cell data independently of PNG rendering:
 
 ```python
 from PIL import Image
-from retroimg.constraints import optimise_teletext_mosaic
+from retroimg.targets.teletext import optimise_teletext_mosaic, rasterize_teletext
 from retroimg.palettes import get_palette
-from retroimg.render import rasterize_teletext, render_indexed
+from retroimg.render import render_indexed
 
 source = Image.new("RGB", (80, 75), "red")  # Already resized logical source
 page = optimise_teletext_mosaic(source, get_palette("teletext"))
@@ -434,13 +434,20 @@ print(cell.foreground, cell.background, cell.pattern)
 render_indexed(rasterize_teletext(page), scale=6).save("preview.png")
 ```
 
+Machine-specific code lives in `retroimg.targets`, and reusable fitting
+algorithms live in `retroimg.constraints`. The [architecture notes](docs/architecture.md)
+describe the module boundaries and how to add another target. Earlier imports
+such as `retroimg.c64`, `retroimg.cellfit`, Teletext functions from
+`retroimg.constraints`, and `rasterize_*` functions from `retroimg.render`
+remain available through compatibility exports.
+
 Palette definitions, profile geometry, colour coexistence constraints, logical
 representations and renderers remain separate. The generic cell optimiser has
 no Teletext transmission rules. It accepts an optional set of allowed palette
 index pairs: Teletext uses all pairs, while Spectrum supplies only pairs that
-share a brightness bank. The conversion-mode registry connects profile
-constraint models to raster adapters, keeping target rules out of the shared
-file preparation/rendering pipeline.
+share a brightness bank. The conversion-mode registry validates mode options
+and connects profile constraint models to target-owned raster adapters, keeping
+target rules out of the shared file preparation/rendering pipeline.
 
 `optimise_spectrum_attributes` returns a `SpectrumImage` containing validated
 `SpectrumCell` values: hardware ink/paper codes (0–7), a shared boolean `bright`

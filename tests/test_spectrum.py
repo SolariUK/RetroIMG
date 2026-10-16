@@ -5,13 +5,14 @@ from PIL import Image
 import pytest
 
 from retroimg.adjustments import adjust_colours
-from retroimg.constraints import quantize_cells
+from retroimg.constraints.cells import quantize_cells
 from retroimg.convert import convert_file
 from retroimg.model import IndexedImage
 from retroimg.palettes import get_palette
 from retroimg.quantize import colour_distance, quantize
-from retroimg.render import rasterize_spectrum, render_indexed
-from retroimg.spectrum import (
+from retroimg.targets.spectrum import rasterize_spectrum
+from retroimg.render import render_indexed
+from retroimg.targets.spectrum import (
     SpectrumCell, SpectrumImage, optimise_spectrum_attributes, spectrum_from_indexed,
 )
 

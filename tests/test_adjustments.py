@@ -9,7 +9,7 @@ from retroimg.adjustments import adjust_colours
 from retroimg.convert import convert_file
 from retroimg.palettes import get_palette
 from retroimg.quantize import quantize
-from retroimg.constraints import quantize_teletext_mosaic
+from retroimg.targets.teletext import quantize_teletext_mosaic
 
 
 def sample():

@@ -1,3 +1,4 @@
+"""Reusable two-colour cell constraints, independent of target hardware."""
 from __future__ import annotations
 
 from itertools import combinations_with_replacement
@@ -6,7 +7,6 @@ from PIL import Image
 
 from retroimg.model import IndexedImage, Palette
 from retroimg.quantize import colour_distance, quantize
-from retroimg.teletext import TeletextPage, page_from_indexed
 
 
 def quantize_cells(
@@ -76,37 +76,3 @@ def quantize_cells(
     out = IndexedImage(source.width, source.height, palette, tuple(map(tuple, result)))
     out.validate()
     return out
-
-
-def quantize_teletext_mosaic(
-    image: Image.Image, palette: Palette, dither: str = "none"
-) -> IndexedImage:
-    """Compatibility raster API for the explicit Teletext page optimiser."""
-    from retroimg.render import rasterize_teletext
-
-    return rasterize_teletext(optimise_teletext_mosaic(image, palette, dither))
-
-
-def optimise_teletext_mosaic(
-    image: Image.Image, palette: Palette, dither: str = "none"
-) -> TeletextPage:
-    """Fit RGB source and retain the resulting logical cell patterns."""
-    if image.width % 2 or image.height % 3:
-        raise ValueError(
-            "teletext mosaic mode requires width divisible by 2 and height divisible by 3"
-        )
-    indexed = quantize_cells(image, palette, cell_width=2, cell_height=3, dither=dither)
-    return page_from_indexed(indexed)
-
-
-def constrain_teletext_mosaic(image: IndexedImage) -> IndexedImage:
-    """Compatibility entry point for callers with an already indexed raster.
-
-    Conversion should use quantize_teletext_mosaic with the RGB source to avoid
-    losing colour information before optimisation.
-    """
-    image.validate()
-    source = Image.new("RGB", (image.width, image.height))
-    values = image.palette.rgb_values()
-    source.putdata([values[index] for row in image.pixels for index in row])
-    return quantize_teletext_mosaic(source, image.palette)

@@ -6,14 +6,15 @@ from PIL import Image
 import pytest
 
 from retroimg.adjustments import adjust_colours
-from retroimg.cpc import CPCImage, optimise_cpc
+from retroimg.targets.cpc import CPCImage, optimise_cpc
 from retroimg.convert import convert_file
 from retroimg.model import Colour, Palette, IndexedImage
-from retroimg.palettefit import select_palette_indices
+from retroimg.constraints.global_palette import select_palette_indices
 from retroimg.palettes import get_palette
 from retroimg.profiles import get_profile
 from retroimg.quantize import colour_distance, quantize
-from retroimg.render import rasterize_cpc, render_indexed
+from retroimg.targets.cpc import rasterize_cpc
+from retroimg.render import render_indexed
 
 CPC = get_palette("cpc")
 VALUES = CPC.rgb_values()

@@ -1,17 +1,18 @@
 """Resolve profile constraint modes without target rules in the file pipeline."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Callable
 from functools import partial
 
 from PIL import Image
 
-from retroimg.constraints import quantize_teletext_mosaic
-from retroimg.c64 import quantize_c64_multicolour
-from retroimg.cpc import quantize_cpc
-from retroimg.model import IndexedImage, Palette
+from retroimg.targets.teletext import quantize_teletext_mosaic
+from retroimg.targets.c64 import quantize_c64_multicolour
+from retroimg.targets.cpc import quantize_cpc
+from retroimg.model import IndexedImage, Palette, TargetProfile
 from retroimg.quantize import quantize
-from retroimg.spectrum import quantize_spectrum_attributes
+from retroimg.targets.spectrum import quantize_spectrum_attributes
 
 Quantizer = Callable[[Image.Image, Palette, str], IndexedImage]
 
@@ -30,3 +31,40 @@ def get_quantizer(constraint_model: str, mode: str) -> Quantizer:
         return CONSTRAINED_QUANTIZERS[constraint_model, mode]
     except KeyError as exc:
         raise ValueError(f"unsupported mode {mode!r} for constraint model {constraint_model!r}") from exc
+
+
+@dataclass(frozen=True)
+class ModeOption:
+    """CLI/API mode metadata; the target itself owns its colour rules."""
+
+    label: str
+    modes: tuple[str, ...]
+    constraint_models: tuple[str, ...]
+    required_profiles: str
+
+
+MODE_OPTIONS = {
+    "teletext_mode": ModeOption("Teletext", ("bitmap", "mosaic"), ("teletext-mosaic",), "teletext"),
+    "spectrum_mode": ModeOption("Spectrum", ("bitmap", "attributes"), ("spectrum-attributes",), "spectrum"),
+    "c64_mode": ModeOption("C64", ("bitmap", "multicolour"), ("c64-multicolour",), "c64-multicolour"),
+    "cpc_mode": ModeOption("CPC", ("bitmap", "constrained"), tuple(f"cpc-mode{mode}" for mode in range(3)),
+                           "cpc-mode0, cpc-mode1 or cpc-mode2"),
+}
+
+
+def get_profile_quantizer(profile: TargetProfile, **modes: str) -> Quantizer:
+    """Validate supplied target options, then resolve a raster adapter."""
+    unknown = modes.keys() - MODE_OPTIONS.keys()
+    if unknown:
+        raise ValueError("unknown mode options: " + ", ".join(sorted(unknown)))
+    selected = "bitmap"
+    for option, spec in MODE_OPTIONS.items():
+        mode = modes.get(option, "bitmap")
+        if mode not in spec.modes:
+            raise ValueError(f"unknown {spec.label} mode: {mode}")
+        if profile.constraint_model in spec.constraint_models:
+            selected = mode
+        elif mode != "bitmap":
+            flag = option.replace("_", "-")
+            raise ValueError(f"--{flag} {mode} is only valid with --profile {spec.required_profiles}")
+    return get_quantizer(profile.constraint_model, selected)

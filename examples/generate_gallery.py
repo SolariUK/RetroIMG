@@ -18,8 +18,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 from retroimg.convert import convert_file
 from retroimg.model import IndexedImage
-from retroimg.spectrum import spectrum_from_indexed
-from retroimg.teletext import page_from_indexed
+from retroimg.targets.spectrum import spectrum_from_indexed
+from retroimg.targets.teletext import page_from_indexed
 
 FAMILIES = ("teletext", "spectrum", "c64", "cpc")
 CATALOG = Path(__file__).with_name("sources.json")

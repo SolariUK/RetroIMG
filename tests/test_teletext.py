@@ -1,11 +1,12 @@
 import pytest
 from PIL import Image
 
-from retroimg.constraints import optimise_teletext_mosaic, quantize_cells
+from retroimg.targets.teletext import optimise_teletext_mosaic
+from retroimg.constraints.cells import quantize_cells
 from retroimg.model import IndexedImage
 from retroimg.palettes import get_palette
-from retroimg.render import rasterize_teletext
-from retroimg.teletext import TeletextCell, TeletextPage, page_from_indexed
+from retroimg.targets.teletext import rasterize_teletext
+from retroimg.targets.teletext import TeletextCell, TeletextPage, page_from_indexed
 
 
 @pytest.mark.parametrize("pattern", range(64))
