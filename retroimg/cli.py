@@ -79,13 +79,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="selected screen-colour limit for Amiga constrained mode: 2/4/8/16/32 (hires maximum 16; default is the profile maximum)",
     )
 
+    guided = sub.add_parser("guided", help="build a conversion command interactively")
+    guided.add_argument("input", type=Path, nargs="?", help="input image (prompted when omitted)")
+    guided.add_argument("output", type=Path, nargs="?", help="output image (prompted when omitted)")
+    guided.add_argument("--print-only", action="store_true", help="show the command without converting")
+
     sub.add_parser("palettes", help="list available palettes")
     sub.add_parser("profiles", help="list available target profiles")
     return p
 
 
-def main() -> None:
-    args = build_parser().parse_args()
+def main(argv: list[str] | None = None) -> None:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.command == "guided":
+        from retroimg.guided import run_guided
+        arguments = run_guided(args.input, args.output, parser=parser, print_only=args.print_only)
+        if arguments is not None:
+            try:
+                main(arguments)
+            except (OSError, ValueError) as exc:
+                parser.exit(1, f"Conversion failed: {exc}\n")
+        return
 
     if args.command == "convert":
         indexed = convert_file(

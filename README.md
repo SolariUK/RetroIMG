@@ -22,6 +22,45 @@ retroimg profiles
 retroimg palettes
 ```
 
+## Guided CLI
+
+Use the guided command builder to explore the options interactively:
+
+```bash
+retroimg guided /path/to/image.jpg output.png
+
+# Prompt for file paths as well
+retroimg guided
+
+# Build and display a command without converting
+retroimg guided /path/to/image.jpg output.png --print-only
+```
+
+Choose a machine and profile, then step through conversion constraints, palette,
+resolution and fitting, dithering, optional colour adjustments and preview scale.
+Menus accept their numbered choices or named values. Matrix sizes and screen
+colour counts accept the actual values shown. Press Enter for a default, or
+enter `q` at any prompt to cancel. Source colour adjustments and custom resolution
+can each be skipped as a group.
+
+Only applicable choices appear: for example, CPC modes 0/1/2 all offer Bayer,
+Amiga hires excludes EHB/HAM, and constrained modes retain their palette rules.
+Unrestricted modes continue to offer palette swaps. Custom dimensions are
+checked against the selected cell/block layout. Suggested preview scales aim
+for a convenient display size; the chosen scale is explicit in the command.
+
+Before conversion, the guide shows a settings summary and the equivalent
+`retroimg convert` command. Choose to convert, revise settings, keep the command
+only, or cancel. Revisions retain previous choices as defaults and reset options
+that become incompatible. Existing output files require explicit replacement;
+the input image cannot be selected as the output. File paths entered at prompts
+do not need shell quoting. The displayed command quotes paths for a POSIX shell
+or, on Windows, PowerShell.
+
+The guide only builds arguments and delegates to the existing `convert` command.
+Normal CLI usage and image conversion are unchanged, and there are no additional
+dependencies.
+
 ## Teletext
 
 The Teletext profile has two modes.

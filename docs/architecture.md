@@ -40,6 +40,7 @@ retroimg/
     conversion_modes.py      # Mode metadata, validation and adapter registry
     convert.py               # Shared file conversion pipeline
     cli.py                   # Command-line argument handling
+    guided.py                # Optional interactive builder for ordinary convert arguments
 ```
 
 Machine modules live only under `targets`, and fitting implementations live
@@ -233,3 +234,30 @@ previous nearest-channel fast path and output. Bayer uses no error buffer.
 
 All dithering belongs to logical conversion. Preview scaling and future CRT
 post-processing remain independent.
+
+## Guided CLI boundary
+
+`guided.py` is an optional command builder, loaded only for `retroimg guided`.
+It reads profile/palette registries, mode metadata and supported adapter keys.
+Small UI tables provide explanations, restricted palette choices and dimension
+hints; target adapters retain the authoritative conversion validation. Amiga
+screen-colour choices reuse the existing target limits. New target constraints
+should update these presentation hints alongside their CLI exposure.
+
+The builder uses ordinary parser defaults, collects applicable options and
+returns a `convert` argument list. The CLI feeds that list through its existing
+parser and conversion branch. It does not execute the printed shell command.
+The guide has no palette fitting, quantisation, rendering or image-writing
+implementation. Pillow is used only to check input images and output extensions.
+Core conversion modules do not depend on the guide.
+
+Input/output paths may be supplied or prompted. File paths are made absolute;
+argument lists keep spaces and shell metacharacters literal. Equals syntax
+preserves negative scientific-notation values through argparse. Displayed
+commands use POSIX quoting or PowerShell single-quoted tokens on Windows.
+
+The UI has injectable input/output for tests. Enter accepts defaults, q/EOF/
+Ctrl-C cancels, and the final review offers conversion, revision or command-only
+output. Revisions preserve compatible defaults and discard inapplicable flags.
+Existing outputs require explicit replacement before returning conversion
+arguments. None of these review/path checks alter the noninteractive converter.

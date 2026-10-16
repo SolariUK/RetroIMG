@@ -1,0 +1,377 @@
+"""Interactive command builder. Conversion stays in the ordinary CLI path."""
+from __future__ import annotations
+
+import argparse
+import math
+import os
+from pathlib import Path
+import shlex
+from typing import Callable, Sequence
+
+from PIL import Image
+
+from retroimg.conversion_modes import (
+    COLOUR_COUNT_QUANTIZERS, CONSTRAINED_QUANTIZERS, MODE_OPTIONS,
+    get_profile_quantizer,
+)
+from retroimg.model import TargetProfile
+from retroimg.ordered import BAYER_SIZES, DITHER_MODES
+from retroimg.palettes import PALETTES
+from retroimg.profiles import PROFILES
+from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
+
+# Presentation and input hints only. Target adapters remain the authority on
+# constraints; the wizard does not fit palettes, quantise, render or save images.
+FAMILY_LABELS = {
+    'teletext': 'Teletext', 'spectrum': 'ZX Spectrum', 'c64': 'Commodore 64',
+    'cpc': 'Amstrad CPC', 'bbc': 'BBC Micro', 'amiga': 'Amiga', 'atari2600': 'Atari 2600',
+}
+REQUIRED_PALETTES = {
+    'spectrum_mode': ('spectrum',), 'c64_mode': ('c64',), 'cpc_mode': ('cpc',),
+    'bbc_mode': ('bbc',), 'amiga_mode': ('amiga',),
+    'atari_mode': ('atari2600-ntsc', 'atari2600-pal'),
+}
+CELL_DIMENSIONS = {
+    'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-multicolour': (4, 8),
+}
+MODE_HELP = {
+    'bitmap': 'unrestricted palette conversion',
+    'mosaic': 'two colours per 2x3 cell',
+    'attributes': 'ink/paper with shared brightness per 8x8 cell',
+    'multicolour': 'shared background plus three local colours per 4x8 cell',
+    'constrained': 'apply this display mode\'s screen-colour limit',
+    'ehb': '32 base colours and their linked half-bright colours (lores)',
+    'ham': 'HAM6: base colours and changes to the held colour (lores)',
+    'playfield': '40 independent blocks with two colours per band',
+    'repeat': '20 playfield blocks repeated in the right half',
+    'mirror': '20 playfield blocks mirrored in the right half',
+}
+
+
+class GuidedCancelled(Exception):
+    """The user ended the command builder without requesting conversion."""
+
+
+class Prompts:
+    """Small standard-library-only terminal UI, with injectable I/O for tests."""
+
+    def __init__(self, read: Callable[[str], str] | None = None,
+                 write: Callable[[str], None] | None = None):
+        self.read = input if read is None else read
+        self.write = print if write is None else write
+
+    def answer(self, prompt: str) -> str:
+        value = self.read(prompt).strip()
+        if value.lower() in {'q', 'quit', 'cancel'}:
+            raise GuidedCancelled
+        return value
+
+    def choice(self, title: str, choices: Sequence[tuple[str, str]], default: str) -> str:
+        self.write('\n' + title)
+        numeric_values = all(value.isdecimal() for value, _ in choices)
+        for index, (value, label) in enumerate(choices, 1):
+            prefix = '  ' if numeric_values else f'  {index}. '
+            self.write(prefix + label + (' [default]' if value == default else ''))
+        while True:
+            answer = self.answer(f'Choose {title.lower()} [{default}]: ')
+            if not answer:
+                return default
+            for value, label in choices:
+                if answer.lower() in {value.lower(), label.lower()}:
+                    return value
+            if not numeric_values and answer.isdecimal() and 1 <= int(answer) <= len(choices):
+                return choices[int(answer) - 1][0]
+            self.write('Choose a listed number or value, or press Enter for the default.')
+
+    def yes_no(self, title: str, default: bool = False) -> bool:
+        while True:
+            answer = self.answer(f'{title} [{"Y/n" if default else "y/N"}]: ').lower()
+            if not answer:
+                return default
+            if answer in {'y', 'yes'}:
+                return True
+            if answer in {'n', 'no'}:
+                return False
+            self.write('Enter yes or no.')
+
+    def number(self, title: str, default: int | float, *, integer: bool = False,
+               valid: Callable[[float], bool] = lambda value: True,
+               hint: str = 'Enter a finite number.') -> int | float:
+        while True:
+            answer = self.answer(f'{title} [{default}]: ')
+            try:
+                value = default if not answer else (int(answer) if integer else float(answer))
+                if math.isfinite(value) and valid(value):
+                    return value
+            except (ValueError, OverflowError):
+                pass
+            self.write(hint)
+
+
+def profile_families() -> dict[str, tuple[TargetProfile, ...]]:
+    families: dict[str, list[TargetProfile]] = {}
+    for profile in PROFILES.values():
+        families.setdefault(profile.name.split('-', 1)[0], []).append(profile)
+    return {name: tuple(profiles) for name, profiles in sorted(families.items())}
+
+
+def profile_modes(profile: TargetProfile) -> tuple[str | None, tuple[str, ...]]:
+    for option, spec in MODE_OPTIONS.items():
+        if profile.constraint_model in spec.constraint_models:
+            modes = tuple(mode for mode in spec.modes if mode == 'bitmap'
+                          or (profile.constraint_model, mode) in CONSTRAINED_QUANTIZERS)
+            return option, modes
+    return None, ('bitmap',)
+
+
+def palette_choices(profile: TargetProfile, mode: str, option: str | None) -> tuple[str, ...]:
+    names = (REQUIRED_PALETTES.get(option, tuple(PALETTES)) if mode != 'bitmap'
+             else tuple(PALETTES))
+    return tuple(sorted(names, key=lambda name: (name != profile.default_palette, name)))
+
+
+def _geometry_options(ui: Prompts, profile: TargetProfile, mode: str,
+                      option: str | None, previous: dict) -> dict:
+    same_profile = previous.get('profile') == profile.name
+    dimensions: dict = {}
+    geometry = profile.geometry
+    ui.write(f'Logical resolution: {geometry.width}x{geometry.height}.')
+    if ui.yes_no('Use a custom logical resolution?', same_profile and 'width' in previous):
+        multiples = CELL_DIMENSIONS.get(profile.constraint_model, (1, 1)) if mode != 'bitmap' else (1, 1)
+        fixed_width = 160 if option == 'atari_mode' and mode != 'bitmap' else None
+        if fixed_width is not None:
+            dimensions['width'] = fixed_width
+            ui.write('Playfield width is fixed at 160 logical pixels.')
+        else:
+            step = multiples[0]
+            default_width = previous.get('width', geometry.width) if same_profile else geometry.width
+            if default_width % step:
+                default_width = geometry.width
+            dimensions['width'] = ui.number('Logical width', default_width,
+                integer=True, valid=lambda n: n > 0 and n % step == 0,
+                hint=f'Enter a positive whole number divisible by {step}.')
+        step = multiples[1]
+        default_height = previous.get('height', geometry.height) if same_profile else geometry.height
+        if default_height % step:
+            default_height = geometry.height
+        dimensions['height'] = ui.number('Logical height', default_height,
+            integer=True, valid=lambda n: n > 0 and n % step == 0,
+            hint=f'Enter a positive whole number divisible by {step}.')
+    return dimensions
+
+
+def _adjustment_options(ui: Prompts, defaults: dict, preferred: dict) -> dict:
+    result: dict = {}
+    adjustments = ('saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain')
+    adjusted = any(preferred[key] != defaults[key] for key in adjustments)
+    if ui.yes_no('Adjust source colours?', adjusted):
+        result['saturation'] = ui.number('Saturation (1=neutral)', preferred['saturation'], valid=lambda n: n > 0,
+                                           hint='Enter a finite number greater than zero.')
+        result['hue_shift'] = ui.number('Hue shift in degrees (0=neutral)', preferred['hue_shift'])
+        for channel in ('red', 'green', 'blue'):
+            key = channel + '_gain'
+            result[key] = ui.number(f'{channel.title()} gain (1=neutral)', preferred[key], valid=lambda n: n >= 0,
+                                     hint='Enter a finite non-negative number.')
+    return result
+
+
+def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -> dict:
+    previous = {} if previous is None else previous
+    preferred = dict(defaults, **previous)
+    families = profile_families()
+    family = ui.choice('Machine', [(name, FAMILY_LABELS.get(name, name)) for name in families],
+                       preferred['profile'].split('-', 1)[0])
+    profiles = families[family]
+    default_profile = next((p for p in profiles if p.name == preferred['profile']), profiles[0])
+    if len(profiles) > 1:
+        name = ui.choice('Profile', [(p.name, f'{p.name}: {p.description}') for p in profiles],
+                         default_profile.name)
+    else:
+        name = profiles[0].name
+    profile = PROFILES[name]
+    ui.write(f'\nProfile: {name}. {profile.description}')
+    options: dict = {'profile': name}
+    option, modes = profile_modes(profile)
+    mode = 'bitmap'
+    if option is not None:
+        default_mode = preferred.get(option, 'bitmap')
+        if default_mode not in modes:
+            default_mode = 'bitmap'
+        mode = ui.choice('Conversion mode', [(m, f'{m}: {MODE_HELP.get(m, m)}') for m in modes], default_mode)
+        options[option] = mode
+    else:
+        ui.write('Conversion mode: bitmap (unrestricted palette conversion).')
+
+    same_profile = previous.get('profile') == name
+    palettes = palette_choices(profile, mode, option)
+    default_palette = preferred.get('palette') if same_profile else profile.default_palette
+    if default_palette not in palettes:
+        default_palette = profile.default_palette
+    if len(palettes) > 1:
+        options['palette'] = ui.choice('Palette', [
+            (p, f'{p}: {len(PALETTES[p].colours)} entries; {PALETTES[p].description}') for p in palettes
+        ], default_palette)
+    else:
+        options['palette'] = palettes[0]
+        ui.write(f'Palette: {palettes[0]} (required by this constraint).')
+
+    if (profile.constraint_model, mode) in COLOUR_COUNT_QUANTIZERS:
+        limit = AMIGA_COLOUR_LIMITS[profile.constraint_model.removeprefix('amiga-')]
+        counts = tuple(2**n for n in range(1, limit.bit_length()))
+        default_count = preferred.get('colours')
+        if default_count not in counts:
+            default_count = limit
+        options['colours'] = int(ui.choice('Screen colours', [(str(n), str(n)) for n in counts], str(default_count)))
+    if option == 'atari_mode' and mode != 'bitmap':
+        options['atari_row_height'] = ui.number(
+            'Row height in scanlines (1=finer, 4/8=chunkier)', preferred.get('atari_row_height') or 2,
+            integer=True, valid=lambda n: n > 0, hint='Enter a positive whole number.')
+
+    options.update(_geometry_options(ui, profile, mode, option, previous))
+    options['fit'] = ui.choice('Image fitting', [
+        ('cover', 'cover: fill the image and crop overflow'),
+        ('contain', 'contain: keep the whole image, with black padding'),
+        ('stretch', 'stretch: fill without preserving source proportions'),
+    ], preferred['fit'])
+    descriptions = {'none': 'nearest colour, no dithering', 'floyd-steinberg': 'spread error into neighbouring pixels',
+                    'bayer': 'a regular repeating threshold pattern'}
+    options['dither'] = ui.choice('Dithering', [(d, f'{d}: {descriptions[d]}') for d in DITHER_MODES], preferred['dither'])
+    if options['dither'] == 'bayer':
+        options['bayer_size'] = int(ui.choice('Bayer matrix', [(str(n), f'{n}x{n}') for n in BAYER_SIZES],
+                                              str(preferred.get('bayer_size') or 4)))
+    options.update(_adjustment_options(ui, defaults, preferred))
+    geometry = profile.geometry
+    width, height = options.get('width', geometry.width), options.get('height', geometry.height)
+    aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1
+    longest = max(width * max(1, aspect), height * max(1, 1 / aspect))
+    suggested = max(1, min(defaults['scale'], int(640 // longest)))
+    options['scale'] = ui.number('Preview scale (integer enlargement)', previous.get('scale', suggested) if same_profile else suggested,
+                                 integer=True, valid=lambda n: n > 0, hint='Enter a positive whole number.')
+    return options
+
+
+def build_convert_arguments(input_path: Path, output_path: Path, options: dict) -> list[str]:
+    """Produce ordinary argparse tokens, never shell-executed text.
+
+    Absolute paths protect leading-dash filenames and make the printed command
+    independent of the current directory. Equals syntax handles negative values
+    in scientific notation as well as ordinary numeric settings.
+    """
+    return ['convert', str(input_path.expanduser().absolute()), str(output_path.expanduser().absolute()),
+            *(f'--{key.replace("_", "-")}={value}' for key, value in options.items())]
+
+
+def format_command(arguments: Sequence[str], *, platform: str | None = None) -> str:
+    """Quote a copyable POSIX-shell or Windows PowerShell command."""
+    tokens = ['retroimg', *arguments]
+    if (os.name if platform is None else platform) == 'nt':
+        return '& ' + ' '.join("'" + token.replace("'", "''") + "'" for token in tokens)
+    return shlex.join(tokens)
+
+
+def _input_path(ui: Prompts, supplied: Path | None) -> Path:
+    value = supplied
+    while True:
+        if value is None:
+            answer = ui.answer('Input image path: ')
+            if not answer:
+                ui.write('Enter an image path.')
+                continue
+            value = Path(answer)
+        path = value.expanduser().absolute()
+        try:
+            with Image.open(path) as image:
+                size = image.size
+                image.verify()
+            ui.write(f'Input: {path} ({size[0]}x{size[1]})')
+            return path
+        except (OSError, ValueError) as exc:
+            ui.write(f'Cannot read input image: {exc}')
+            value = None
+
+
+def _output_path(ui: Prompts, supplied: Path | None, source: Path) -> Path:
+    value = supplied
+    default = source.with_name(source.stem + '-retro.png')
+    while True:
+        if value is None:
+            answer = ui.answer(f'Output image path (PNG recommended) [{default}]: ')
+            value = Path(answer) if answer else default
+        path = value.expanduser().absolute()
+        if path.resolve() == source.resolve():
+            ui.write('Choose an output path different from the input image.')
+        elif not path.parent.is_dir():
+            ui.write('The output directory does not exist; choose an existing directory.')
+        elif path.is_dir():
+            ui.write('The output path is a directory; enter an image filename.')
+        elif Image.registered_extensions().get(path.suffix.lower()) not in Image.SAVE:
+            ui.write('Choose a supported output image extension, such as .png or .jpg.')
+        else:
+            return path
+        value = None
+
+
+def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: dict) -> None:
+    profile = PROFILES[options['profile']]
+    width, height = options.get('width', profile.geometry.width), options.get('height', profile.geometry.height)
+    aspect = profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1
+    scale = options['scale']
+    preview = (round(width * scale * max(1, aspect)), round(height * scale * max(1, 1 / aspect)))
+    ui.write('\nSettings summary')
+    ui.write(f'  Input: {source}\n  Output: {output}')
+    ui.write(f'  Profile: {profile.name}; palette: {options["palette"]}')
+    labels = {'colours': 'Screen colours', 'atari_row_height': 'Row height in scanlines'}
+    for key, value in options.items():
+        if key in MODE_OPTIONS or key in labels:
+            label = MODE_OPTIONS[key].label + ' mode' if key in MODE_OPTIONS else labels[key]
+            ui.write(f'  {label}: {value}')
+    ui.write(f'  Logical image: {width}x{height}; fitting: {options["fit"]}')
+    ui.write(f'  Dithering: {options["dither"]}' + (f'; matrix: {options["bayer_size"]}x{options["bayer_size"]}'
+                                                       if 'bayer_size' in options else ''))
+    ui.write(f'  Saturation: {options.get("saturation", defaults["saturation"])}; '
+             f'hue shift: {options.get("hue_shift", defaults["hue_shift"])} degrees')
+    ui.write('  RGB gains: ' + ', '.join(str(options.get(c + '_gain', defaults[c + '_gain'])) for c in ('red', 'green', 'blue')))
+    ui.write(f'  Preview: {preview[0]}x{preview[1]} (scale {scale})')
+
+
+def run_guided(input_path: Path | None, output_path: Path | None, *,
+               parser: argparse.ArgumentParser, print_only: bool = False,
+               ui: Prompts | None = None) -> list[str] | None:
+    """Return confirmed convert arguments, or None after printing/cancellation."""
+    ui = Prompts() if ui is None else ui
+    ui.write('retroimg guided command builder\nPress Enter for defaults. Enter q at any prompt to cancel.')
+    try:
+        source = _input_path(ui, input_path)
+        output = _output_path(ui, output_path, source)
+        defaults = vars(parser.parse_args(['convert', str(source), str(output)]))
+        previous = None
+        while True:
+            options = collect_options(ui, defaults, previous)
+            arguments = build_convert_arguments(source, output, options)
+            parsed = vars(parser.parse_args(arguments))
+            get_profile_quantizer(PROFILES[parsed['profile']], colours=parsed['colours'],
+                atari_row_height=parsed['atari_row_height'], bayer_size=parsed['bayer_size'],
+                **{key: parsed[key] for key in MODE_OPTIONS})
+            _summary(ui, source, output, options, defaults)
+            shell = 'PowerShell' if os.name == 'nt' else 'POSIX shell'
+            ui.write(f'\nEquivalent command ({shell}):\n' + format_command(arguments))
+            if print_only:
+                ui.write('Command only; no output written.')
+                return None
+            action = ui.choice('Next action', [
+                ('convert', 'Convert now'), ('edit', 'Revise settings'),
+                ('command', 'Keep the command only'), ('cancel', 'Cancel'),
+            ], 'convert')
+            if action == 'edit':
+                previous = options
+                continue
+            if action == 'convert':
+                if output.exists() and not ui.yes_no('Output already exists. Replace it?'):
+                    ui.write('No output written.')
+                    return None
+                return arguments
+            ui.write('Command only; no output written.' if action == 'command' else 'Cancelled; no output written.')
+            return None
+    except (GuidedCancelled, EOFError, KeyboardInterrupt):
+        ui.write('\nCancelled; no output written.')
+        return None
