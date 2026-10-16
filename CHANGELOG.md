@@ -8,8 +8,9 @@
 - Added palette-aware Bayer dithering alongside none and Floyd–Steinberg.
 - Added brightness, contrast, saturation, hue rotation and individual RGB
   channel gains, including guided entry and portable preset settings.
-- Curated eight screen-sized documentation panels with reproducible settings
-  and an explicit refresh command; comprehensive galleries remain optional.
+- Curated eight width-limited documentation panels with multiple modes,
+  greener C64 settings, reproducible conversion commands and an explicit
+  refresh command; comprehensive galleries remain optional.
 - Added a guided command builder, portable JSON presets and optional
   cross-platform path completion through the `guided` install extra.
 - Separated target models and reusable colour constraints; added regression

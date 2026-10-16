@@ -102,7 +102,7 @@ def test_bundled_directory_contains_only_catalogued_public_assets():
 
 
 @pytest.mark.parametrize('identifier', [
-    'macaws-cpc', 'portrait-colour-teletext', 'lush-landscape-c64',
+    'macaws-cpc', 'macaws-teletext', 'lush-landscape-c64',
     'lush-landscape-spectrum', 'macaws-bbc', 'portrait-colour-amiga',
     'lush-landscape-atari2600', 'macaws-adjustments',
 ])
@@ -122,10 +122,12 @@ def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
     sheet = directory / entry['sheet']
     assert sha256(sheet.read_bytes()).hexdigest() == entry['sha256']
     with Image.open(sheet) as image:
-        assert image.size == (800, 600)
+        assert image.size == tuple(entry['panel_size'])
+        assert image.width == 800
+        assert image.height <= 2712
         assert image.format == 'PNG'
         image.verify()
-    assert len(entry['variants']) == (3 if entry['show_source'] else 4)
+    assert 1 <= len(entry['variants']) + int(entry['show_source']) <= 20
     for variant in entry['variants']:
         arguments = build_parser().parse_args(shlex.split(variant['command'])[1:])
         assert arguments.input == Path('/path/to/image.jpg')
@@ -133,14 +135,39 @@ def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
 
 
 def test_curated_samples_are_bounded_and_cover_all_target_families():
-    from examples.generate_samples import selections
+    from examples.generate_samples import panel_size, selections
 
     panels = selections()
     assert len(panels) == 8
     assert set(FAMILIES) <= {panel.family for panel in panels}
+    for panel in panels:
+        assert panel_size(panel)[0] == 800
+        assert panel_size(panel)[1] <= 2712
+        assert len({variant.slug for variant in panel.variants}) == len(panel.variants)
     directory = CATALOG_PATH.parents[1] / 'samples' / 'comparisons'
     assert {p.name for p in directory.iterdir()} == {
         'README.md', 'manifest.json', *(panel.filename for panel in panels)}
+
+
+def test_sample_modes_and_greener_c64_controls_are_represented():
+    from examples.generate_samples import selections
+
+    panels = {panel.family: panel for panel in selections()}
+    assert panels['teletext'].source == 'macaws'
+    assert {v.options['teletext_mode'] for v in panels['teletext'].variants} == {'bitmap', 'mosaic'}
+    cpc = {tuple(v.options[key] for key in ('profile_name', 'cpc_mode', 'dither'))
+           for v in panels['cpc'].variants}
+    assert cpc == {(f'cpc-mode{mode}', constraint, dither)
+                   for mode in (0, 1, 2) for constraint in ('bitmap', 'constrained')
+                   for dither in ('none', 'floyd-steinberg', 'bayer')}
+    assert any(v.options.get('saturation', 1) > 1 and v.options.get('green_gain', 1) > 1
+               and v.options.get('hue_shift') == 20 for v in panels['c64'].variants)
+    assert {v.options['profile_name'] for v in panels['bbc'].variants} == {
+        f'bbc-mode{mode}' for mode in (0, 1, 2, 4, 5)}
+    assert {'ehb', 'ham', 'constrained', 'bitmap'} <= {
+        v.options.get('amiga_mode', 'bitmap') for v in panels['amiga'].variants}
+    assert {v.options['atari_mode'] for v in panels['atari2600'].variants} == {
+        'bitmap', 'playfield', 'repeat', 'mirror'}
 
 
 def test_sample_refresh_refuses_unmanaged_files(tmp_path):

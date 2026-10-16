@@ -2,7 +2,7 @@
 
 `sources/` contains the seven public-domain/CC0 or locally generated reference images used by the gallery. Keeping these modest source files in Git makes comparisons reproducible from a fresh checkout, without a download service or access to a developer scratchpad. The files total approximately 6 MB.
 
-The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. [comparisons/](comparisons/README.md) holds eight curated **800×600 PNG panels**, covering the seven target families and a macaws adjustment recipe. Each uses a two-by-two layout for GitHub and desktop viewing, with settings, checksums and reproduction commands. Intermediate conversions are automatically cleaned up; large galleries are optional development diagnostics.
+The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. [comparisons/](comparisons/README.md) holds eight curated **800-pixel-wide PNG panels**, covering the seven target families and a macaws adjustment recipe. Each uses two columns and up to ten rows, so extra modes scroll vertically without making the page wider. CPC includes modes 0/1/2, BBC includes 0/1/2/4/5, and Amiga includes RGB12, indexed palettes, EHB and HAM6. C64 shows greener saturation/hue/gain settings, and Teletext uses colourful macaws. Settings, checksums and reproduction commands accompany each panel. Intermediate conversions are automatically cleaned up; large galleries are optional development diagnostics.
 
 ## Generate examples
 

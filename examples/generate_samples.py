@@ -19,9 +19,10 @@ if __package__:
 else:
     from generate_gallery import BUNDLED_SOURCES, CATALOG, Variant, check_constraints, command_for, variants_for
 
-PANEL_SIZE = (800, 600)
+PANEL_WIDTH = 800
 DEFAULT_OUTPUT = BUNDLED_SOURCES.parent / 'comparisons'
-LEGACY_SHEETS = {'macaws-cpc.jpg', 'portrait-colour-teletext.jpg', 'lush-landscape-c64.jpg'}
+LEGACY_SHEETS = {'macaws-cpc.jpg', 'portrait-colour-teletext.jpg', 'lush-landscape-c64.jpg',
+                 'portrait-colour-teletext.png'}
 
 
 @dataclass(frozen=True)
@@ -38,25 +39,97 @@ class Panel:
 
 
 def selections() -> tuple[Panel, ...]:
-    """Seven representative modes and one controlled adjustment comparison."""
+    """Cover mode differences and useful adjustments within twenty tiles each."""
+    baselines = {family: {v.slug: v for v in variants_for(family)} for family in
+                 ('teletext', 'c64', 'cpc', 'spectrum', 'bbc', 'amiga', 'atari2600')}
+    dithers = (('none', 'No dither'), ('floyd-steinberg', 'FS'), ('bayer', 'Bayer 4x4'))
+
+    def make(family, slug, label, dither='none', **controls):
+        base = baselines[family][slug]
+        options = dict(base.options, dither=dither, **controls)
+        if dither == 'bayer':
+            options.setdefault('bayer_size', 4)
+        identifier = slug + '-' + dither + ''.join(f'-{key}-{value}' for key, value in controls.items())
+        return Variant(identifier, label, options, base.size)
+
     panels = []
-    for source, family, slug, title in (
-        ('macaws', 'cpc', 'mode0-constrained', 'Amstrad CPC mode 0 / 16 screen colours'),
-        ('portrait-colour', 'teletext', 'mosaic', 'Teletext / two colours per mosaic cell'),
-        ('lush-landscape', 'c64', 'multicolour', 'Commodore 64 / multicolour cells'),
-        ('lush-landscape', 'spectrum', 'attributes', 'ZX Spectrum / attribute cells'),
-        ('macaws', 'bbc', 'mode2-constrained', 'BBC Micro mode 2 / eight steady colours'),
-        ('portrait-colour', 'amiga', 'lores-32', 'Amiga PAL low resolution / 32 colours'),
-        ('lush-landscape', 'atari2600', 'ntsc-playfield', 'Atari 2600 NTSC / independent playfield'),
+    variants = []
+    for dither, label, controls in (
+        ('none', 'No dither', {}), ('floyd-steinberg', 'FS', {}),
+        ('bayer', 'Bayer 2x2', dict(bayer_size=2)),
+        ('bayer', 'Bayer 4x4', dict(bayer_size=4)),
+        ('bayer', 'Bayer 8x8', dict(bayer_size=8)),
     ):
-        base = next(v for v in variants_for(family) if v.slug == slug)
-        variants = []
-        for dither, label in (('none', 'No dither'), ('floyd-steinberg', 'Floyd-Steinberg'), ('bayer', 'Bayer 4x4')):
-            options = dict(base.options, dither=dither)
-            if dither == 'bayer':
-                options['bayer_size'] = 4
-            variants.append(Variant(dither, label, options, base.size))
-        panels.append(Panel(source, family, title, tuple(variants)))
+        for mode in ('bitmap', 'mosaic'):
+            variants.append(make('teletext', mode, f'{mode.title()} / {label}', dither, **controls))
+    for slug, label in (('mosaic-large', 'Mosaic / 160x150 logical / FS'),
+                        ('mosaic-c64', 'Mosaic / C64 palette / FS'),
+                        ('mosaic-spectrum', 'Mosaic / Spectrum palette / FS')):
+        variants.append(make('teletext', slug, label, 'floyd-steinberg'))
+    panels.append(Panel('macaws', 'teletext', 'Teletext / bitmap, mosaics and palette swaps', tuple(variants)))
+
+    variants = []
+    for mode, title, controls in (
+        ('bitmap', 'Hires geometry bitmap', dict(profile_name='c64-hires')),
+        ('bitmap', 'Wide bitmap', {}), ('multicolour', 'Multicolour', {}),
+    ):
+        for dither, label in dithers:
+            variants.append(make('c64', mode, f'{title} / {label}', dither, **controls))
+    for label, controls in (
+        ('Multicolour / FS / saturation 1.3', dict(saturation=1.3)),
+        ('Multicolour / FS / green 1.15', dict(green_gain=1.15)),
+        ('Multicolour / FS / hue 20 + green 1.15', dict(hue_shift=20, green_gain=1.15)),
+        ('FS / sat 1.3 + hue 20 + green 1.15', dict(saturation=1.3, hue_shift=20, green_gain=1.15)),
+    ):
+        variants.append(make('c64', 'multicolour', label, 'floyd-steinberg', **controls))
+    variants.append(make('c64', 'multicolour', 'Bayer 4 / sat 1.3 + hue 20 + green 1.15',
+                         'bayer', saturation=1.3, hue_shift=20, green_gain=1.15))
+    panels.append(Panel('lush-landscape', 'c64', 'Commodore 64 / geometry, constraints and greener colour', tuple(variants)))
+
+    variants = []
+    for mode in range(3):
+        for dither, label in dithers:
+            for constraint in ('bitmap', 'constrained'):
+                variants.append(make('cpc', f'mode{mode}-{constraint}',
+                                     f'Mode {mode} / {constraint} / {label}', dither))
+    panels.append(Panel('macaws', 'cpc', 'Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained', tuple(variants)))
+
+    variants = []
+    for dither, label in dithers:
+        for mode in ('bitmap', 'attributes'):
+            variants.append(make('spectrum', mode, f'{mode.title()} / {label}', dither))
+    for size in (2, 8):
+        variants.append(make('spectrum', 'attributes', f'Attributes / Bayer {size}x{size}', 'bayer', bayer_size=size))
+    panels.append(Panel('lush-landscape', 'spectrum', 'ZX Spectrum / bitmap and attribute cells', tuple(variants)))
+
+    variants = []
+    for mode in (0, 1, 2, 4, 5):
+        for dither, label in dithers:
+            variants.append(make('bbc', f'mode{mode}-constrained', f'Mode {mode} / constrained / {label}', dither))
+    for dither, label in dithers[:2]:
+        variants.append(make('bbc', 'mode0-bitmap', f'Mode 0 / unrestricted / {label}', dither))
+    panels.append(Panel('macaws', 'bbc', 'BBC Micro / modes 0, 1, 2, 4 and 5', tuple(variants)))
+
+    variants = []
+    for slug, title in (('lores-bitmap', 'Lores / unrestricted RGB12'),
+                        *[(f'lores-{count}', f'Lores / {count} colours') for count in (2, 4, 8, 16, 32)]):
+        for dither, label in dithers[:2]:
+            variants.append(make('amiga', slug, f'{title} / {label}', dither))
+    for mode in ('ehb', 'ham'):
+        for dither, label in dithers:
+            variants.append(make('amiga', mode, f'{mode.upper()} / {label}', dither))
+    variants.append(make('amiga', 'hires-16', 'Hires / 16 colours / FS', 'floyd-steinberg'))
+    panels.append(Panel('portrait-colour', 'amiga', 'Amiga / RGB12, indexed palettes, EHB and HAM6', tuple(variants)))
+
+    variants = []
+    for mode in ('bitmap', 'playfield', 'repeat', 'mirror'):
+        for dither, label in dithers:
+            variants.append(make('atari2600', f'ntsc-{mode}', f'NTSC / {mode} / {label}', dither))
+    for mode in ('bitmap', 'playfield', 'repeat', 'mirror'):
+        variants.append(make('atari2600', f'pal-{mode}', f'PAL / {mode} / FS', 'floyd-steinberg'))
+    variants.append(make('atari2600', 'ntsc-chunky', 'NTSC / playfield / 8-line bands / FS', 'floyd-steinberg'))
+    panels.append(Panel('lush-landscape', 'atari2600', 'Atari 2600 / bitmap, playfield, repeat and mirror', tuple(variants)))
+
     base = dict(profile_name='cpc-mode1', cpc_mode='constrained', dither='bayer',
                 bayer_size=2, saturation=1.1, scale=2)
     variants = []
@@ -70,6 +143,13 @@ def selections() -> tuple[Panel, ...]:
         variants.append(Variant(slug, label, dict(base, **controls), (640, 400)))
     panels.append(Panel('macaws', 'adjustments', 'CPC mode 1 / Bayer 2x2 / source adjustments', tuple(variants), False))
     return tuple(panels)
+
+
+def panel_size(panel: Panel) -> tuple[int, int]:
+    tiles = len(panel.variants) + int(panel.show_source)
+    if not 1 <= tiles <= 20:
+        raise ValueError('sample panels must contain between one and twenty tiles')
+    return PANEL_WIDTH, 72 + 264 * ((tiles + 1) // 2)
 
 
 def _font(size: int):
@@ -100,12 +180,14 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
     records = json.loads(CATALOG.read_text(encoding='utf-8'))
     sources = {r['id']: r for r in records if r['public']}
     output.parent.mkdir(parents=True, exist_ok=True)
-    manifest = {'version': 2, 'panel_size': list(PANEL_SIZE), 'comparisons': []}
-    lines = ['# Screen-sized sample comparisons', '',
-             'Eight lossless PNG panels, each **800 x 600**, arranged in two columns.',
-             'They cover all seven target families and one macaws colour-adjustment recipe.',
-             'Each target panel shows the source, no dither, Floyd–Steinberg and Bayer 4x4.',
-             'Representative modes keep this collection small; the target reference covers other modes.', '',
+    manifest = {'version': 3, 'panel_width': PANEL_WIDTH, 'columns': 2, 'comparisons': []}
+    lines = ['# Sample mode comparisons', '',
+             'Eight lossless PNG panels, **800 pixels wide**, arranged in two columns.',
+             'Panels grow vertically to show more modes, with at most ten rows each.',
+             'FS means Floyd–Steinberg. No dither, FS and Bayer are compared throughout.',
+             'CPC covers modes 0/1/2; BBC covers 0/1/2/4/5; Amiga includes indexed/EHB/HAM.',
+             'C64 includes neutral and greener saturation/hue/channel-gain examples.',
+             'Teletext uses the colourful macaws for bitmap and mosaic comparisons.', '',
              'Converted previews are fitted with nearest-neighbour resizing for documentation.',
              'They are thumbnails; inspect regenerated individual PNGs for exact pixel patterns.',
              'Source thumbnails use smooth resizing. Palette counts in the manifest refer to',
@@ -127,7 +209,8 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
             source = dict(sources[panel.source])
             path = BUNDLED_SOURCES / source['file']
             source['sha256'] = sha256(path.read_bytes()).hexdigest()
-            sheet = Image.new('RGB', PANEL_SIZE, '#202020')
+            size = panel_size(panel)
+            sheet = Image.new('RGB', size, '#202020')
             draw = ImageDraw.Draw(sheet)
             draw.text((16, 12), panel.title, fill='white', font=_font(18))
             if panel.show_source:
@@ -148,7 +231,8 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
                     if rendered.size != variant.size:
                         raise AssertionError(f'unexpected preview size: {rendered_path}')
                     colours = rendered.convert('RGB').getcolors(maxcolors=len(indexed.palette.colours))
-                    if colours is None or any(rgb not in set(indexed.palette.rgb_values()) for _, rgb in colours):
+                    allowed = set(indexed.palette.rgb_values())
+                    if colours is None or any(rgb not in allowed for _, rgb in colours):
                         raise AssertionError(f'off-palette conversion: {rendered_path}')
                     _tile(sheet, index + int(panel.show_source), variant.label, rendered)
                 command = command_for(source, rendered_path.name, options).replace(
@@ -158,10 +242,11 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
                                      colours_used=len(colours), palette=indexed.palette.name,
                                      sha256=sha256(rendered_path.read_bytes()).hexdigest()))
                 lines.extend([f'### {variant.label}', '', '```bash', command, '```', ''])
-            draw.text((16, 580), '800 x 600 | Source credits and exact settings: README.md', fill='#cccccc', font=_font(12))
+            draw.text((16, size[1] - 20), f'{size[0]} x {size[1]} | Source credits and exact settings: README.md',
+                      fill='#cccccc', font=_font(12))
             sheet.save(stage / panel.filename)
             manifest['comparisons'].append(dict(
-                source=source, family=panel.family, title=panel.title, sheet=panel.filename,
+                source=source, family=panel.family, title=panel.title, sheet=panel.filename, panel_size=list(size),
                 show_source=panel.show_source, sha256=sha256((stage / panel.filename).read_bytes()).hexdigest(), variants=variants))
             lines.extend(['</details>', ''])
             print(f'{panel.filename}: {len(variants)} conversions checked', flush=True)

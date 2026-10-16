@@ -1,9 +1,7 @@
 {
-  "version": 2,
-  "panel_size": [
-    800,
-    600
-  ],
+  "version": 3,
+  "panel_width": 800,
+  "columns": 2,
   "comparisons": [
     {
       "source": {
@@ -23,111 +21,40 @@
         "rights_checked": "2026-10-16",
         "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
       },
-      "family": "cpc",
-      "title": "Amstrad CPC mode 0 / 16 screen colours",
-      "sheet": "macaws-cpc.png",
-      "show_source": true,
-      "sha256": "cf83c32329c3be0c8b85ad5075399ea86d8729cd177b4a7552467eb7ff8cb47b",
-      "variants": [
-        {
-          "label": "No dither",
-          "settings": {
-            "profile_name": "cpc-mode0",
-            "cpc_mode": "constrained",
-            "dither": "none",
-            "scale": 2,
-            "fit": "cover"
-          },
-          "command": "retroimg convert /path/to/image.jpg macaws-cpc-none.png --profile cpc-mode0 --cpc-mode constrained --dither none --scale 2 --fit cover",
-          "preview_size": [
-            640,
-            400
-          ],
-          "logical_size": [
-            160,
-            200
-          ],
-          "colours_used": 16,
-          "palette": "cpc",
-          "sha256": "42fe595e46abacd2284be70f1f9192d305ccc6fc5f7b290516c55556b1708b75"
-        },
-        {
-          "label": "Floyd-Steinberg",
-          "settings": {
-            "profile_name": "cpc-mode0",
-            "cpc_mode": "constrained",
-            "dither": "floyd-steinberg",
-            "scale": 2,
-            "fit": "cover"
-          },
-          "command": "retroimg convert /path/to/image.jpg macaws-cpc-floyd-steinberg.png --profile cpc-mode0 --cpc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
-          "preview_size": [
-            640,
-            400
-          ],
-          "logical_size": [
-            160,
-            200
-          ],
-          "colours_used": 16,
-          "palette": "cpc",
-          "sha256": "20d1e9dabd6cb2ce225b9e86b337710c0fe0113d8acaf5018bb0fe00809ee8ee"
-        },
-        {
-          "label": "Bayer 4x4",
-          "settings": {
-            "profile_name": "cpc-mode0",
-            "cpc_mode": "constrained",
-            "dither": "bayer",
-            "scale": 2,
-            "bayer_size": 4,
-            "fit": "cover"
-          },
-          "command": "retroimg convert /path/to/image.jpg macaws-cpc-bayer.png --profile cpc-mode0 --cpc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
-          "preview_size": [
-            640,
-            400
-          ],
-          "logical_size": [
-            160,
-            200
-          ],
-          "colours_used": 16,
-          "palette": "cpc",
-          "sha256": "da971a6e594ae8db107d31c8098ec3435b7ea6495d5bc196f6b221fd0a0a7dc0"
-        }
-      ]
-    },
-    {
-      "source": {
-        "id": "portrait-colour",
-        "file": "portrait-colour.jpg",
-        "title": "Summer Girl Portrait",
-        "fit": "cover",
-        "public": true,
-        "credit": "Petr Kratochvil",
-        "rights": "CC0 1.0 Universal Public Domain Dedication",
-        "source": "https://www.publicdomainpictures.net/en/view-image.php?image=392516&picture=summer-girl-portrait",
-        "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "download": "https://www.publicdomainpictures.net/pictures/400000/velka/summer-girl-portrait-1619788328kKQ.jpg",
-        "notes": "Source explicitly identifies CC0 and reports obtaining a model release. It also cautions against offensive or derogatory depictions of the person. Do not imply model endorsement. Download is the free standard-resolution version, not the paid original.",
-        "coverage": "Primary colour portrait: skin tones, eyes, hair, hat texture, soft shadows and bright background.",
-        "reference_sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602",
-        "reference_size": [
-          1920,
-          1593
-        ],
-        "rights_checked": "2026-10-16",
-        "sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602"
-      },
       "family": "teletext",
-      "title": "Teletext / two colours per mosaic cell",
-      "sheet": "portrait-colour-teletext.png",
+      "title": "Teletext / bitmap, mosaics and palette swaps",
+      "sheet": "macaws-teletext.png",
+      "panel_size": [
+        800,
+        1920
+      ],
       "show_source": true,
-      "sha256": "69208a55e017cc1e7fe3fa770769d6b5c03348a6fab8450193c8a937bbfb441f",
+      "sha256": "a97d31e73567759bcba31313406484f25726d559b439b33124a96ed697a2b6fe",
       "variants": [
         {
-          "label": "No dither",
+          "label": "Bitmap / No dither",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "bitmap",
+            "dither": "none",
+            "scale": 6,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-bitmap-none.png --profile teletext --teletext-mode bitmap --dither none --scale 6 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "6c66e4c5d5ff1787f3d28d452ee5b1fea599c5ecdc4a6326c6efa475b9de2963"
+        },
+        {
+          "label": "Mosaic / No dither",
           "settings": {
             "profile_name": "teletext",
             "teletext_mode": "mosaic",
@@ -135,7 +62,7 @@
             "scale": 6,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg portrait-colour-teletext-none.png --profile teletext --teletext-mode mosaic --dither none --scale 6 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-none.png --profile teletext --teletext-mode mosaic --dither none --scale 6 --fit cover",
           "preview_size": [
             480,
             450
@@ -144,12 +71,34 @@
             80,
             75
           ],
-          "colours_used": 5,
+          "colours_used": 8,
           "palette": "teletext",
-          "sha256": "4875bcab602112236bcc5fc2d7d2b589ce07da477efbd972f6fc8e1068766707"
+          "sha256": "b35006e28aa12188350c641821d6182497a207efa5453cbd3698a4f4820b74dd"
         },
         {
-          "label": "Floyd-Steinberg",
+          "label": "Bitmap / FS",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 6,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-bitmap-floyd-steinberg.png --profile teletext --teletext-mode bitmap --dither floyd-steinberg --scale 6 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "cc8c4460cc5e15c143703e14d0004894182c3f97484372c2a0e5f6e00a2ad1fc"
+        },
+        {
+          "label": "Mosaic / FS",
           "settings": {
             "profile_name": "teletext",
             "teletext_mode": "mosaic",
@@ -157,7 +106,7 @@
             "scale": 6,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg portrait-colour-teletext-floyd-steinberg.png --profile teletext --teletext-mode mosaic --dither floyd-steinberg --scale 6 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-floyd-steinberg.png --profile teletext --teletext-mode mosaic --dither floyd-steinberg --scale 6 --fit cover",
           "preview_size": [
             480,
             450
@@ -166,12 +115,81 @@
             80,
             75
           ],
-          "colours_used": 5,
+          "colours_used": 8,
           "palette": "teletext",
-          "sha256": "5f346179cce8c20ef44a1a52d2c434ba2543eb51fa2b60a9b7b16966dae4eed8"
+          "sha256": "f794ef3c70f388560c83b400892473f9a96d49b86ec0e6848f81c15bb070ac66"
         },
         {
-          "label": "Bayer 4x4",
+          "label": "Bitmap / Bayer 2x2",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-bitmap-bayer-bayer_size-2.png --profile teletext --teletext-mode bitmap --dither bayer --scale 6 --bayer-size 2 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "356f1e9cbe563131ad9189217ef6f8b0f6ecd18c44a563a1cba0b49aeb73c0a1"
+        },
+        {
+          "label": "Mosaic / Bayer 2x2",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-bayer-bayer_size-2.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 2 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "f38dc0093436accc08156dfcd844106b53eebf1a296a2f0c56030be4a9801432"
+        },
+        {
+          "label": "Bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-bitmap-bayer-bayer_size-4.png --profile teletext --teletext-mode bitmap --dither bayer --scale 6 --bayer-size 4 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "2d81a84649d60983bc5fda2bc741ce9444e1e40ccd85aa5c47b3954bfc516116"
+        },
+        {
+          "label": "Mosaic / Bayer 4x4",
           "settings": {
             "profile_name": "teletext",
             "teletext_mode": "mosaic",
@@ -180,7 +198,7 @@
             "bayer_size": 4,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg portrait-colour-teletext-bayer.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 4 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-bayer-bayer_size-4.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 4 --fit cover",
           "preview_size": [
             480,
             450
@@ -189,9 +207,125 @@
             80,
             75
           ],
-          "colours_used": 5,
+          "colours_used": 8,
           "palette": "teletext",
-          "sha256": "bf2600d34914fcb29e214595d0c5b3461fd9026aa2a6cc884f197dbb687fb3ca"
+          "sha256": "4ae0d31de039f1891101126b6946ed205c7f42ea5f9ff12da90d1c78e29881b5"
+        },
+        {
+          "label": "Bitmap / Bayer 8x8",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 8,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-bitmap-bayer-bayer_size-8.png --profile teletext --teletext-mode bitmap --dither bayer --scale 6 --bayer-size 8 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "c74fa1cd6ef44dbe59f118f21cdf47baa665f110730d91030724496cefe5e2ed"
+        },
+        {
+          "label": "Mosaic / Bayer 8x8",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 8,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-bayer-bayer_size-8.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 8 --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "7c4ff77551ee16feab9f2d1cdc1e7c552267fc0baf814e8070df1daebcfad71a"
+        },
+        {
+          "label": "Mosaic / 160x150 logical / FS",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "width": 160,
+            "height": 150,
+            "scale": 3,
+            "dither": "floyd-steinberg",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-large-floyd-steinberg.png --profile teletext --teletext-mode mosaic --width 160 --height 150 --scale 3 --dither floyd-steinberg --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            160,
+            150
+          ],
+          "colours_used": 8,
+          "palette": "teletext",
+          "sha256": "e179dca7bf0f0eb4895fdd1e5694ad0297c33ad2291dbd704cea67bd643e31bb"
+        },
+        {
+          "label": "Mosaic / C64 palette / FS",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "palette_name": "c64",
+            "scale": 6,
+            "dither": "floyd-steinberg",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-c64-floyd-steinberg.png --profile teletext --teletext-mode mosaic --palette c64 --scale 6 --dither floyd-steinberg --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 9,
+          "palette": "c64",
+          "sha256": "1cb86c3f25d63070d846a974a0022dbe36d3f3b9dc8206048a3148066c24cbde"
+        },
+        {
+          "label": "Mosaic / Spectrum palette / FS",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "palette_name": "spectrum",
+            "scale": 6,
+            "dither": "floyd-steinberg",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-teletext-mosaic-spectrum-floyd-steinberg.png --profile teletext --teletext-mode mosaic --palette spectrum --scale 6 --dither floyd-steinberg --fit cover",
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "colours_used": 9,
+          "palette": "spectrum",
+          "sha256": "c2bb47f04add3d9d03f2cdb10f0b1bbc1160926d8172bb2ae923c08af92336c2"
         }
       ]
     },
@@ -220,13 +354,151 @@
         "sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1"
       },
       "family": "c64",
-      "title": "Commodore 64 / multicolour cells",
+      "title": "Commodore 64 / geometry, constraints and greener colour",
       "sheet": "lush-landscape-c64.png",
+      "panel_size": [
+        800,
+        2184
+      ],
       "show_source": true,
-      "sha256": "6c896662034e941bc662d61774bcf2f6c81af0967df39938545cf4a16c631c22",
+      "sha256": "84dcb5298f54c7266082272e7e7688a656d251a5fed3bf117842e7d709091295",
       "variants": [
         {
-          "label": "No dither",
+          "label": "Hires geometry bitmap / No dither",
+          "settings": {
+            "profile_name": "c64-hires",
+            "c64_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bitmap-none-profile_name-c64-hires.png --profile c64-hires --c64-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 11,
+          "palette": "c64",
+          "sha256": "8decb3e3082d3e9ca0486ffb9a7b2363a5ccbcd47762888d0ee65c926960d374"
+        },
+        {
+          "label": "Hires geometry bitmap / FS",
+          "settings": {
+            "profile_name": "c64-hires",
+            "c64_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bitmap-floyd-steinberg-profile_name-c64-hires.png --profile c64-hires --c64-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "c64",
+          "sha256": "3d7c9ced8e04d450c481cd77886e8a1c58598e8f75abfe5accb257d0d8e37856"
+        },
+        {
+          "label": "Hires geometry bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "c64-hires",
+            "c64_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bitmap-bayer-profile_name-c64-hires.png --profile c64-hires --c64-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "c64",
+          "sha256": "8cd830233f94579c92fe9d353b5a09cc1d4670fb4ce82a4b0f049feae40d8751"
+        },
+        {
+          "label": "Wide bitmap / No dither",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bitmap-none.png --profile c64-multicolour --c64-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 8,
+          "palette": "c64",
+          "sha256": "3420478cc05e9eabf057649da0fa65fb2bc5dfbdaf5b7c3e95baeebdfb101906"
+        },
+        {
+          "label": "Wide bitmap / FS",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bitmap-floyd-steinberg.png --profile c64-multicolour --c64-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "c64",
+          "sha256": "c677f47e482bf1a86f570055b8a09d76f8b8fd83364af3ff5750cdc17f158419"
+        },
+        {
+          "label": "Wide bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bitmap-bayer.png --profile c64-multicolour --c64-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "c64",
+          "sha256": "a9e695ffe58ca1646e8db78d46c9d59cdc73f67c942af352169df3b57f8b90f0"
+        },
+        {
+          "label": "Multicolour / No dither",
           "settings": {
             "profile_name": "c64-multicolour",
             "c64_mode": "multicolour",
@@ -234,7 +506,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-none.png --profile c64-multicolour --c64-mode multicolour --dither none --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-none.png --profile c64-multicolour --c64-mode multicolour --dither none --scale 2 --fit cover",
           "preview_size": [
             640,
             400
@@ -248,7 +520,7 @@
           "sha256": "07fb352e359178fe6118e913b69268c7a37bfa23b5bfa403a37e8a2ae4b3cc41"
         },
         {
-          "label": "Floyd-Steinberg",
+          "label": "Multicolour / FS",
           "settings": {
             "profile_name": "c64-multicolour",
             "c64_mode": "multicolour",
@@ -256,7 +528,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-floyd-steinberg.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-floyd-steinberg.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --fit cover",
           "preview_size": [
             640,
             400
@@ -270,7 +542,7 @@
           "sha256": "928643eac92368450a0b86117efffc0d5c317499d5d5036cdcce98407f0d46e1"
         },
         {
-          "label": "Bayer 4x4",
+          "label": "Multicolour / Bayer 4x4",
           "settings": {
             "profile_name": "c64-multicolour",
             "c64_mode": "multicolour",
@@ -279,7 +551,7 @@
             "bayer_size": 4,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-bayer.png --profile c64-multicolour --c64-mode multicolour --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-bayer.png --profile c64-multicolour --c64-mode multicolour --dither bayer --scale 2 --bayer-size 4 --fit cover",
           "preview_size": [
             640,
             400
@@ -291,6 +563,559 @@
           "colours_used": 8,
           "palette": "c64",
           "sha256": "6ca7ec2487780e43d2701a96db50a4c9435127225b84cc4215b7c9ca5019658c"
+        },
+        {
+          "label": "Multicolour / FS / saturation 1.3",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "saturation": 1.3,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-floyd-steinberg-saturation-1.3.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --saturation 1.3 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 11,
+          "palette": "c64",
+          "sha256": "8ddbd0ffb8c9bfabd24f4d21b53e683ad04feadddecd492c678d3636ab5349cd"
+        },
+        {
+          "label": "Multicolour / FS / green 1.15",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "green_gain": 1.15,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-floyd-steinberg-green_gain-1.15.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --green-gain 1.15 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 11,
+          "palette": "c64",
+          "sha256": "e2aa963b535fb1c681f4a437ab1aff2d89b85cf2b04eb02e9b8fce451f66fa42"
+        },
+        {
+          "label": "Multicolour / FS / hue 20 + green 1.15",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "hue_shift": 20,
+            "green_gain": 1.15,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-floyd-steinberg-hue_shift-20-green_gain-1.15.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --hue-shift 20 --green-gain 1.15 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 12,
+          "palette": "c64",
+          "sha256": "19a5eca5e9448be48b3d24e46561d3ba5a33b52d231992ed9060be4aea4bddbe"
+        },
+        {
+          "label": "FS / sat 1.3 + hue 20 + green 1.15",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "saturation": 1.3,
+            "hue_shift": 20,
+            "green_gain": 1.15,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-floyd-steinberg-saturation-1.3-hue_shift-20-green_gain-1.15.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --saturation 1.3 --hue-shift 20 --green-gain 1.15 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 13,
+          "palette": "c64",
+          "sha256": "1b661aa65bcf703b1a4cb8279333b7f7ae7d2d0707598a93df06973df920c068"
+        },
+        {
+          "label": "Bayer 4 / sat 1.3 + hue 20 + green 1.15",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "bayer",
+            "scale": 2,
+            "saturation": 1.3,
+            "hue_shift": 20,
+            "green_gain": 1.15,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-bayer-saturation-1.3-hue_shift-20-green_gain-1.15.png --profile c64-multicolour --c64-mode multicolour --dither bayer --scale 2 --saturation 1.3 --hue-shift 20 --green-gain 1.15 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 13,
+          "palette": "c64",
+          "sha256": "bfcb26411438dffd4a98de5a8b1c1e50e8dfd8ff4f07d6a95fc04ee695093091"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "macaws",
+        "file": "macaws.jpg",
+        "title": "Blue-and-yellow macaws",
+        "fit": "cover",
+        "public": true,
+        "credit": "Adrian Pingstone (Arpingstone), July 2004",
+        "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+        "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+        "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+        "reference_size": [
+          750,
+          536
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
+      },
+      "family": "cpc",
+      "title": "Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained",
+      "sheet": "macaws-cpc.png",
+      "panel_size": [
+        800,
+        2712
+      ],
+      "show_source": true,
+      "sha256": "e91d2a7bd7239fcbbef74d05e8f49685684b5f7fcb9c47fcdd4b47477c4a734e",
+      "variants": [
+        {
+          "label": "Mode 0 / bitmap / No dither",
+          "settings": {
+            "profile_name": "cpc-mode0",
+            "cpc_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode0-bitmap-none.png --profile cpc-mode0 --cpc-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 17,
+          "palette": "cpc",
+          "sha256": "5ed14e48647b966a88e9861e915d08888ff78f9fce3d03018637a5342a6207fb"
+        },
+        {
+          "label": "Mode 0 / constrained / No dither",
+          "settings": {
+            "profile_name": "cpc-mode0",
+            "cpc_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode0-constrained-none.png --profile cpc-mode0 --cpc-mode constrained --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "cpc",
+          "sha256": "42fe595e46abacd2284be70f1f9192d305ccc6fc5f7b290516c55556b1708b75"
+        },
+        {
+          "label": "Mode 0 / bitmap / FS",
+          "settings": {
+            "profile_name": "cpc-mode0",
+            "cpc_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode0-bitmap-floyd-steinberg.png --profile cpc-mode0 --cpc-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 25,
+          "palette": "cpc",
+          "sha256": "aa44df6cd04bcfa044fa082eeedd9c6d0bbf77ef9e15f93590b5af348e8af34d"
+        },
+        {
+          "label": "Mode 0 / constrained / FS",
+          "settings": {
+            "profile_name": "cpc-mode0",
+            "cpc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode0-constrained-floyd-steinberg.png --profile cpc-mode0 --cpc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "cpc",
+          "sha256": "20d1e9dabd6cb2ce225b9e86b337710c0fe0113d8acaf5018bb0fe00809ee8ee"
+        },
+        {
+          "label": "Mode 0 / bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode0",
+            "cpc_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode0-bitmap-bayer.png --profile cpc-mode0 --cpc-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 27,
+          "palette": "cpc",
+          "sha256": "9d15b18a8c6d3533f5319ddc4ec6c046ec7aa5b7671e12021c5c8236066209d5"
+        },
+        {
+          "label": "Mode 0 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode0",
+            "cpc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode0-constrained-bayer.png --profile cpc-mode0 --cpc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "cpc",
+          "sha256": "da971a6e594ae8db107d31c8098ec3435b7ea6495d5bc196f6b221fd0a0a7dc0"
+        },
+        {
+          "label": "Mode 1 / bitmap / No dither",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode1-bitmap-none.png --profile cpc-mode1 --cpc-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 17,
+          "palette": "cpc",
+          "sha256": "38aa60ff1f4b27bb41fc140f721e03e691c93c24564b1e7fe0a9249b44371641"
+        },
+        {
+          "label": "Mode 1 / constrained / No dither",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode1-constrained-none.png --profile cpc-mode1 --cpc-mode constrained --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cpc",
+          "sha256": "876d0a8485721bc3910765a8cbb21da0b2e2b4e85a720e8f3fffa420388e60e4"
+        },
+        {
+          "label": "Mode 1 / bitmap / FS",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode1-bitmap-floyd-steinberg.png --profile cpc-mode1 --cpc-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 25,
+          "palette": "cpc",
+          "sha256": "72a703eb197c1e01b985035c3b0262555cec14b232a36b7f5aedee00b82af0f6"
+        },
+        {
+          "label": "Mode 1 / constrained / FS",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode1-constrained-floyd-steinberg.png --profile cpc-mode1 --cpc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cpc",
+          "sha256": "b0c0bfc4a173dd38f030d4f52292dcd4021f678d546e264f9c60898737ab8b7b"
+        },
+        {
+          "label": "Mode 1 / bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode1-bitmap-bayer.png --profile cpc-mode1 --cpc-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 27,
+          "palette": "cpc",
+          "sha256": "cbaf3fad29c50b57ff18fba48ef98b817babd0a9b5db8ae22d84b22fbabfa481"
+        },
+        {
+          "label": "Mode 1 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode1-constrained-bayer.png --profile cpc-mode1 --cpc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cpc",
+          "sha256": "0f33e3e23f46ed9aeaae3ebcaf5bfaa0904e7a00b031d74a24e4f4de852b8d7e"
+        },
+        {
+          "label": "Mode 2 / bitmap / No dither",
+          "settings": {
+            "profile_name": "cpc-mode2",
+            "cpc_mode": "bitmap",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode2-bitmap-none.png --profile cpc-mode2 --cpc-mode bitmap --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 17,
+          "palette": "cpc",
+          "sha256": "ff292e47d37e27eb547624d40f8eb247ccbe3d4cd707af6748a4b4843c67e9d9"
+        },
+        {
+          "label": "Mode 2 / constrained / No dither",
+          "settings": {
+            "profile_name": "cpc-mode2",
+            "cpc_mode": "constrained",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode2-constrained-none.png --profile cpc-mode2 --cpc-mode constrained --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 2,
+          "palette": "cpc",
+          "sha256": "272d6277c610f23e3a2938eb276296a37cca963835eb71299b98ea5e53a5591d"
+        },
+        {
+          "label": "Mode 2 / bitmap / FS",
+          "settings": {
+            "profile_name": "cpc-mode2",
+            "cpc_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode2-bitmap-floyd-steinberg.png --profile cpc-mode2 --cpc-mode bitmap --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 25,
+          "palette": "cpc",
+          "sha256": "ced64645d54faea68f27c31b82b7509efd42f6f72be1fdfcaafdabfb715b4e2a"
+        },
+        {
+          "label": "Mode 2 / constrained / FS",
+          "settings": {
+            "profile_name": "cpc-mode2",
+            "cpc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode2-constrained-floyd-steinberg.png --profile cpc-mode2 --cpc-mode constrained --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 2,
+          "palette": "cpc",
+          "sha256": "a2b459497d1a78b7fbd4911cbc56f83ba9810e73ea4544494520b14b406963e3"
+        },
+        {
+          "label": "Mode 2 / bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode2",
+            "cpc_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode2-bitmap-bayer.png --profile cpc-mode2 --cpc-mode bitmap --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 27,
+          "palette": "cpc",
+          "sha256": "6a8bd353bbfe6b10cbb1eb801beffa8485ff70f10659d264af3f9dc0737c01f0"
+        },
+        {
+          "label": "Mode 2 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode2",
+            "cpc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cpc-mode2-constrained-bayer.png --profile cpc-mode2 --cpc-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 2,
+          "palette": "cpc",
+          "sha256": "57fff3be8564f37abcbbd41010fb3f9b204c5c24dbfa475f4ec3cbaffdd23740"
         }
       ]
     },
@@ -319,13 +1144,39 @@
         "sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1"
       },
       "family": "spectrum",
-      "title": "ZX Spectrum / attribute cells",
+      "title": "ZX Spectrum / bitmap and attribute cells",
       "sheet": "lush-landscape-spectrum.png",
+      "panel_size": [
+        800,
+        1392
+      ],
       "show_source": true,
-      "sha256": "c61ef2e1babecbaac7c03867902e6a4c77b8217a04462ca42e27d23848bff326",
+      "sha256": "7c8b3b338fb585db267cf3a8634dc0fbd3386793bac0ca874639387310be093e",
       "variants": [
         {
-          "label": "No dither",
+          "label": "Bitmap / No dither",
+          "settings": {
+            "profile_name": "spectrum",
+            "spectrum_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-bitmap-none.png --profile spectrum --spectrum-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 9,
+          "palette": "spectrum",
+          "sha256": "c3fd8d5483dc8f2715a6f7428e782e19a23f3b1f3ba5a5832e1cdd24a93ec4c4"
+        },
+        {
+          "label": "Attributes / No dither",
           "settings": {
             "profile_name": "spectrum",
             "spectrum_mode": "attributes",
@@ -333,7 +1184,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-none.png --profile spectrum --spectrum-mode attributes --dither none --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-attributes-none.png --profile spectrum --spectrum-mode attributes --dither none --scale 2 --fit cover",
           "preview_size": [
             512,
             384
@@ -347,7 +1198,29 @@
           "sha256": "f2049887ec3ad1f5a34978924bc8f0eb43b5ee59fd370b0149246434319052a7"
         },
         {
-          "label": "Floyd-Steinberg",
+          "label": "Bitmap / FS",
+          "settings": {
+            "profile_name": "spectrum",
+            "spectrum_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-bitmap-floyd-steinberg.png --profile spectrum --spectrum-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 13,
+          "palette": "spectrum",
+          "sha256": "ff6964e99df7bac8fb18f32485c2a0ec1249eda2e81145a5b84b3191c13a0255"
+        },
+        {
+          "label": "Attributes / FS",
           "settings": {
             "profile_name": "spectrum",
             "spectrum_mode": "attributes",
@@ -355,7 +1228,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-floyd-steinberg.png --profile spectrum --spectrum-mode attributes --dither floyd-steinberg --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-attributes-floyd-steinberg.png --profile spectrum --spectrum-mode attributes --dither floyd-steinberg --scale 2 --fit cover",
           "preview_size": [
             512,
             384
@@ -369,7 +1242,30 @@
           "sha256": "1e8860a579a87298072a9561749f019b4309006197bb279ca2bbc1c5a0500133"
         },
         {
-          "label": "Bayer 4x4",
+          "label": "Bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "spectrum",
+            "spectrum_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-bitmap-bayer.png --profile spectrum --spectrum-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 15,
+          "palette": "spectrum",
+          "sha256": "e392cea65e964aa0bcffbc615c0ad30e6bf6cb4cd8cd1b7cba174e7a4d55539b"
+        },
+        {
+          "label": "Attributes / Bayer 4x4",
           "settings": {
             "profile_name": "spectrum",
             "spectrum_mode": "attributes",
@@ -378,7 +1274,7 @@
             "bayer_size": 4,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-bayer.png --profile spectrum --spectrum-mode attributes --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-attributes-bayer.png --profile spectrum --spectrum-mode attributes --dither bayer --scale 2 --bayer-size 4 --fit cover",
           "preview_size": [
             512,
             384
@@ -390,6 +1286,52 @@
           "colours_used": 8,
           "palette": "spectrum",
           "sha256": "819eba585607f5ad8d088ad060bb42aa856956109741b60958c4fd2899a17bd4"
+        },
+        {
+          "label": "Attributes / Bayer 2x2",
+          "settings": {
+            "profile_name": "spectrum",
+            "spectrum_mode": "attributes",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-attributes-bayer-bayer_size-2.png --profile spectrum --spectrum-mode attributes --dither bayer --scale 2 --bayer-size 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 8,
+          "palette": "spectrum",
+          "sha256": "d539718ff92b88db0a4a9b60b13842a2c7d718fc24d149ca8a62c72436d848d5"
+        },
+        {
+          "label": "Attributes / Bayer 8x8",
+          "settings": {
+            "profile_name": "spectrum",
+            "spectrum_mode": "attributes",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 8,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-spectrum-attributes-bayer-bayer_size-8.png --profile spectrum --spectrum-mode attributes --dither bayer --scale 2 --bayer-size 8 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 8,
+          "palette": "spectrum",
+          "sha256": "867a9598d5c28f5ba905f90a8abc6304b22adee7eb0de8bab30ea90146134e99"
         }
       ]
     },
@@ -412,13 +1354,151 @@
         "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
       },
       "family": "bbc",
-      "title": "BBC Micro mode 2 / eight steady colours",
+      "title": "BBC Micro / modes 0, 1, 2, 4 and 5",
       "sheet": "macaws-bbc.png",
+      "panel_size": [
+        800,
+        2448
+      ],
       "show_source": true,
-      "sha256": "e9e2263bbf81bccfc04c2c35db278fc1f84953cabc63fa61bae1636c150f70d0",
+      "sha256": "00756fd72291df078450f13dc816b61332c37d8935bd777ab44a924d31354031",
       "variants": [
         {
-          "label": "No dither",
+          "label": "Mode 0 / constrained / No dither",
+          "settings": {
+            "profile_name": "bbc-mode0",
+            "bbc_mode": "constrained",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode0-constrained-none.png --profile bbc-mode0 --bbc-mode constrained --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            640,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "bbc",
+          "sha256": "6611bf46d923ce825c38b93c3bcb333b88f329b47bd4e29fd7a90e01c489d251"
+        },
+        {
+          "label": "Mode 0 / constrained / FS",
+          "settings": {
+            "profile_name": "bbc-mode0",
+            "bbc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode0-constrained-floyd-steinberg.png --profile bbc-mode0 --bbc-mode constrained --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            640,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "bbc",
+          "sha256": "c9b3f39ae965776d79038b278a6675708f3ec4a278b82042d4f6f206c82b6d04"
+        },
+        {
+          "label": "Mode 0 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "bbc-mode0",
+            "bbc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode0-constrained-bayer.png --profile bbc-mode0 --bbc-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            640,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "bbc",
+          "sha256": "1c554c293ecfcfeada34e22faf3d3123dc77435a0043ac8159d32967b8c488c0"
+        },
+        {
+          "label": "Mode 1 / constrained / No dither",
+          "settings": {
+            "profile_name": "bbc-mode1",
+            "bbc_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode1-constrained-none.png --profile bbc-mode1 --bbc-mode constrained --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "bbc",
+          "sha256": "9d30770b65cebe8fc86fb1ec8a93446d3754af43a2a72d5887c5002bef40dba0"
+        },
+        {
+          "label": "Mode 1 / constrained / FS",
+          "settings": {
+            "profile_name": "bbc-mode1",
+            "bbc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode1-constrained-floyd-steinberg.png --profile bbc-mode1 --bbc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "bbc",
+          "sha256": "a33ba4f34d70dcaec4ad5f4ac26ed159da1cf3595744000447c31deb14088c2b"
+        },
+        {
+          "label": "Mode 1 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "bbc-mode1",
+            "bbc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode1-constrained-bayer.png --profile bbc-mode1 --bbc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "bbc",
+          "sha256": "12e37271606f158890f1680f379e25c48dcd36465cba7a7943834de6603420ac"
+        },
+        {
+          "label": "Mode 2 / constrained / No dither",
           "settings": {
             "profile_name": "bbc-mode2",
             "bbc_mode": "constrained",
@@ -426,7 +1506,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg macaws-bbc-none.png --profile bbc-mode2 --bbc-mode constrained --dither none --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode2-constrained-none.png --profile bbc-mode2 --bbc-mode constrained --dither none --scale 2 --fit cover",
           "preview_size": [
             640,
             512
@@ -440,7 +1520,7 @@
           "sha256": "d615240fe3a44c997a9eec02790395f25ee38eb7af87eeaa9ff1e57d06562586"
         },
         {
-          "label": "Floyd-Steinberg",
+          "label": "Mode 2 / constrained / FS",
           "settings": {
             "profile_name": "bbc-mode2",
             "bbc_mode": "constrained",
@@ -448,7 +1528,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg macaws-bbc-floyd-steinberg.png --profile bbc-mode2 --bbc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode2-constrained-floyd-steinberg.png --profile bbc-mode2 --bbc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
           "preview_size": [
             640,
             512
@@ -462,7 +1542,7 @@
           "sha256": "51990543706694c104d2e7106ebf687db2f756e3ed3fb96b20eb4bfdc79abee4"
         },
         {
-          "label": "Bayer 4x4",
+          "label": "Mode 2 / constrained / Bayer 4x4",
           "settings": {
             "profile_name": "bbc-mode2",
             "bbc_mode": "constrained",
@@ -471,7 +1551,7 @@
             "bayer_size": 4,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg macaws-bbc-bayer.png --profile bbc-mode2 --bbc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode2-constrained-bayer.png --profile bbc-mode2 --bbc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
           "preview_size": [
             640,
             512
@@ -483,6 +1563,184 @@
           "colours_used": 8,
           "palette": "bbc",
           "sha256": "c4eec3e5e59d46510ab850feaaafe010bac93b7c5769df39c2c6f7585bd5ba29"
+        },
+        {
+          "label": "Mode 4 / constrained / No dither",
+          "settings": {
+            "profile_name": "bbc-mode4",
+            "bbc_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode4-constrained-none.png --profile bbc-mode4 --bbc-mode constrained --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "bbc",
+          "sha256": "516f7091454f01f81a0bfa3a1c96d1ff5ca4d7f92937211bf5dabd4fe24b4646"
+        },
+        {
+          "label": "Mode 4 / constrained / FS",
+          "settings": {
+            "profile_name": "bbc-mode4",
+            "bbc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode4-constrained-floyd-steinberg.png --profile bbc-mode4 --bbc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "bbc",
+          "sha256": "cbb1d18bae8e3cc28af629cbe98832a2ba1b497f12819c4ad090a2089bedbdf8"
+        },
+        {
+          "label": "Mode 4 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "bbc-mode4",
+            "bbc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode4-constrained-bayer.png --profile bbc-mode4 --bbc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "bbc",
+          "sha256": "6fea3836156af9b0e8118f4a597100fbceb45ab834ecf0c364af39c53f2abaee"
+        },
+        {
+          "label": "Mode 5 / constrained / No dither",
+          "settings": {
+            "profile_name": "bbc-mode5",
+            "bbc_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode5-constrained-none.png --profile bbc-mode5 --bbc-mode constrained --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            160,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "bbc",
+          "sha256": "0f8349e3ad503d3a0d8bf4bf5c0e9617b1e241fed78fdfb9e7605937a347e43d"
+        },
+        {
+          "label": "Mode 5 / constrained / FS",
+          "settings": {
+            "profile_name": "bbc-mode5",
+            "bbc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode5-constrained-floyd-steinberg.png --profile bbc-mode5 --bbc-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            160,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "bbc",
+          "sha256": "9e7ea7c9b89aafdbd86cacf89dfe8b8700248103e4fe1257a2461c0067e928ad"
+        },
+        {
+          "label": "Mode 5 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "bbc-mode5",
+            "bbc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode5-constrained-bayer.png --profile bbc-mode5 --bbc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            160,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "bbc",
+          "sha256": "489f04c5cea58a9a098f001494e19d76a60d9d46d0894e8292aae3ab06cefa63"
+        },
+        {
+          "label": "Mode 0 / unrestricted / No dither",
+          "settings": {
+            "profile_name": "bbc-mode0",
+            "bbc_mode": "bitmap",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode0-bitmap-none.png --profile bbc-mode0 --bbc-mode bitmap --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            640,
+            256
+          ],
+          "colours_used": 8,
+          "palette": "bbc",
+          "sha256": "908133dfca46ec50a04ad78396682ee72dcfd7013462d4efc92a2eb0767b8ff1"
+        },
+        {
+          "label": "Mode 0 / unrestricted / FS",
+          "settings": {
+            "profile_name": "bbc-mode0",
+            "bbc_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-bbc-mode0-bitmap-floyd-steinberg.png --profile bbc-mode0 --bbc-mode bitmap --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            640,
+            256
+          ],
+          "colours_used": 8,
+          "palette": "bbc",
+          "sha256": "827daaf447131f5e2812c0eaeaf82a3e09a564ce691526bfce60fee4bc27c568"
         }
       ]
     },
@@ -509,13 +1767,243 @@
         "sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602"
       },
       "family": "amiga",
-      "title": "Amiga PAL low resolution / 32 colours",
+      "title": "Amiga / RGB12, indexed palettes, EHB and HAM6",
       "sheet": "portrait-colour-amiga.png",
+      "panel_size": [
+        800,
+        2712
+      ],
       "show_source": true,
-      "sha256": "17d4ecf5648c61267c5e22eabedbac1afb18c604a5f430190b85db72280bfa47",
+      "sha256": "2ac74dcaec3d58efe7670a22c16590bcb702dce44cd9db859a174cb5f0b6c4d4",
       "variants": [
         {
-          "label": "No dither",
+          "label": "Lores / unrestricted RGB12 / No dither",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-bitmap-none.png --profile amiga-lores --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 246,
+          "palette": "amiga",
+          "sha256": "6dfa7758a7fab3af7688661ba2a753959857ad926978f73b17d60b7eced1dee3"
+        },
+        {
+          "label": "Lores / unrestricted RGB12 / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-bitmap-floyd-steinberg.png --profile amiga-lores --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 290,
+          "palette": "amiga",
+          "sha256": "745557fb8c48ace5069c7c457254fe7ffd56ba23aeea1c67eb0843aef63f358c"
+        },
+        {
+          "label": "Lores / 2 colours / No dither",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 2,
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-2-none.png --profile amiga-lores --amiga-mode constrained --colours 2 --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "amiga",
+          "sha256": "454bdb04debe3f43bf21e97aa26a7a8b32e8f2594cded1bd4cdf154ed58cee21"
+        },
+        {
+          "label": "Lores / 2 colours / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 2,
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-2-floyd-steinberg.png --profile amiga-lores --amiga-mode constrained --colours 2 --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 2,
+          "palette": "amiga",
+          "sha256": "49bc765c5c8b7e1437e0fb089f21642217968cc4dc99f9e20a81c81bfd056fd5"
+        },
+        {
+          "label": "Lores / 4 colours / No dither",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 4,
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-4-none.png --profile amiga-lores --amiga-mode constrained --colours 4 --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "amiga",
+          "sha256": "46e90dcf59ccc679fb9d67690239485ef2decf59fb5a4692a548bdd21454a71e"
+        },
+        {
+          "label": "Lores / 4 colours / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 4,
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-4-floyd-steinberg.png --profile amiga-lores --amiga-mode constrained --colours 4 --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 4,
+          "palette": "amiga",
+          "sha256": "c0dd8bd177908d0e652076f5f817095f60615840e87e0bfbf4bf2b135ce21810"
+        },
+        {
+          "label": "Lores / 8 colours / No dither",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 8,
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-8-none.png --profile amiga-lores --amiga-mode constrained --colours 8 --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 8,
+          "palette": "amiga",
+          "sha256": "5b43d3fdcaa1c9d305fbb85f2070fe42113553dd1d72280ecde3a23e8696a598"
+        },
+        {
+          "label": "Lores / 8 colours / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 8,
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-8-floyd-steinberg.png --profile amiga-lores --amiga-mode constrained --colours 8 --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 8,
+          "palette": "amiga",
+          "sha256": "d3e8eb9a95715c5566c639f3d3112b653142ef17f63bcfbcb6d2cbe322224dda"
+        },
+        {
+          "label": "Lores / 16 colours / No dither",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 16,
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-16-none.png --profile amiga-lores --amiga-mode constrained --colours 16 --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 16,
+          "palette": "amiga",
+          "sha256": "44d06d711bf57bdf33aa7f2780781cea01a64cf3720fe00c1b74f3a7efd5b07e"
+        },
+        {
+          "label": "Lores / 16 colours / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "constrained",
+            "colours": 16,
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-16-floyd-steinberg.png --profile amiga-lores --amiga-mode constrained --colours 16 --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 16,
+          "palette": "amiga",
+          "sha256": "9b78e60448614f79db0d30939f0f9cb4ecdb70e478b3f5ace6b6de3931ec438b"
+        },
+        {
+          "label": "Lores / 32 colours / No dither",
           "settings": {
             "profile_name": "amiga-lores",
             "amiga_mode": "constrained",
@@ -524,7 +2012,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-none.png --profile amiga-lores --amiga-mode constrained --colours 32 --dither none --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-32-none.png --profile amiga-lores --amiga-mode constrained --colours 32 --dither none --scale 2 --fit cover",
           "preview_size": [
             640,
             512
@@ -538,7 +2026,7 @@
           "sha256": "3f6b5cd1eebb1212df342f70f8660683e1a8ba3b9f87c98a1891dd714c9c3278"
         },
         {
-          "label": "Floyd-Steinberg",
+          "label": "Lores / 32 colours / FS",
           "settings": {
             "profile_name": "amiga-lores",
             "amiga_mode": "constrained",
@@ -547,7 +2035,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-floyd-steinberg.png --profile amiga-lores --amiga-mode constrained --colours 32 --dither floyd-steinberg --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-lores-32-floyd-steinberg.png --profile amiga-lores --amiga-mode constrained --colours 32 --dither floyd-steinberg --scale 2 --fit cover",
           "preview_size": [
             640,
             512
@@ -561,17 +2049,15 @@
           "sha256": "26d87312e56da46f8c41b6c0e8fe3cdfe278d06b6efec3acbe5b24113baee429"
         },
         {
-          "label": "Bayer 4x4",
+          "label": "EHB / No dither",
           "settings": {
             "profile_name": "amiga-lores",
-            "amiga_mode": "constrained",
-            "colours": 32,
-            "dither": "bayer",
+            "amiga_mode": "ehb",
+            "dither": "none",
             "scale": 2,
-            "bayer_size": 4,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-bayer.png --profile amiga-lores --amiga-mode constrained --colours 32 --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-ehb-none.png --profile amiga-lores --amiga-mode ehb --dither none --scale 2 --fit cover",
           "preview_size": [
             640,
             512
@@ -580,9 +2066,144 @@
             320,
             256
           ],
-          "colours_used": 32,
+          "colours_used": 52,
+          "palette": "amiga-ehb",
+          "sha256": "9de662c0da04c06f2587271e519e9c14337ee21a1a774541a3cd38fffb2b631f"
+        },
+        {
+          "label": "EHB / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "ehb",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-ehb-floyd-steinberg.png --profile amiga-lores --amiga-mode ehb --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 52,
+          "palette": "amiga-ehb",
+          "sha256": "8b18e2eb863d8ef76d47de2b11607d08fb61f15451b44eac93d9660eff3190f9"
+        },
+        {
+          "label": "EHB / Bayer 4x4",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "ehb",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-ehb-bayer.png --profile amiga-lores --amiga-mode ehb --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 54,
+          "palette": "amiga-ehb",
+          "sha256": "cabe269c4558b1cbebc76f7aeb6e1d72bb8d20bf37d730c20c3b8a87cd4ef4e0"
+        },
+        {
+          "label": "HAM / No dither",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "ham",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-ham-none.png --profile amiga-lores --amiga-mode ham --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 247,
           "palette": "amiga",
-          "sha256": "398139aed6c81d574c71a56bd89cb7959751f48fa3b8f1551a7771568eb86474"
+          "sha256": "ac3796e890f57dacc4457f66654d59ec75f5f097d7f697e9aa8db9887f535590"
+        },
+        {
+          "label": "HAM / FS",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "ham",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-ham-floyd-steinberg.png --profile amiga-lores --amiga-mode ham --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 463,
+          "palette": "amiga",
+          "sha256": "77ba7c14956a66d059fd11b19feece44ce1c585ae48eb74c1b8bdb1e70f626f9"
+        },
+        {
+          "label": "HAM / Bayer 4x4",
+          "settings": {
+            "profile_name": "amiga-lores",
+            "amiga_mode": "ham",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-ham-bayer.png --profile amiga-lores --amiga-mode ham --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            320,
+            256
+          ],
+          "colours_used": 661,
+          "palette": "amiga",
+          "sha256": "c688c6049d633a68e6b2eaab42813cf535e9738c6f688da063efb206b4193461"
+        },
+        {
+          "label": "Hires / 16 colours / FS",
+          "settings": {
+            "profile_name": "amiga-hires",
+            "amiga_mode": "constrained",
+            "colours": 16,
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-amiga-hires-16-floyd-steinberg.png --profile amiga-hires --amiga-mode constrained --colours 16 --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            512
+          ],
+          "logical_size": [
+            640,
+            256
+          ],
+          "colours_used": 16,
+          "palette": "amiga",
+          "sha256": "02592cb534cf9a20675728466108ddbbedfd3673c140bcaf16867defa2d1e0fc"
         }
       ]
     },
@@ -611,13 +2232,84 @@
         "sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1"
       },
       "family": "atari2600",
-      "title": "Atari 2600 NTSC / independent playfield",
+      "title": "Atari 2600 / bitmap, playfield, repeat and mirror",
       "sheet": "lush-landscape-atari2600.png",
+      "panel_size": [
+        800,
+        2448
+      ],
       "show_source": true,
-      "sha256": "d7eb95527234a73ff894f4777bfc587284f10413a7a79f03f3c1057e2ca3f63a",
+      "sha256": "a4161fa80e36be2e2e043041dde0f7c33672765fffc4e91d77136b9b98b2686b",
       "variants": [
         {
-          "label": "No dither",
+          "label": "NTSC / bitmap / No dither",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-bitmap-none.png --profile atari2600-ntsc --atari-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 50,
+          "palette": "atari2600-ntsc",
+          "sha256": "5c792ade0e8c7a0e41bbaf681d518d77311feae6ad26ef451b217064d9ce7d84"
+        },
+        {
+          "label": "NTSC / bitmap / FS",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-bitmap-floyd-steinberg.png --profile atari2600-ntsc --atari-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 91,
+          "palette": "atari2600-ntsc",
+          "sha256": "a4624c6a1f477a32feddf473f0dd45597e719afe30eaf81175ecdf7d8acb8a7f"
+        },
+        {
+          "label": "NTSC / bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-bitmap-bayer.png --profile atari2600-ntsc --atari-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 128,
+          "palette": "atari2600-ntsc",
+          "sha256": "a5473cc057cd87bf400ca7bf47a5ae1882295e23e59ecca532f26b90ab11ff72"
+        },
+        {
+          "label": "NTSC / playfield / No dither",
           "settings": {
             "profile_name": "atari2600-ntsc",
             "atari_mode": "playfield",
@@ -625,7 +2317,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-none.png --profile atari2600-ntsc --atari-mode playfield --dither none --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-playfield-none.png --profile atari2600-ntsc --atari-mode playfield --dither none --scale 2 --fit cover",
           "preview_size": [
             512,
             384
@@ -639,7 +2331,7 @@
           "sha256": "d7fd203246e89b820d651aa980b7a55cf9cb2b29e7c1e7dd3181dbb3a7fbfab7"
         },
         {
-          "label": "Floyd-Steinberg",
+          "label": "NTSC / playfield / FS",
           "settings": {
             "profile_name": "atari2600-ntsc",
             "atari_mode": "playfield",
@@ -647,7 +2339,7 @@
             "scale": 2,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-floyd-steinberg.png --profile atari2600-ntsc --atari-mode playfield --dither floyd-steinberg --scale 2 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-playfield-floyd-steinberg.png --profile atari2600-ntsc --atari-mode playfield --dither floyd-steinberg --scale 2 --fit cover",
           "preview_size": [
             512,
             384
@@ -661,7 +2353,7 @@
           "sha256": "88dc974f136770e87676296db6da9270d9a829b463b568979ddaed8c9e157773"
         },
         {
-          "label": "Bayer 4x4",
+          "label": "NTSC / playfield / Bayer 4x4",
           "settings": {
             "profile_name": "atari2600-ntsc",
             "atari_mode": "playfield",
@@ -670,7 +2362,7 @@
             "bayer_size": 4,
             "fit": "cover"
           },
-          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-bayer.png --profile atari2600-ntsc --atari-mode playfield --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-playfield-bayer.png --profile atari2600-ntsc --atari-mode playfield --dither bayer --scale 2 --bayer-size 4 --fit cover",
           "preview_size": [
             512,
             384
@@ -682,6 +2374,251 @@
           "colours_used": 18,
           "palette": "atari2600-ntsc",
           "sha256": "1322281b9442ec4577f24817ba3991fb148a71b9408833d9910b5ab0b2d23e0c"
+        },
+        {
+          "label": "NTSC / repeat / No dither",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "repeat",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-repeat-none.png --profile atari2600-ntsc --atari-mode repeat --dither none --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 18,
+          "palette": "atari2600-ntsc",
+          "sha256": "54dc50aa773fa22120469aff45ac9e059604a894d593441c023f7a2f0613e92d"
+        },
+        {
+          "label": "NTSC / repeat / FS",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "repeat",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-repeat-floyd-steinberg.png --profile atari2600-ntsc --atari-mode repeat --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 19,
+          "palette": "atari2600-ntsc",
+          "sha256": "17bae5b208ccca95a6d6d4bd8946dbd7fdb34dda6f17cca3f60d5f3b685af48d"
+        },
+        {
+          "label": "NTSC / repeat / Bayer 4x4",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "repeat",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-repeat-bayer.png --profile atari2600-ntsc --atari-mode repeat --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 19,
+          "palette": "atari2600-ntsc",
+          "sha256": "566259498a24cf2965b1778ef8f063e2e9b59f32c46509a9e200597c206d2448"
+        },
+        {
+          "label": "NTSC / mirror / No dither",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "mirror",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-mirror-none.png --profile atari2600-ntsc --atari-mode mirror --dither none --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 17,
+          "palette": "atari2600-ntsc",
+          "sha256": "d392b564154872f318c9cae6b46c2b1359be8a93af4aaca1ecf95d2ed9e4690a"
+        },
+        {
+          "label": "NTSC / mirror / FS",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "mirror",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-mirror-floyd-steinberg.png --profile atari2600-ntsc --atari-mode mirror --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 18,
+          "palette": "atari2600-ntsc",
+          "sha256": "e6da3f5ce1f5199412a00c7d4227e076e13a8c128f9aab93dcdc06cd782db5ab"
+        },
+        {
+          "label": "NTSC / mirror / Bayer 4x4",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "mirror",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-mirror-bayer.png --profile atari2600-ntsc --atari-mode mirror --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 18,
+          "palette": "atari2600-ntsc",
+          "sha256": "c35f8e35b7fc9f7e5000df31d42c4dd8b15c6629f1df70d92658b85a79967282"
+        },
+        {
+          "label": "PAL / bitmap / FS",
+          "settings": {
+            "profile_name": "atari2600-pal",
+            "atari_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-pal-bitmap-floyd-steinberg.png --profile atari2600-pal --atari-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            608,
+            456
+          ],
+          "logical_size": [
+            160,
+            228
+          ],
+          "colours_used": 80,
+          "palette": "atari2600-pal",
+          "sha256": "c97e3c30c7f017e95d6cb999172911cb8ca5b48b10c573b5424ba943636b21a0"
+        },
+        {
+          "label": "PAL / playfield / FS",
+          "settings": {
+            "profile_name": "atari2600-pal",
+            "atari_mode": "playfield",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-pal-playfield-floyd-steinberg.png --profile atari2600-pal --atari-mode playfield --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            608,
+            456
+          ],
+          "logical_size": [
+            160,
+            228
+          ],
+          "colours_used": 13,
+          "palette": "atari2600-pal",
+          "sha256": "24dd5c8f068db1315fe23d615a2eb79fe5120fd13eb996070af450903bc8999d"
+        },
+        {
+          "label": "PAL / repeat / FS",
+          "settings": {
+            "profile_name": "atari2600-pal",
+            "atari_mode": "repeat",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-pal-repeat-floyd-steinberg.png --profile atari2600-pal --atari-mode repeat --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            608,
+            456
+          ],
+          "logical_size": [
+            160,
+            228
+          ],
+          "colours_used": 14,
+          "palette": "atari2600-pal",
+          "sha256": "0aee6dd34ee2de5b6cf0cab8ebe3d687e42d1f0042f3610050052db90bdedf1a"
+        },
+        {
+          "label": "PAL / mirror / FS",
+          "settings": {
+            "profile_name": "atari2600-pal",
+            "atari_mode": "mirror",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-pal-mirror-floyd-steinberg.png --profile atari2600-pal --atari-mode mirror --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            608,
+            456
+          ],
+          "logical_size": [
+            160,
+            228
+          ],
+          "colours_used": 17,
+          "palette": "atari2600-pal",
+          "sha256": "3670283c36511a97cc072ef9e4824f795e049676eb533cbf6a4af65720489f62"
+        },
+        {
+          "label": "NTSC / playfield / 8-line bands / FS",
+          "settings": {
+            "profile_name": "atari2600-ntsc",
+            "atari_mode": "playfield",
+            "atari_row_height": 8,
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-chunky-floyd-steinberg.png --profile atari2600-ntsc --atari-mode playfield --atari-row-height 8 --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            160,
+            192
+          ],
+          "colours_used": 15,
+          "palette": "atari2600-ntsc",
+          "sha256": "95adb5bf19c3ec0e5f87295a608e0b4853a1617fc41bbc4e22190b4fecebdf5e"
         }
       ]
     },
@@ -706,6 +2643,10 @@
       "family": "adjustments",
       "title": "CPC mode 1 / Bayer 2x2 / source adjustments",
       "sheet": "macaws-adjustments.png",
+      "panel_size": [
+        800,
+        600
+      ],
       "show_source": false,
       "sha256": "aeabcbd301fdcb55b0a78e4122d2a52c7b8586037dfbdabc213161c2ff709960",
       "variants": [

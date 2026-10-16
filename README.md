@@ -165,9 +165,11 @@ CRT/scanline effects and native hardware export are deferred.
 ## Example results
 
 The [sample comparisons](samples/comparisons/README.md) show selected conversions
-of the bundled public-domain/CC0 reference photographs. Eight **800×600** panels
-cover all target families and a macaws adjustment recipe. Each has readable
-labels, source credits and expandable reproduction commands.
+of the bundled public-domain/CC0 reference photographs. Eight panels stay
+**800 pixels wide**, with two columns and up to ten rows. They compare multiple
+modes per family: CPC 0/1/2, BBC 0/1/2/4/5, Amiga indexed/EHB/HAM and more.
+C64 includes greener saturation/hue/gain settings; colourful macaws demonstrate
+Teletext. Each panel has labels, credits and expandable reproduction commands.
 
 ![CPC mode 1 source adjustments](samples/comparisons/macaws-adjustments.png)
 

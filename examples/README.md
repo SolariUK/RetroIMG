@@ -188,11 +188,14 @@ recorded in each gallery manifest.
 ## Curated repository samples
 
 `generate_samples.py` reuses the converter, mode variants and constraint checks
-to maintain eight 800×600 PNG panels with two-by-two layouts. Seven show a source
-photograph, no dither, Floyd–Steinberg and Bayer 4×4 for one representative mode
-per target family. The eighth shows CPC macaws with blue gain, brightness and
-contrast adjustments. This is a bounded documentation set rather than a full
-conversion matrix. It defaults to `samples/comparisons`.
+to maintain eight PNG panels, each 800 pixels wide with two columns and up to
+ten rows. The seven family panels show several modes and dithers: Teletext
+bitmap/mosaic and palette swaps; C64 geometry, multicolour and greener colour
+settings; CPC 0/1/2 bitmap/constrained; Spectrum bitmap/attributes; BBC 0/1/2/4/5;
+Amiga RGB12, indexed 2/4/8/16/32, EHB/HAM6 and hires; Atari bitmap, playfield,
+repeat/mirror and PAL/NTSC. The eighth retains the CPC macaws blue-gain,
+brightness and contrast recipe. This remains a bounded documentation set,
+defaulting to `samples/comparisons`; individual conversions are temporary.
 
 ```bash
 python examples/generate_samples.py --replace
