@@ -1,0 +1,52 @@
+name: Windows portable test build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/windows-portable.yml'
+      - 'scripts/build_portable.py'
+      - 'scripts/check_portable.py'
+      - 'scripts/retroimg_entry.py'
+      - 'retroimg/**'
+      - 'pyproject.toml'
+      - 'docs/portable.md'
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Install test and bundle dependencies
+        run: python -m pip install -e ".[dev,guided,bundle]"
+      - name: Run regression tests
+        run: python -m pytest -q
+      - name: Build portable console application
+        run: python scripts/build_portable.py
+      - name: Test the extracted ZIP outside the checkout
+        shell: pwsh
+        run: |
+          $archive = Get-ChildItem dist/portable/*.zip | Select-Object -First 1
+          python scripts/check_portable.py $archive.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: retroimg-windows-x64-${{ github.sha }}
+          path: |
+            dist/portable/*.zip
+            dist/portable/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14

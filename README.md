@@ -33,6 +33,14 @@ retroimg profiles
 retroimg palettes
 ```
 
+## Portable Windows test build
+
+A [Windows x64 test-build workflow](https://github.com/SolariUK/RetroIMG/actions/workflows/windows-portable.yml)
+produces a portable ZIP with Python, Pillow, guided mode and completion bundled.
+Download a successful run's artifact, extract the enclosed test ZIP, then use
+`retroimg.exe` from PowerShell or double-click `Start guided.cmd`.
+See [portable instructions](docs/portable.md) for download steps and testing.
+
 ## Quick start
 
 ```bash

@@ -55,6 +55,24 @@ The workflow runs on pushes, pull requests and manual dispatch. Native Windows
 terminal interaction still benefits from a manual check: start `retroimg guided`,
 use Tab in paths with spaces, and try cancellation and a new output filename.
 
+## Portable test builds
+
+The [Windows portable workflow](.github/workflows/windows-portable.yml) builds a
+console application with PyInstaller and uploads a ZIP for manual testing. It
+runs automatically when build/runtime files change on `main`, or on manual
+dispatch. It creates an Actions artifact, without publishing a release.
+
+Install `.[dev,guided,bundle]`, run `python scripts/build_portable.py`, then pass
+the resulting ZIP to `python scripts/check_portable.py /path/to/test.zip`.
+The latter extracts the ZIP into a fresh temporary directory and compares all
+supported profile/mode outputs against the Python converter. This checks the
+downloadable bundle, not the build directory. PyInstaller is a build-only extra;
+ordinary Python installations still require only Pillow.
+
+Build on Windows to create Windows executables. The same scripts can make a
+native Linux bundle for local build validation. See [portable instructions](docs/portable.md)
+for the artifact layout and the interactive Windows test checklist.
+
 ## Changes and examples
 
 Keep target rules under `retroimg/targets`, reusable constraints under

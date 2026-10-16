@@ -13,6 +13,8 @@
   refresh command; comprehensive galleries remain optional.
 - Added a guided command builder, portable JSON presets and optional
   cross-platform path completion through the `guided` install extra.
+- Added a Windows x64 portable test-build workflow, bundled guided launcher,
+  source/executable parity checks and downloadable Actions ZIP artifacts.
 - Separated target models and reusable colour constraints; added regression
   tests, public-domain/CC0 reference sources and reproducible gallery tools.
 - Added consistent package/CLI version reporting, development installation
