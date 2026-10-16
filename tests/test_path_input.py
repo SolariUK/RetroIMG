@@ -6,6 +6,9 @@ from types import SimpleNamespace
 
 from PIL import Image
 import pytest
+
+pytest.importorskip('prompt_toolkit')
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document

@@ -73,12 +73,21 @@ adds a separator so you can continue into subdirectories. Relative and absolute
 paths, spaces, Unicode names and `~` home paths are supported. Output paths can
 end with a new filename. Enter paths literally, without surrounding quotes.
 Completion uses `prompt_toolkit` on Linux, macOS and Windows (including
-PowerShell); it is installed automatically with `retroimg`. Redirected or piped
-input uses ordinary text entry.
+PowerShell). Install the optional completion extra from your checkout:
+
+```bash
+python -m pip install -e ".[guided]"
+```
+
+Or, when installing a published package, use `python -m pip install "retroimg[guided]"`.
+In Windows PowerShell, the checkout command is
+`.\.venv\Scripts\python.exe -m pip install -e ".[guided]"`.
+Without this extra, the guide still works with ordinary path input. Redirected
+or piped input also uses ordinary text entry. The base installation requires
+only Pillow.
 
 The guide only builds arguments and delegates to the existing `convert` command.
-Normal CLI usage and image conversion are unchanged. After updating an existing
-checkout, run `python -m pip install -e .` to install the new prompt dependency.
+Normal CLI usage and image conversion are unchanged.
 
 ## Presets
 

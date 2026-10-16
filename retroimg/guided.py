@@ -57,8 +57,16 @@ class Prompts:
 
     def answer(self, prompt: str, *, path: bool = False) -> str:
         if path and self._complete_paths:
-            from retroimg.path_input import read_path
-            value = read_path(prompt, fallback=self.read).strip()
+            try:
+                from retroimg.path_input import read_path
+            except ModuleNotFoundError as exc:
+                if exc.name != 'prompt_toolkit':
+                    raise
+                # The guide also works without the optional completion extra.
+                prompt = prompt.replace('Tab to complete; ', '').replace(' (Tab to complete)', '')
+                value = self.read(prompt).strip()
+            else:
+                value = read_path(prompt, fallback=self.read).strip()
         else:
             value = self.read(prompt).strip()
         if value.lower() in {'q', 'quit', 'cancel'}:

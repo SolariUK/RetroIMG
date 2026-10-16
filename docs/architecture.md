@@ -260,6 +260,9 @@ commands use POSIX quoting or PowerShell single-quoted tokens on Windows.
 Path prompts lazily load `path_input.py`, which uses `prompt_toolkit` for the
 same Tab completion on Unix and Windows. Directory candidates include a path
 separator; names remain literal, including spaces and shell metacharacters.
+The completion library is an optional `guided` install extra. When it is absent,
+the guide uses ordinary path input and omits completion hints. Other import
+errors propagate rather than being mistaken for a missing optional dependency.
 Piped input and injected test readers retain ordinary input. Menu prompts do
 not use the completion backend or change global readline configuration.
 
