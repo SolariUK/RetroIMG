@@ -4,6 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from retroimg import __version__
 from retroimg.convert import convert_file
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
@@ -12,6 +13,7 @@ from retroimg.profiles import PROFILES
 
 def build_parser(*, conversion_defaults: dict | None = None) -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Convert images to constrained retro display styles.")
+    p.add_argument("--version", action="version", version=f"retroimg {__version__}")
     sub = p.add_subparsers(dest="command", required=True)
 
     convert = sub.add_parser("convert", help="convert an image")

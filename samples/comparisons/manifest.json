@@ -1,0 +1,456 @@
+{
+  "version": 1,
+  "comparisons": [
+    {
+      "source": {
+        "id": "macaws",
+        "file": "macaws.jpg",
+        "title": "Blue-and-yellow macaws",
+        "fit": "cover",
+        "public": true,
+        "credit": "Adrian Pingstone (Arpingstone), July 2004",
+        "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+        "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+        "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+        "reference_size": [
+          750,
+          536
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
+      },
+      "family": "cpc",
+      "sheet": "macaws-cpc.jpg",
+      "sha256": "cc4f8be0cf5255157ce496fc210a201c49111f2f7c58de65d1ed75a3c2747609",
+      "variants": [
+        {
+          "source": "macaws",
+          "family": "cpc",
+          "label": "Mode 1 / constrained / No dither",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "palette": "cpc",
+          "colours_used": 4,
+          "sha256": "876d0a8485721bc3910765a8cbb21da0b2e2b4e85a720e8f3fffa420388e60e4",
+          "command": "retroimg convert /path/to/image.jpg mode1-constrained-none.png --profile cpc-mode1 --cpc-mode constrained --dither none --scale 2 --fit cover"
+        },
+        {
+          "source": "macaws",
+          "family": "cpc",
+          "label": "Mode 1 / constrained / Floyd-Steinberg",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "palette": "cpc",
+          "colours_used": 4,
+          "sha256": "b0c0bfc4a173dd38f030d4f52292dcd4021f678d546e264f9c60898737ab8b7b",
+          "command": "retroimg convert /path/to/image.jpg mode1-constrained-fs.png --profile cpc-mode1 --cpc-mode constrained --dither floyd-steinberg --scale 2 --fit cover"
+        },
+        {
+          "source": "macaws",
+          "family": "cpc",
+          "label": "Mode 1 / constrained / Bayer 2x2",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "palette": "cpc",
+          "colours_used": 4,
+          "sha256": "f13266b9b8e4ed489f9ddc2514be5350527b7609a1422ee89dab82492a886d95",
+          "command": "retroimg convert /path/to/image.jpg mode1-constrained-bayer2.png --profile cpc-mode1 --cpc-mode constrained --dither bayer --scale 2 --bayer-size 2 --fit cover"
+        },
+        {
+          "source": "macaws",
+          "family": "cpc",
+          "label": "Mode 1 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "palette": "cpc",
+          "colours_used": 4,
+          "sha256": "0f33e3e23f46ed9aeaae3ebcaf5bfaa0904e7a00b031d74a24e4f4de852b8d7e",
+          "command": "retroimg convert /path/to/image.jpg mode1-constrained-bayer4.png --profile cpc-mode1 --cpc-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover"
+        },
+        {
+          "source": "macaws",
+          "family": "cpc",
+          "label": "Mode 1 / constrained / Bayer 8x8",
+          "settings": {
+            "profile_name": "cpc-mode1",
+            "cpc_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 8,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "palette": "cpc",
+          "colours_used": 4,
+          "sha256": "d0c61830e78f5f48bc302c55a03bdecddef18564a2f81837c5f4ce842abfe01c",
+          "command": "retroimg convert /path/to/image.jpg mode1-constrained-bayer8.png --profile cpc-mode1 --cpc-mode constrained --dither bayer --scale 2 --bayer-size 8 --fit cover"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "portrait-colour",
+        "file": "portrait-colour.jpg",
+        "title": "Summer Girl Portrait",
+        "fit": "cover",
+        "public": true,
+        "credit": "Petr Kratochvil",
+        "rights": "CC0 1.0 Universal Public Domain Dedication",
+        "source": "https://www.publicdomainpictures.net/en/view-image.php?image=392516&picture=summer-girl-portrait",
+        "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "download": "https://www.publicdomainpictures.net/pictures/400000/velka/summer-girl-portrait-1619788328kKQ.jpg",
+        "notes": "Source explicitly identifies CC0 and reports obtaining a model release. It also cautions against offensive or derogatory depictions of the person. Do not imply model endorsement. Download is the free standard-resolution version, not the paid original.",
+        "coverage": "Primary colour portrait: skin tones, eyes, hair, hat texture, soft shadows and bright background.",
+        "reference_sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602",
+        "reference_size": [
+          1920,
+          1593
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602"
+      },
+      "family": "teletext",
+      "sheet": "portrait-colour-teletext.jpg",
+      "sha256": "1cc120b70da4dc6c515efbbcfa0f93fe6a573147035298292242feb1afe5997d",
+      "variants": [
+        {
+          "source": "portrait-colour",
+          "family": "teletext",
+          "label": "Mosaic / No dither",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "none",
+            "scale": 6,
+            "fit": "cover"
+          },
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "palette": "teletext",
+          "colours_used": 5,
+          "sha256": "4875bcab602112236bcc5fc2d7d2b589ce07da477efbd972f6fc8e1068766707",
+          "command": "retroimg convert /path/to/image.jpg mosaic-none.png --profile teletext --teletext-mode mosaic --dither none --scale 6 --fit cover"
+        },
+        {
+          "source": "portrait-colour",
+          "family": "teletext",
+          "label": "Mosaic / Floyd-Steinberg",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "floyd-steinberg",
+            "scale": 6,
+            "fit": "cover"
+          },
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "palette": "teletext",
+          "colours_used": 5,
+          "sha256": "5f346179cce8c20ef44a1a52d2c434ba2543eb51fa2b60a9b7b16966dae4eed8",
+          "command": "retroimg convert /path/to/image.jpg mosaic-fs.png --profile teletext --teletext-mode mosaic --dither floyd-steinberg --scale 6 --fit cover"
+        },
+        {
+          "source": "portrait-colour",
+          "family": "teletext",
+          "label": "Mosaic / Bayer 2x2",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "palette": "teletext",
+          "colours_used": 5,
+          "sha256": "f5cf14fe7d34c4699a79e97f442edfd4ce4543530a825b829b0010e9a3ec0184",
+          "command": "retroimg convert /path/to/image.jpg mosaic-bayer2.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 2 --fit cover"
+        },
+        {
+          "source": "portrait-colour",
+          "family": "teletext",
+          "label": "Mosaic / Bayer 4x4",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "palette": "teletext",
+          "colours_used": 5,
+          "sha256": "bf2600d34914fcb29e214595d0c5b3461fd9026aa2a6cc884f197dbb687fb3ca",
+          "command": "retroimg convert /path/to/image.jpg mosaic-bayer4.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 4 --fit cover"
+        },
+        {
+          "source": "portrait-colour",
+          "family": "teletext",
+          "label": "Mosaic / Bayer 8x8",
+          "settings": {
+            "profile_name": "teletext",
+            "teletext_mode": "mosaic",
+            "dither": "bayer",
+            "scale": 6,
+            "bayer_size": 8,
+            "fit": "cover"
+          },
+          "preview_size": [
+            480,
+            450
+          ],
+          "logical_size": [
+            80,
+            75
+          ],
+          "palette": "teletext",
+          "colours_used": 5,
+          "sha256": "9df214c55db620598db4393c12b66dd8287bf04c7fae04a513b3e4fcaafca7d6",
+          "command": "retroimg convert /path/to/image.jpg mosaic-bayer8.png --profile teletext --teletext-mode mosaic --dither bayer --scale 6 --bayer-size 8 --fit cover"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "lush-landscape",
+        "file": "lush-landscape.jpg",
+        "title": "Green Landscape with Hills and Trees",
+        "fit": "cover",
+        "public": true,
+        "credit": "Baap8969",
+        "rights": "CC0 1.0 Universal Public Domain Dedication",
+        "source": "https://commons.wikimedia.org/wiki/File:Green_Landscape_with_Hills_and_Trees.jpg",
+        "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "download": "https://upload.wikimedia.org/wikipedia/commons/7/75/Green_Landscape_with_Hills_and_Trees.jpg",
+        "notes": "Uploader identifies this photograph as own work and explicitly applies CC0. Current Commons original includes the recorded rotation correction.",
+        "coverage": "Primary lush landscape: grass, leafy trees, distant green hill, blue-grey sky, haze and fine wire detail.",
+        "source_revision": "https://commons.wikimedia.org/w/index.php?title=File:Green_Landscape_with_Hills_and_Trees.jpg&oldid=1168022534",
+        "adjusted": true,
+        "reference_sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1",
+        "reference_size": [
+          1599,
+          896
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1"
+      },
+      "family": "c64",
+      "sheet": "lush-landscape-c64.jpg",
+      "sha256": "4edfd6eb6bc01db2fe08446d4373325553d8120e9171ed1b3044ed146e65de53",
+      "variants": [
+        {
+          "source": "lush-landscape",
+          "family": "c64",
+          "label": "Multicolour / No dither",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "palette": "c64",
+          "colours_used": 8,
+          "sha256": "07fb352e359178fe6118e913b69268c7a37bfa23b5bfa403a37e8a2ae4b3cc41",
+          "command": "retroimg convert /path/to/image.jpg multicolour-none.png --profile c64-multicolour --c64-mode multicolour --dither none --scale 2 --fit cover"
+        },
+        {
+          "source": "lush-landscape",
+          "family": "c64",
+          "label": "Multicolour / Floyd-Steinberg",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "palette": "c64",
+          "colours_used": 8,
+          "sha256": "928643eac92368450a0b86117efffc0d5c317499d5d5036cdcce98407f0d46e1",
+          "command": "retroimg convert /path/to/image.jpg multicolour-fs.png --profile c64-multicolour --c64-mode multicolour --dither floyd-steinberg --scale 2 --fit cover"
+        },
+        {
+          "source": "lush-landscape",
+          "family": "c64",
+          "label": "Multicolour / Bayer 2x2",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 2,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "palette": "c64",
+          "colours_used": 8,
+          "sha256": "97322bbfb3ddd04c6d6ef40d1e2c5a25d42eaa3cbcca0f989045d9d7c5754849",
+          "command": "retroimg convert /path/to/image.jpg multicolour-bayer2.png --profile c64-multicolour --c64-mode multicolour --dither bayer --scale 2 --bayer-size 2 --fit cover"
+        },
+        {
+          "source": "lush-landscape",
+          "family": "c64",
+          "label": "Multicolour / Bayer 4x4",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "palette": "c64",
+          "colours_used": 8,
+          "sha256": "6ca7ec2487780e43d2701a96db50a4c9435127225b84cc4215b7c9ca5019658c",
+          "command": "retroimg convert /path/to/image.jpg multicolour-bayer4.png --profile c64-multicolour --c64-mode multicolour --dither bayer --scale 2 --bayer-size 4 --fit cover"
+        },
+        {
+          "source": "lush-landscape",
+          "family": "c64",
+          "label": "Multicolour / Bayer 8x8",
+          "settings": {
+            "profile_name": "c64-multicolour",
+            "c64_mode": "multicolour",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 8,
+            "fit": "cover"
+          },
+          "preview_size": [
+            640,
+            400
+          ],
+          "logical_size": [
+            160,
+            200
+          ],
+          "palette": "c64",
+          "colours_used": 8,
+          "sha256": "9fb859f2bbb361447999101519d91a84e6f8f2373684fc7353aa71beb576a932",
+          "command": "retroimg convert /path/to/image.jpg multicolour-bayer8.png --profile c64-multicolour --c64-mode multicolour --dither bayer --scale 2 --bayer-size 8 --fit cover"
+        }
+      ]
+    }
+  ]
+}

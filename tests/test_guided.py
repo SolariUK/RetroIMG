@@ -55,7 +55,7 @@ def test_defaults_build_an_ordinary_command_without_writing(paths):
     assert not paths[1].exists()
     assert any('Settings summary' in message for message in replies.messages)
     assert any('Preview: 640x600' in message for message in replies.messages)
-    assert shlex.split(format_command(arguments))[1:] == arguments
+    assert shlex.split(format_command(arguments, platform='posix'))[1:] == arguments
 
 
 CASES = []
@@ -223,6 +223,9 @@ def test_command_tokens_handle_metacharacters_and_negative_scientific_notation(p
 
 
 def test_guided_cli_matches_its_printed_normal_command(paths, monkeypatch, capsys):
+    # Parse POSIX quoting explicitly; PowerShell quoting has a separate test.
+    monkeypatch.setattr('retroimg.guided.format_command',
+                        lambda arguments: format_command(arguments, platform='posix'))
     replies = Replies({'Choose machine': 'cpc', 'Choose profile': 'cpc-mode0',
         'Choose conversion mode': 'constrained', 'Use a custom': 'yes',
         'Logical width': '16', 'Logical height': '24', 'Choose image fitting': 'stretch',

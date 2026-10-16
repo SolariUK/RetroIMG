@@ -185,6 +185,23 @@ conversions run separately from pytest. Reference checksums describe the bundled
 files; external source overrides are allowed and their actual checksums are
 recorded in each gallery manifest.
 
+## Curated repository samples
+
+`generate_samples.py` reuses the gallery converter, constraint checks and sheet
+renderer to publish three small comparisons: CPC macaws, Teletext colour portrait
+and C64 landscape. Each compares all five dither settings with neutral adjustments.
+It retains only JPEG sheets, source records, commands and checksums; individual
+PNG previews and intermediate galleries are temporary.
+
+```bash
+python examples/generate_samples.py --output-dir /path/to/new-sample-sheets
+```
+
+The committed selection is under [samples/comparisons](../samples/comparisons/README.md).
+JPEG sheets are for visual browsing; exact colour counts refer to the underlying
+PNG previews, not the compressed sheets. Source-image rights remain separately
+documented in [samples/README.md](../samples/README.md).
+
 ## Conversion timings
 
 Each output entry in `manifest.json` includes `elapsed_seconds`, measured around

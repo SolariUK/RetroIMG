@@ -2,7 +2,7 @@
 
 `sources/` contains the seven public-domain/CC0 or locally generated reference images used by the gallery. Keeping these modest source files in Git makes comparisons reproducible from a fresh checkout, without a download service or access to a developer scratchpad. The files total approximately 6 MB.
 
-The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. Large generated galleries, experimental conversions and verification reports belong in a temporary directory. A future `comparisons/` directory can hold a curated selection of labelled comparison sheets; it is intentionally not populated with every generated output.
+The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. Large generated galleries, experimental conversions and verification reports belong in a temporary directory. [comparisons/](comparisons/README.md) holds three curated, labelled comparison sheets with settings, checksums and reproduction commands; individual converted PNGs remain temporary.
 
 ## Generate examples
 

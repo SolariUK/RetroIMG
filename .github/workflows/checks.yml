@@ -1,0 +1,57 @@
+name: Tests and packages
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.extra }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10', '3.13']
+        extra: [base, guided]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install base development tools
+        if: matrix.extra == 'base'
+        run: python -m pip install -e ".[dev]"
+      - name: Install development tools and completion
+        if: matrix.extra == 'guided'
+        run: python -m pip install -e ".[dev,guided]"
+      - name: Run regression tests
+        run: python -m pytest -q
+
+  packages:
+    name: Packages (${{ matrix.os }}, ${{ matrix.extra }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        extra: [base, guided]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install build tools
+        run: python -m pip install ".[dev]"
+      - name: Build source archive and wheel
+        run: python -m build
+      - name: Check installed artifacts outside the checkout
+        run: python scripts/check_distribution.py --extra ${{ matrix.extra }}

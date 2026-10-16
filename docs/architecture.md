@@ -41,6 +41,7 @@ retroimg/
     convert.py               # Shared file conversion pipeline
     cli.py                   # Command-line argument handling
     guided.py                # Optional interactive builder for ordinary convert arguments
+    path_input.py            # Optional cross-platform terminal completion backend
     settings.py              # Portable option validation and shared UI constraint hints
     presets.py               # Versioned JSON presets, built-ins and user storage
 ```
