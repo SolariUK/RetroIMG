@@ -6,7 +6,8 @@
   multicolour, Amstrad CPC, BBC Micro, Amiga indexed/EHB/HAM6 and Atari 2600
   playfields. Unrestricted bitmap conversion remains available.
 - Added palette-aware Bayer dithering alongside none and Floyd–Steinberg.
-- Added saturation, hue rotation and individual RGB channel gains.
+- Added brightness, contrast, saturation, hue rotation and individual RGB
+  channel gains, including guided entry and portable preset settings.
 - Added a guided command builder, portable JSON presets and optional
   cross-platform path completion through the `guided` install extra.
 - Separated target models and reusable colour constraints; added regression

@@ -26,6 +26,8 @@ def convert_file(
     fit: str = "cover",
     dither: str = "none",
     bayer_size: int | None = None,
+    brightness: float = 1.0,
+    contrast: float = 1.0,
     saturation: float = 1.0,
     hue_shift: float = 0.0,
     red_gain: float = 1.0,
@@ -66,7 +68,8 @@ def convert_file(
     with Image.open(input_path) as source:
         prepared = resize_to_geometry(source, geometry, fit=fit)
         prepared = adjust_colours(
-            prepared, saturation=saturation, hue_shift=hue_shift,
+            prepared, brightness=brightness, contrast=contrast,
+            saturation=saturation, hue_shift=hue_shift,
             red_gain=red_gain, green_gain=green_gain, blue_gain=blue_gain,
         )
         indexed = quantizer(prepared, palette, dither)

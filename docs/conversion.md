@@ -113,10 +113,17 @@ remain unchanged.
 ## Source colour adjustments
 
 Optional adjustments apply after resizing and before palette/cell optimisation
-for every profile. Processing order is saturation, hue shift, then RGB gains.
+for every profile. Processing order is **brightness → contrast → saturation →
+hue shift → RGB gains**. Each stage works on 8-bit RGB values and clips results
+to 0–255 before the next stage.
 Neutral defaults preserve existing conversion output.
 
 ```bash
+# Lift a dark source and strengthen contrast before fitting CPC screen colours
+retroimg convert /path/to/image.jpg output-toned.png \
+    --profile cpc-mode0 --cpc-mode constrained --dither bayer \
+    --brightness 1.1 --contrast 1.2 --scale 2
+
 # Boost green by 15%
 retroimg convert /path/to/image.jpg output-green.png \
     --teletext-mode mosaic --green-gain 1.15 --scale 6
@@ -126,6 +133,27 @@ retroimg convert /path/to/image.jpg output-balanced.png \
     --teletext-mode mosaic --hue-shift 10 \
     --red-gain 0.9 --green-gain 1.15 --blue-gain 1.0 --scale 6
 ```
+
+`--brightness` and `--contrast` are finite, non-negative factors with a default
+of `1.0`. Values below 1 reduce the effect and values above 1 increase it:
+
+| Control | `0` | `1` | Above `1` |
+| --- | --- | --- | --- |
+| Brightness | Black source | Unchanged | Multiply RGB values to brighten |
+| Contrast | Flat grey at mean luminance | Unchanged | Push values away from mean luminance |
+
+Brightness multiplies channel intensities; it does not add a fixed offset, so
+black remains black. Contrast uses Pillow's `ImageEnhance.Contrast`, centred
+on the rounded mean luminance of the brightness-adjusted logical image. With
+`--fit contain`, this includes any padding. Strong increases may clip detail in
+shadows or highlights. These operations precede quantisation: the output still
+obeys its palette and constraints, and subtle changes may map to identical
+colours in a limited palette. Both controls work with every target and dither.
+
+The guide asks for them under **Adjust source colours**, retains them when
+editing, and includes them in the summary, generated command and saved presets.
+Existing presets that omit them use neutral defaults. Use explicit
+`--brightness 1 --contrast 1` to reset values inherited from a preset.
 
 `--hue-shift` rotates HSV hue in degrees (default `0`); positive 120 degrees
 maps red to green, and negative values rotate the other way. Rotation wraps at

@@ -27,6 +27,9 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
     convert.add_argument("--dither", choices=DITHER_MODES, default="none")
     convert.add_argument("--bayer-size", type=int, choices=BAYER_SIZES,
                          help="Bayer matrix size (default: 4; requires --dither bayer)")
+    for name in ("brightness", "contrast"):
+        convert.add_argument(f"--{name}", type=float, default=1.0,
+                             help=f"finite non-negative {name} multiplier (default: 1)")
     convert.add_argument("--saturation", type=float, default=1.0)
     convert.add_argument("--hue-shift", type=float, default=0.0,
                          help="hue rotation in degrees; +120 maps red to green (default: 0)")
@@ -152,6 +155,8 @@ def main(argv: list[str] | None = None) -> None:
             fit=args.fit,
             dither=args.dither,
             bayer_size=args.bayer_size,
+            brightness=args.brightness,
+            contrast=args.contrast,
             saturation=args.saturation,
             hue_shift=args.hue_shift,
             red_gain=args.red_gain,

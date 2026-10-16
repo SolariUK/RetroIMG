@@ -74,6 +74,7 @@ def test_every_profile_and_supported_mode_builds_and_runs(paths, name, option, m
         'Choose conversion mode': mode, 'Use a custom': 'yes',
         'Logical width': '160' if name.startswith('atari') and mode != 'bitmap' else '16',
         'Logical height': '24', 'Choose dithering': 'bayer', 'Choose bayer matrix': '8',
+        'Adjust source': 'yes', 'Brightness': '1.1', 'Contrast': '1.2',
         'Preview scale': '1',
     })
     arguments = guide(paths, replies)
@@ -81,6 +82,7 @@ def test_every_profile_and_supported_mode_builds_and_runs(paths, name, option, m
     assert args.profile == name
     assert args.palette == PROFILES[name].default_palette
     assert args.bayer_size == 8
+    assert (args.brightness, args.contrast) == (1.1, 1.2)
     if option:
         assert getattr(args, option) == mode
     main(arguments)
@@ -119,10 +121,12 @@ def test_geometry_validation_and_finite_colour_controls(paths):
     replies = Replies({'Choose conversion mode': 'mosaic', 'Use a custom': 'yes',
         'Logical width': ['15', '16'], 'Logical height': ['7', '24'],
         'Adjust source': 'yes', 'Saturation': ['nan', '0', '1.2'],
+        'Brightness': ['nan', '-1', '1.1'], 'Contrast': ['inf', '-1', '0'],
         'Hue shift': ['inf', '-20'], 'Green gain': ['-1', '1.15'], 'Preview scale': ['0', '2']})
     args = build_parser().parse_args(guide(paths, replies))
     assert (args.width, args.height, args.saturation, args.hue_shift, args.green_gain, args.scale) == (
         16, 24, 1.2, -20, 1.15, 2)
+    assert (args.brightness, args.contrast) == (1.1, 0)
     assert any('divisible by 2' in message for message in replies.messages)
     assert any('divisible by 3' in message for message in replies.messages)
 
@@ -144,10 +148,12 @@ def test_edit_retains_settings_as_defaults(paths):
         'Logical width': ['16', ''], 'Logical height': ['24', ''],
         'Choose dithering': ['bayer', ''], 'Choose bayer matrix': ['8', ''],
         'Adjust source': ['yes', ''], 'Hue shift': ['20', ''], 'Green gain': ['1.15', ''],
+        'Brightness': ['1.1', ''], 'Contrast': ['1.2', ''],
         'Choose next action': ['edit', 'convert']})
     args = build_parser().parse_args(guide(paths, replies))
     assert (args.profile, args.palette, args.width, args.height, args.bayer_size, args.hue_shift, args.green_gain) == (
         'cpc-mode0', 'c64', 16, 24, 8, 20, 1.15)
+    assert (args.brightness, args.contrast) == (1.1, 1.2)
 
 
 def test_edit_discards_settings_that_no_longer_apply(paths):

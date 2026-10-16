@@ -35,7 +35,7 @@ retroimg/
     ordered.py               # Bayer matrices and palette-aware ordered selection
     quantize.py              # Palette quantisation and Floyd–Steinberg diffusion
     geometry.py              # Fitting and resizing
-    adjustments.py           # Source saturation, hue rotation and RGB gains
+    adjustments.py           # Source brightness, contrast, saturation, hue and RGB gains
     render.py                # Generic indexed preview rendering, scaling and aspect
     conversion_modes.py      # Mode metadata, validation and adapter registry
     convert.py               # Shared file conversion pipeline
@@ -60,7 +60,8 @@ building blocks, but it owns its hardware rules and logical representation.
 
 1. Resolve a palette and geometry, including optional custom dimensions.
 2. Ask the mode registry to validate target options and choose an adapter.
-3. Resize the source and apply saturation, hue shift and RGB gains.
+3. Resize the source and apply brightness, contrast, saturation, hue shift and
+   RGB gains, in that order. Neutral stages bypass enhancement/colour transforms.
 4. Call the adapter to obtain an `IndexedImage`.
 5. Render and save the preview with the profile's preview aspect policy.
 

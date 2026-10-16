@@ -18,7 +18,7 @@ CELL_DIMENSIONS = {
     'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-multicolour': (4, 8),
 }
 INTEGER_OPTIONS = {'width', 'height', 'scale', 'bayer_size', 'colours', 'atari_row_height'}
-FLOAT_OPTIONS = {'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain'}
+FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain'}
 OPTIONAL_OPTIONS = {'palette', 'width', 'height', 'bayer_size', 'colours', 'atari_row_height'}
 NON_SETTINGS = {'command', 'input', 'output', 'preset', 'presets_dir', 'print_only'}
 
@@ -69,6 +69,9 @@ def normalize_settings(raw: dict, defaults: dict) -> dict:
             raise ValueError('Bayer size must be 2, 4 or 8')
     if values['saturation'] <= 0 or any(values[c + '_gain'] < 0 for c in ('red', 'green', 'blue')):
         raise ValueError('saturation must be positive and colour gains non-negative')
+    for name in ('brightness', 'contrast'):
+        if values[name] < 0:
+            raise ValueError(f'{name} must be non-negative')
     width, height = values['width'], values['height']
     if (width is None) != (height is None):
         raise ValueError('preset width and height must be supplied together')

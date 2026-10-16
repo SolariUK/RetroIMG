@@ -169,9 +169,12 @@ def _geometry_options(ui: Prompts, profile: TargetProfile, mode: str,
 
 def _adjustment_options(ui: Prompts, defaults: dict, preferred: dict) -> dict:
     result: dict = {}
-    adjustments = ('saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain')
+    adjustments = ('brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain')
     adjusted = any(preferred[key] != defaults[key] for key in adjustments)
     if ui.yes_no('Adjust source colours?', adjusted):
+        for key in ('brightness', 'contrast'):
+            result[key] = ui.number(f'{key.title()} (1=neutral)', preferred[key], valid=lambda n: n >= 0,
+                                    hint='Enter a finite non-negative number.')
         result['saturation'] = ui.number('Saturation (1=neutral)', preferred['saturation'], valid=lambda n: n > 0,
                                            hint='Enter a finite number greater than zero.')
         result['hue_shift'] = ui.number('Hue shift in degrees (0=neutral)', preferred['hue_shift'])
@@ -335,6 +338,8 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     ui.write(f'  Logical image: {width}x{height}; fitting: {options["fit"]}')
     ui.write(f'  Dithering: {options["dither"]}' + (f'; matrix: {options["bayer_size"]}x{options["bayer_size"]}'
                                                        if 'bayer_size' in options else ''))
+    ui.write(f'  Brightness: {options.get("brightness", defaults["brightness"])}; '
+             f'contrast: {options.get("contrast", defaults["contrast"])}')
     ui.write(f'  Saturation: {options.get("saturation", defaults["saturation"])}; '
              f'hue shift: {options.get("hue_shift", defaults["hue_shift"])} degrees')
     ui.write('  RGB gains: ' + ', '.join(str(options.get(c + '_gain', defaults[c + '_gain'])) for c in ('red', 'green', 'blue')))

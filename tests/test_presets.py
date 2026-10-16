@@ -46,7 +46,8 @@ def test_builtin_macaws_matches_the_users_exact_recipe():
     preset = load_preset('builtin:cpc-macaws-bayer2', build_parser())
     expected = dict(profile='cpc-mode1', cpc_mode='constrained', palette='cpc', fit='cover',
                     dither='bayer', bayer_size=2, saturation=1.1, hue_shift=0.0,
-                    red_gain=1.0, green_gain=1.0, blue_gain=1.5, scale=2)
+                    red_gain=1.0, green_gain=1.0, blue_gain=1.5, scale=2,
+                    brightness=1.0, contrast=1.0)
     assert preset.settings == expected
     assert preset.path is None
 
@@ -78,6 +79,8 @@ BAD_SETTINGS = [
     {'input': 'private.jpg'}, {'output': 'private.png'}, {'preset': 'another'}, {'unknown': 1},
     {'profile': 'missing'}, {'palette': 'missing'}, {'scale': True}, {'scale': '2'}, {'scale': 0},
     {'hue_shift': float('nan')}, {'green_gain': -1}, {'saturation': 0}, {'saturation': None},
+    {'brightness': -0.1}, {'contrast': -1}, {'brightness': float('inf')},
+    {'contrast': float('nan')}, {'brightness': True}, {'contrast': '1.2'},
     {'dither': 'missing'}, {'fit': 'missing'}, {'width': 16}, {'width': 0, 'height': 8},
     {'bayer_size': 4}, {'dither': 'bayer', 'bayer_size': 3},
     {'teletext_mode': 'mosaic', 'width': 15, 'height': 24},
@@ -192,6 +195,34 @@ def test_cli_profile_override_resets_inherited_mode_palette_and_colour_count(pat
           '--profile=amiga-hires', '--width=16', '--height=24', '--scale=1'])
     assert captured[0]['colours'] == 16
     assert captured[0]['palette_name'] == 'amiga'
+
+
+def test_tone_preset_round_trip_and_explicit_neutral_cli_override(paths):
+    source, output, directory = paths
+    parser = build_parser()
+    saved = save_preset(directory / 'toned.json', 'Toned', '',
+                        dict(brightness=1.1, contrast=1.4, width=16, height=24, scale=1), parser)
+    assert load_file(saved.path, parser).settings == saved.settings
+    main(['convert', str(source), str(output), '--preset', str(saved.path),
+          '--brightness=1.0', '--contrast=1.0'])
+    baseline = output.with_name('baseline.png')
+    main(['convert', str(source), str(baseline), '--width=16', '--height=24', '--scale=1'])
+    assert output.read_bytes() == baseline.read_bytes()
+
+
+def test_guide_saves_loads_and_edits_tone_controls(paths):
+    replies = Replies({'Adjust source': 'yes', 'Brightness': '1.1', 'Contrast': '0.8',
+                       'Choose next action': ['save', 'command'], 'Preset name': 'Toned'})
+    assert guide(paths, replies) is None
+    saved = load_file(paths[2] / 'toned.json', build_parser())
+    assert (saved.settings['brightness'], saved.settings['contrast']) == (1.1, 0.8)
+    assert any('Brightness: 1.1; contrast: 0.8' in line for line in replies.messages)
+    replies = Replies({'Choose next action': ['edit', 'convert']})
+    arguments = guide(paths, replies, preset_reference=str(saved.path))
+    settings = build_parser().parse_args(arguments)
+    assert (settings.brightness, settings.contrast) == (1.1, 0.8)
+    assert any(question.startswith('Brightness') for question in replies.questions)
+    assert '--brightness=1.1' in arguments and '--contrast=0.8' in arguments
 
 
 def test_cli_invalid_preset_does_not_touch_output(paths, capsys):

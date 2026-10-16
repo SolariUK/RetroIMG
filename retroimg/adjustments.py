@@ -10,17 +10,22 @@ from PIL import Image, ImageEnhance
 def adjust_colours(
     image: Image.Image,
     *,
+    brightness: float = 1.0,
+    contrast: float = 1.0,
     saturation: float = 1.0,
     hue_shift: float = 0.0,
     red_gain: float = 1.0,
     green_gain: float = 1.0,
     blue_gain: float = 1.0,
 ) -> Image.Image:
-    """Apply saturation, HSV hue rotation in degrees, then RGB channel gains.
+    """Apply brightness, contrast, saturation, HSV hue rotation, then RGB gains.
 
     Gains multiply channel values and clip to 0..255. Neutral settings bypass
     colour-space round trips, preserving existing conversion output exactly.
     """
+    for name, value in (('brightness', brightness), ('contrast', contrast)):
+        if not math.isfinite(value) or value < 0:
+            raise ValueError(f"{name} must be finite and non-negative")
     if not math.isfinite(saturation) or saturation <= 0:
         raise ValueError("saturation must be finite and positive")
     if not math.isfinite(hue_shift):
@@ -30,6 +35,10 @@ def adjust_colours(
         raise ValueError("colour gains must be finite and non-negative")
 
     result = image.convert("RGB")
+    if brightness != 1.0:
+        result = ImageEnhance.Brightness(result).enhance(brightness)
+    if contrast != 1.0:
+        result = ImageEnhance.Contrast(result).enhance(contrast)
     if saturation != 1.0:
         result = ImageEnhance.Color(result).enhance(saturation)
     rotation = (hue_shift % 360) / 360

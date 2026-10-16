@@ -81,6 +81,8 @@ A hand-written version-1 preset can contain a subset of conversion settings:
     "fit": "cover",
     "dither": "bayer",
     "bayer_size": 2,
+    "brightness": 1.1,
+    "contrast": 1.2,
     "saturation": 1.1,
     "blue_gain": 1.5,
     "scale": 2
@@ -97,4 +99,7 @@ and applicable mode flags so they reproduce the chosen settings.
 Integer controls require JSON integers; colour adjustments accept finite JSON
 numbers. Boolean values, unknown fields, duplicate keys, unsupported versions,
 non-finite numbers, and image-path settings are rejected. Description is optional.
+Brightness and contrast must be non-negative; both default to `1.0` when omitted,
+so existing version-1 presets retain their previous output. Explicit CLI values
+of `1.0` reset either saved adjustment to neutral.
 The format stores data only; it cannot execute commands or reference other presets.

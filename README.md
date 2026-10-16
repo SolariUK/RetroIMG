@@ -154,7 +154,10 @@ The versioned JSON format, naming and override rules are described in
 | Atari 2600 | Independent, repeated or mirrored playfields | [Atari 2600](docs/targets/atari2600.md) |
 
 All targets offer no dithering, Floyd–Steinberg and Bayer (2×2, 4×4 or 8×8).
-Source controls include saturation, hue shift and red/green/blue gains.
+Source controls include brightness, contrast, saturation, hue shift and
+red/green/blue gains. For example, add `--brightness 1.1 --contrast 1.2` for a
+10% brightness boost and stronger contrast. Both default to `1.0` (neutral),
+and the guide includes them under **Adjust source colours**.
 Resolution, fitting, palettes and preview scaling are configurable. See
 [conversion options and comparison commands](docs/conversion.md) for details.
 CRT/scanline effects and native hardware export are deferred.
