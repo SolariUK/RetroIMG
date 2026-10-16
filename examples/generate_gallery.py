@@ -23,6 +23,7 @@ from retroimg.targets.teletext import page_from_indexed
 
 FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc")
 CATALOG = Path(__file__).with_name("sources.json")
+BUNDLED_SOURCES = Path(__file__).resolve().parents[1] / "samples" / "sources"
 
 
 @dataclass(frozen=True)
@@ -145,7 +146,7 @@ def write_indexes(output: Path, manifest: dict) -> None:
     public_only = manifest["public_only"]
     heading = "retroimg public examples" if public_only else "retroimg local comparisons"
     intro = ("Documented public-domain/CC0 photographs and a locally generated chart." if public_only else
-             "All five local sources. User-supplied images are marked local-only; use the public gallery for publication material.")
+             f"{len(manifest['sources'])} local sources. User-supplied images are marked local-only; use the public gallery for publication material.")
     md = [f"# {heading}", "", intro, "",
           "Neutral colour adjustments unless labelled. Photos use cover fit; the diagnostic chart uses contain fit.",
           "Comparison sheets are JPEG overviews; individual output PNGs preserve exact pixels.", ""]
@@ -159,6 +160,12 @@ def write_indexes(output: Path, manifest: dict) -> None:
                    f"[Source preview]({identifier}/source-preview.png)", ""])
         credits.extend([f"## {title}", "", source["credit"], "", source["rights"], "",
                         f"Source SHA-256: `{source['sha256']}`", ""])
+        if source.get("rights_url"):
+            credits.extend([f"[Rights terms]({source['rights_url']})", ""])
+        if source.get("notes"):
+            credits.extend([source["notes"], ""])
+        if source.get("rights_evidence"):
+            credits.extend([f"[Additional rights statement]({source['rights_evidence']})", ""])
         link = ""
         if source.get("source"):
             md.extend([f"[Source and rights statement]({source['source']})", ""])
@@ -287,7 +294,8 @@ def generate(sources_dir: Path, output: Path, families: tuple[str, ...], public_
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--sources-dir", type=Path, required=True)
+    parser.add_argument("--sources-dir", type=Path, default=BUNDLED_SOURCES,
+                        help="source directory (default: bundled samples/sources; use --public-only with bundled files)")
     parser.add_argument("--output-dir", type=Path, required=True, help="new directory for generated files")
     parser.add_argument("--family", choices=("all", *FAMILIES), default="all")
     parser.add_argument("--public-only", action="store_true", help="exclude user-supplied sources without documented redistribution rights")

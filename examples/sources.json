@@ -1,32 +1,155 @@
 [
   {
-    "id": "picard", "file": "picard.jpg", "title": "Picard portrait", "fit": "cover",
-    "public": false, "credit": "User-supplied image",
+    "id": "picard",
+    "file": "picard.jpg",
+    "title": "Picard portrait",
+    "fit": "cover",
+    "public": false,
+    "credit": "User-supplied image",
     "rights": "Local comparison only; redistribution rights have not been established.",
     "source": null
   },
   {
-    "id": "landscape1", "file": "landscape1.jpg", "title": "Mountain landscape", "fit": "cover",
-    "public": false, "credit": "User-supplied image",
+    "id": "landscape1",
+    "file": "landscape1.jpg",
+    "title": "Mountain landscape",
+    "fit": "cover",
+    "public": false,
+    "credit": "User-supplied image",
     "rights": "Local comparison only; redistribution rights have not been established.",
-    "source": null, "adjusted": true
+    "source": null,
+    "adjusted": true
   },
   {
-    "id": "macaws", "file": "macaws.jpg", "title": "Blue-and-yellow macaws", "fit": "cover",
-    "public": true, "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "id": "macaws",
+    "file": "macaws.jpg",
+    "title": "Blue-and-yellow macaws",
+    "fit": "cover",
+    "public": true,
+    "credit": "Adrian Pingstone (Arpingstone), July 2004",
     "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
-    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg"
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+    "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+    "reference_size": [
+      750,
+      536
+    ],
+    "rights_checked": "2026-10-16"
   },
   {
-    "id": "city-night", "file": "city-night.jpg", "title": "Stockholm at night", "fit": "cover",
-    "public": true, "credit": "Martin Eklund (Teadrinker), 27 October 2012",
+    "id": "city-night",
+    "file": "city-night.jpg",
+    "title": "Stockholm at night",
+    "fit": "cover",
+    "public": true,
+    "credit": "Martin Eklund (Teadrinker), 27 October 2012",
     "rights": "CC0 1.0 Universal Public Domain Dedication.",
-    "source": "https://commons.wikimedia.org/wiki/File:City_silhouette_at_night.jpg"
+    "source": "https://commons.wikimedia.org/wiki/File:City_silhouette_at_night.jpg",
+    "reference_sha256": "7cce3e17e8180acd3a2a3bf8185ef2fcf7c91a344e33069f7ecb3c5cc7af4092",
+    "reference_size": [
+      4879,
+      3253
+    ],
+    "rights_checked": "2026-10-16"
   },
   {
-    "id": "diagnostic-chart", "file": "diagnostic-chart.png", "title": "Diagnostic chart", "fit": "contain",
-    "public": true, "credit": "Generated locally for retroimg using Pillow",
+    "id": "diagnostic-chart",
+    "file": "diagnostic-chart.png",
+    "title": "Diagnostic chart",
+    "fit": "contain",
+    "public": true,
+    "credit": "Generated locally for retroimg using Pillow",
     "rights": "Locally generated gradients, patterns and text; no third-party source imagery.",
-    "source": null
+    "source": null,
+    "reference_sha256": "33514e9e68750a7d9ccd9485cfbe5fc413be4d652ecd7f6b8823e3184a9b5a46",
+    "reference_size": [
+      640,
+      400
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  {
+    "id": "portrait-colour",
+    "file": "portrait-colour.jpg",
+    "title": "Summer Girl Portrait",
+    "fit": "cover",
+    "public": true,
+    "credit": "Petr Kratochvil",
+    "rights": "CC0 1.0 Universal Public Domain Dedication",
+    "source": "https://www.publicdomainpictures.net/en/view-image.php?image=392516&picture=summer-girl-portrait",
+    "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "download": "https://www.publicdomainpictures.net/pictures/400000/velka/summer-girl-portrait-1619788328kKQ.jpg",
+    "notes": "Source explicitly identifies CC0 and reports obtaining a model release. It also cautions against offensive or derogatory depictions of the person. Do not imply model endorsement. Download is the free standard-resolution version, not the paid original.",
+    "coverage": "Primary colour portrait: skin tones, eyes, hair, hat texture, soft shadows and bright background.",
+    "reference_sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602",
+    "reference_size": [
+      1920,
+      1593
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  {
+    "id": "lush-landscape",
+    "file": "lush-landscape.jpg",
+    "title": "Green Landscape with Hills and Trees",
+    "fit": "cover",
+    "public": true,
+    "credit": "Baap8969",
+    "rights": "CC0 1.0 Universal Public Domain Dedication",
+    "source": "https://commons.wikimedia.org/wiki/File:Green_Landscape_with_Hills_and_Trees.jpg",
+    "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/7/75/Green_Landscape_with_Hills_and_Trees.jpg",
+    "notes": "Uploader identifies this photograph as own work and explicitly applies CC0. Current Commons original includes the recorded rotation correction.",
+    "coverage": "Primary lush landscape: grass, leafy trees, distant green hill, blue-grey sky, haze and fine wire detail.",
+    "source_revision": "https://commons.wikimedia.org/w/index.php?title=File:Green_Landscape_with_Hills_and_Trees.jpg&oldid=1168022534",
+    "adjusted": true,
+    "reference_sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1",
+    "reference_size": [
+      1599,
+      896
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  {
+    "id": "green-hills",
+    "file": "green-hills.jpg",
+    "title": "Green hills",
+    "fit": "cover",
+    "public": true,
+    "credit": "Jon Sullivan",
+    "rights": "Worldwide public-domain release by the author, with an unrestricted-use fallback where necessary.",
+    "source": "https://commons.wikimedia.org/wiki/File:Green_hills.jpg",
+    "rights_url": "https://commons.wikimedia.org/wiki/File:Green_hills.jpg#Licensing",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Green_hills.jpg",
+    "notes": "Commons records the author release and earlier public-domain-image.com provenance. Original Commons JPEG retained without re-encoding.",
+    "coverage": "Alternative hill landscape: yellow-green versus blue-green foliage, rocks, distant mountains, sky gradient and dense vegetation.",
+    "source_revision": "https://commons.wikimedia.org/w/index.php?title=File:Green_hills.jpg&oldid=1284827690",
+    "reference_sha256": "7338b0c737504593697881e31b413cb5de3d74f0d821b4ae7d473fe0509fd1f9",
+    "reference_size": [
+      1000,
+      750
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  {
+    "id": "portrait-man",
+    "file": "portrait-man.jpg",
+    "title": "People",
+    "fit": "cover",
+    "public": true,
+    "credit": "George Hodan",
+    "rights": "CC0 1.0 Universal Public Domain Dedication",
+    "source": "https://www.publicdomainpictures.net/en/view-image.php?image=82849&picture=people",
+    "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "download": "https://www.publicdomainpictures.net/pictures/90000/velka/people-1398598376zDo.jpg",
+    "notes": "The download page explicitly states CC0. The indexed image description reports a model release and cautions against offensive or derogatory depictions. Do not imply model endorsement. Free standard-resolution download, not the paid original.",
+    "coverage": "Optional near-monochrome portrait: deep shadows, facial texture, hand detail and dither behaviour. Not a substitute for the colour portrait skin-tone case.",
+    "rights_evidence": "https://www.publicdomainpictures.net/en/free-download.php?id=82849&image=people",
+    "reference_sha256": "ffb6b5cf7d2fedceb5d6cf498669045e0f994b38594b4cc988443e885ba6c5bd",
+    "reference_size": [
+      1920,
+      1271
+    ],
+    "rights_checked": "2026-10-16"
   }
 ]

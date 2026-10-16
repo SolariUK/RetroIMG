@@ -451,13 +451,16 @@ palette experiments, dithering, and labelled colour-adjustment examples.
 
 ```bash
 python examples/generate_gallery.py \
-    --sources-dir /path/to/source-images \
     --output-dir /path/to/new-gallery \
     --public-only
 ```
 
-Use a new output directory and the project's Python environment. Source
-filenames and credits are described in [examples/README.md](examples/README.md).
+Use a new output directory and the project's Python environment. Public
+reference images are included in [samples/sources](samples/README.md), which is
+the default source directory. Override it with `--sources-dir /path/to/source-images`
+for local experiments. Source credits and rights are recorded in
+[samples/README.md](samples/README.md); generation options are described in
+[examples/README.md](examples/README.md).
 The public-only run uses the documented public-domain/CC0 photographs and a
 locally generated diagnostic chart. Local-only user-supplied images are excluded.
 

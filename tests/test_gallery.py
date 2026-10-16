@@ -71,3 +71,38 @@ def test_public_export_excludes_private_files_and_metadata(tmp_path):
             assert b'PRIVATE_SENTINEL' not in path.read_bytes()
     with pytest.raises(ValueError, match='new output directory'):
         export_public_gallery(local, output, manifest)
+
+
+CATALOG_PATH = Path(__file__).resolve().parents[1] / 'examples' / 'sources.json'
+PUBLIC_SOURCES = [source for source in json.loads(CATALOG_PATH.read_text()) if source['public']]
+
+
+@pytest.mark.parametrize('source', PUBLIC_SOURCES, ids=lambda source: source['id'])
+def test_bundled_reference_assets_match_catalogue(source):
+    from hashlib import sha256
+    from examples.generate_gallery import BUNDLED_SOURCES
+
+    path = BUNDLED_SOURCES / source['file']
+    assert sha256(path.read_bytes()).hexdigest() == source['reference_sha256']
+    with Image.open(path) as image:
+        assert list(image.size) == source['reference_size']
+        image.verify()
+    assert source['rights'] and source['credit']
+    assert source['source'] or source['id'] == 'diagnostic-chart'
+
+
+def test_bundled_directory_contains_only_catalogued_public_assets():
+    from examples.generate_gallery import BUNDLED_SOURCES
+
+    assert {path.name for path in BUNDLED_SOURCES.iterdir()} == {source['file'] for source in PUBLIC_SOURCES}
+    assert {'portrait-colour', 'lush-landscape', 'green-hills', 'portrait-man'} <= {
+        source['id'] for source in PUBLIC_SOURCES}
+
+
+def test_catalogue_gallery_totals():
+    catalog = json.loads(CATALOG_PATH.read_text())
+    def output_count(sources):
+        return sum(len(variants_for(family, source.get('adjusted', False)))
+                   for source in sources for family in FAMILIES)
+    assert output_count(catalog) == 512
+    assert output_count(PUBLIC_SOURCES) == 386

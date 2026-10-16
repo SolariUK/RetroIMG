@@ -8,20 +8,36 @@ suite. It uses the installed converter and Pillow, with no additional dependenci
 
 ## Sources and rights
 
-`sources.json` records filenames, captions, fitting choices and rights. Place
-the source files in a directory of your choice. Public-only runs require:
+`sources.json` records filenames, captions, fitting choices, rights, reference
+checksums and dimensions. The seven public reference images are bundled under
+[`samples/sources/`](../samples/README.md), the default `--sources-dir`. No
+downloads or scratchpad files are needed for `--public-only` runs. You can still
+supply an external source directory for local experiments. Public runs include:
 
 | Filename | Subject | Rights/source |
 | --- | --- | --- |
 | `macaws.jpg` | Blue-and-yellow macaws | Public-domain release by Adrian Pingstone; [source statement](https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg) |
 | `city-night.jpg` | Stockholm night architecture | CC0 dedication by Martin Eklund; [source statement](https://commons.wikimedia.org/wiki/File:City_silhouette_at_night.jpg) |
 | `diagnostic-chart.png` | Mathematical gradients, swatches, fine patterns and text | Generated locally without third-party source imagery |
+| `portrait-colour.jpg` | Colour portrait, skin tones, hair and hat texture | CC0, Petr Kratochvil; [source statement](https://www.publicdomainpictures.net/en/view-image.php?image=392516&picture=summer-girl-portrait) |
+| `lush-landscape.jpg` | Grass, trees and green hills | CC0, Baap8969; [source statement](https://commons.wikimedia.org/wiki/File:Green_Landscape_with_Hills_and_Trees.jpg) |
+| `green-hills.jpg` | Dense vegetation, rocks, sky and distant hills | Worldwide public-domain release, Jon Sullivan; [source statement](https://commons.wikimedia.org/wiki/File:Green_hills.jpg) |
+| `portrait-man.jpg` | Near-monochrome portrait and deep shadows | CC0, George Hodan; [source statement](https://www.publicdomainpictures.net/en/free-download.php?id=82849&image=people) |
 
-The default local run also uses the two user-supplied files recorded in the
+A run without `--public-only` also requires the two user-supplied files recorded in the
 catalogue. Their redistribution rights have not been established, so they are
 marked local-only and excluded from public exports. Generated examples retain
 the source's credit and rights information; conversion does not establish new
 rights to the source image.
+
+Photograph rights are separate from the software licence. The portrait sources
+report model releases and caution against offensive or derogatory portrayals;
+use neutral conversion comparisons without implying endorsement. Detailed
+provenance, rights notes and checksums are in [samples/README.md](../samples/README.md).
+
+Keep experimental outputs in an external temporary directory. Only selected
+comparison sheets should later be copied to `samples/comparisons/`; complete
+galleries are not committed.
 
 The generator never downloads source files or publishes anything remotely.
 Original files are read without modification. Reports include source checksums
@@ -43,9 +59,8 @@ by each gallery identifies the exact input used in that run.
 Install retroimg in the active environment, then run from the project root:
 
 ```bash
-# Only the documented public examples
+# Bundled public examples; no downloads or external sources needed
 python examples/generate_gallery.py \
-    --sources-dir /path/to/source-images \
     --output-dir /path/to/new-public-gallery \
     --public-only
 
@@ -84,17 +99,18 @@ Each source gets the same 52 neutral conversions:
 | CPC | Modes 0/1/2, unrestricted/constrained, each with no dither and Floyd–Steinberg |
 | BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
 
-The source marked `adjusted` in the catalogue also gets 22 constrained examples
+Each source marked `adjusted` in the catalogue also gets 22 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
-neutral baselines. With the current five-source catalogue, the full local run
-produces 282 converted PNGs and 25 comparison sheets; the public-only run
-produces 156 converted PNGs and 15 sheets.
+neutral baselines. Both the local-only mountain landscape and the bundled lush
+landscape have these adjustments. With the current nine-source catalogue, the
+full local run produces 512 converted PNGs and 45 comparison sheets; the
+public-only run produces 386 converted PNGs and 35 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because
 all eight steady colours fit. Its other eight hardware slots provide flashing
 pairs, which are excluded from static output. Use `--family bbc` for a BBC-only
-run (120 local PNGs or 66 public PNGs with the current catalogue).
+run (218 local PNGs or 164 public PNGs with the current catalogue).
 
 Photos use `cover` fitting; the diagnostic chart uses `contain` so the complete
 chart remains visible. Different target geometries can therefore crop photos
@@ -115,4 +131,8 @@ that PNG colours belong to its selected palette. Constrained examples also check
 These checks establish structural validity, not visual quality or historical
 hardware-file compatibility. The normal pytest suite additionally covers the
 gallery matrix, constraint-failure detection and exclusion of private files and
-metadata from public exports. Large source images are not pytest dependencies.
+metadata from public exports. A lightweight reference-asset check verifies the
+bundled files against catalogue checksums and dimensions; full photographic
+conversions run separately from pytest. Reference checksums describe the bundled
+files; external source overrides are allowed and their actual checksums are
+recorded in each gallery manifest.
