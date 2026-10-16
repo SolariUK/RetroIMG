@@ -257,6 +257,11 @@ Input/output paths may be supplied or prompted. File paths are made absolute;
 argument lists keep spaces and shell metacharacters literal. Equals syntax
 preserves negative scientific-notation values through argparse. Displayed
 commands use POSIX quoting or PowerShell single-quoted tokens on Windows.
+Path prompts lazily load `path_input.py`, which uses `prompt_toolkit` for the
+same Tab completion on Unix and Windows. Directory candidates include a path
+separator; names remain literal, including spaces and shell metacharacters.
+Piped input and injected test readers retain ordinary input. Menu prompts do
+not use the completion backend or change global readline configuration.
 
 The UI has injectable input/output for tests. Enter accepts defaults, q/EOF/
 Ctrl-C cancels, and the final review offers conversion, revision or command-only

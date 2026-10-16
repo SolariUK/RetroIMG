@@ -15,6 +15,14 @@ source .venv/bin/activate
 python3 -m pip install -e .
 ```
 
+On Windows, use PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\retroimg.exe guided
+```
+
 Then list the built-in targets:
 
 ```bash
@@ -59,9 +67,18 @@ the input image cannot be selected as the output. File paths entered at prompts
 do not need shell quoting. The displayed command quotes paths for a POSIX shell
 or, on Windows, PowerShell.
 
+At input/output path prompts, press **Tab** to complete files and directories;
+when several names match, Tab opens a list to choose from. Directory completion
+adds a separator so you can continue into subdirectories. Relative and absolute
+paths, spaces, Unicode names and `~` home paths are supported. Output paths can
+end with a new filename. Enter paths literally, without surrounding quotes.
+Completion uses `prompt_toolkit` on Linux, macOS and Windows (including
+PowerShell); it is installed automatically with `retroimg`. Redirected or piped
+input uses ordinary text entry.
+
 The guide only builds arguments and delegates to the existing `convert` command.
-Normal CLI usage and image conversion are unchanged, and there are no additional
-dependencies.
+Normal CLI usage and image conversion are unchanged. After updating an existing
+checkout, run `python -m pip install -e .` to install the new prompt dependency.
 
 ## Presets
 

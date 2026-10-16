@@ -47,15 +47,20 @@ class GuidedCancelled(Exception):
 
 
 class Prompts:
-    """Small standard-library-only terminal UI, with injectable I/O for tests."""
+    """Small terminal UI, with injectable I/O and completion for path prompts."""
 
     def __init__(self, read: Callable[[str], str] | None = None,
                  write: Callable[[str], None] | None = None):
         self.read = input if read is None else read
         self.write = print if write is None else write
+        self._complete_paths = read is None
 
-    def answer(self, prompt: str) -> str:
-        value = self.read(prompt).strip()
+    def answer(self, prompt: str, *, path: bool = False) -> str:
+        if path and self._complete_paths:
+            from retroimg.path_input import read_path
+            value = read_path(prompt, fallback=self.read).strip()
+        else:
+            value = self.read(prompt).strip()
         if value.lower() in {'q', 'quit', 'cancel'}:
             raise GuidedCancelled
         return value
@@ -267,7 +272,7 @@ def _input_path(ui: Prompts, supplied: Path | None) -> Path:
     value = supplied
     while True:
         if value is None:
-            answer = ui.answer('Input image path: ')
+            answer = ui.answer('Input image path (Tab to complete): ', path=True)
             if not answer:
                 ui.write('Enter an image path.')
                 continue
@@ -289,7 +294,7 @@ def _output_path(ui: Prompts, supplied: Path | None, source: Path) -> Path:
     default = source.with_name(source.stem + '-retro.png')
     while True:
         if value is None:
-            answer = ui.answer(f'Output image path (PNG recommended) [{default}]: ')
+            answer = ui.answer(f'Output image path (Tab to complete; PNG recommended) [{default}]: ', path=True)
             value = Path(answer) if answer else default
         path = value.expanduser().absolute()
         if path.resolve() == source.resolve():
