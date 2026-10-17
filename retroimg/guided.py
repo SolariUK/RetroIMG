@@ -27,9 +27,12 @@ from retroimg.presets import list_presets, load_preset, preset_directory, preset
 FAMILY_LABELS = {
     'teletext': 'Teletext', 'spectrum': 'ZX Spectrum', 'c64': 'Commodore 64',
     'cpc': 'Amstrad CPC', 'bbc': 'BBC Micro', 'amiga': 'Amiga', 'atari2600': 'Atari 2600',
+    'megadrive': 'Sega Mega Drive / Genesis', 'snes': 'Super Nintendo / SNES',
 }
 MODE_HELP = {
     'bitmap': 'unrestricted palette conversion',
+    'tiles': '8x8 tiles, each selecting one shared 16-entry palette bank and backdrop',
+    'indexed': 'up to 256 image-selected colours for one 8bpp background layer',
     'mosaic': 'two colours per 2x3 cell',
     'attributes': 'ink/paper with shared brightness per 8x8 cell',
     'multicolour': 'shared background plus three local colours per 4x8 cell',

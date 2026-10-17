@@ -9,7 +9,7 @@ import pytest
 from retroimg.adjustments import adjust_colours
 from retroimg.convert import convert_file
 from retroimg.palettes import get_palette
-from retroimg.palettes.builtin import AMIGA
+from retroimg.palettes.amiga import AMIGA
 from retroimg.quantize import colour_distance, quantize
 from retroimg.render import render_indexed
 from retroimg.targets.amiga import (

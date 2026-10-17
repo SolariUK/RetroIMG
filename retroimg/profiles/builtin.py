@@ -90,7 +90,25 @@ AMIGA_PROFILES = tuple(
     for resolution, width, aspect, limit in (("lores", 320, 1.0, 32), ("hires", 640, 0.5, 16))
 )
 
-PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES, *ATARI_PROFILES)}
+MEGADRIVE_PROFILES = tuple(
+    TargetProfile(
+        name=f'megadrive-{width}{suffix}',
+        geometry=Geometry(width, height, pixel_aspect=height * 4 / (width * 3)),
+        default_palette='megadrive',
+        description=f'Mega Drive/Genesis {width}x{height}; normal colour, single background plane.',
+        constraint_model='megadrive-tiles',
+        aspect_correct_preview=True,
+    )
+    for height, suffix in ((224, ''), (240, '-pal')) for width in (320, 256)
+)
+
+SNES_PROFILE = TargetProfile(
+    name='snes', geometry=Geometry(256, 224, pixel_aspect=7 / 6),
+    default_palette='snes', description='SNES 256x224; single 4bpp or 8bpp background layer.',
+    constraint_model='snes-background', aspect_correct_preview=True,
+)
+
+PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES, *ATARI_PROFILES, *MEGADRIVE_PROFILES, SNES_PROFILE)}
 
 
 def get_profile(name: str) -> TargetProfile:

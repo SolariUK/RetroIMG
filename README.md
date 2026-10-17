@@ -3,7 +3,7 @@
 `retroimg` converts modern images into constrained retro-display styles.  The
 project deliberately separates target geometry, palette, quantisation and
 machine-specific constraints so that Teletext, Commodore 64, ZX Spectrum,
-Amstrad CPC, BBC Micro, Amiga, Atari 2600 and future targets can share the same pipeline.
+Amstrad CPC, BBC Micro, Amiga, Atari 2600, Sega Mega Drive, SNES and future targets can share the same pipeline.
 
 ## Install from a checkout
 
@@ -160,6 +160,8 @@ The versioned JSON format, naming and override rules are described in
 | BBC Micro | Modes 0/1/2/4/5 with steady colours | [BBC Micro](docs/targets/bbc.md) |
 | Amiga OCS/ECS | Indexed 2–32 colours, EHB and HAM6 | [Amiga](docs/targets/amiga.md) |
 | Atari 2600 | Independent, repeated or mirrored playfields | [Atari 2600](docs/targets/atari2600.md) |
+| Sega Mega Drive / Genesis | Four 16-entry palette banks, one bank per 8×8 tile | [Mega Drive](docs/targets/megadrive.md) |
+| SNES | Eight 16-entry banks for 4bpp tiles, or a 256-colour 8bpp background | [SNES](docs/targets/snes.md) |
 
 All targets offer no dithering, Floyd–Steinberg and Bayer (2×2, 4×4 or 8×8).
 Source controls include brightness, contrast, saturation, hue shift and
@@ -173,7 +175,7 @@ CRT/scanline effects and native hardware export are deferred.
 ## Example results
 
 The [sample comparisons](samples/comparisons/README.md) show selected conversions
-of the bundled public-domain/CC0 reference photographs. Eight panels stay
+of the bundled public-domain/CC0 reference photographs. Ten panels stay
 **800 pixels wide**, with two columns and up to ten rows. They compare multiple
 modes per family: CPC 0/1/2, BBC 0/1/2/4/5, Amiga indexed/EHB/HAM and more.
 C64 includes greener saturation/hue/gain settings; colourful macaws demonstrate
@@ -187,7 +189,7 @@ Refresh the documentation panels in `samples/comparisons`:
 python examples/generate_samples.py --replace
 ```
 
-Individual conversions are temporary; only the eight panels and their records
+Individual conversions are temporary; only the ten panels and their records
 are retained. Large galleries remain optional, for deliberate visual testing:
 
 ```bash

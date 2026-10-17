@@ -83,7 +83,7 @@ which prevents stale local-only files from surviving in a public export. Open
 access is needed to browse the gallery. JPEG sheets are convenient overviews;
 use the linked PNGs to judge exact converted pixels.
 
-`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga`, `atari2600` or `all`. The generated
+`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga`, `atari2600`, `megadrive`, `snes` or `all`. The generated
 commands use placeholder source paths; replace `/path/to/filename` and run the
 commands from the gallery directory, or adjust the output paths.
 
@@ -92,7 +92,8 @@ commands from the gallery directory, or adjust the output paths.
 The optional `--dither-comparison` matrix compares no dithering, Floyd–Steinberg,
 and Bayer 2x2/4x4/8x8 with otherwise identical conversion settings. It selects
 Teletext mosaic, Spectrum attributes, C64 multicolour, CPC mode 1, BBC mode 0,
-Amiga lores 32-colour/EHB/HAM6, and Atari NTSC independent playfields. Each
+Amiga lores 32-colour/EHB/HAM6, Atari NTSC independent playfields, Mega Drive
+320-wide tiles, and SNES tiles/indexed backgrounds. Each
 comparison sheet has five columns, one per dithering setting. These runs use
 neutral source adjustments so the dithering difference is easy to compare.
 
@@ -106,7 +107,7 @@ python examples/generate_gallery.py --public-only --dither-comparison \
     --output-dir /path/to/new-cpc-dither-gallery
 ```
 
-The complete public dithering run generates 315 PNGs and 49 comparison sheets
+The complete public dithering run generates 420 PNGs and 63 comparison sheets
 from the seven bundled sources. The normal gallery matrix below remains
 unchanged. `--source` also works for normal gallery runs. Unknown IDs and IDs
 excluded by `--public-only` are rejected. Bayer matrix sizes and exact CLI
@@ -114,7 +115,7 @@ commands are retained in the output manifest and reproduction commands.
 
 ## Comparison matrix
 
-Each source gets the same 106 neutral conversions:
+Each source gets the same 128 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
@@ -125,13 +126,15 @@ Each source gets the same 106 neutral conversions:
 | BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
 | Amiga | PAL lores 2/4/8/16/32 colours and hires 2/4/8/16, each with no dither and Floyd–Steinberg; unrestricted lores/hires with both dither settings; C64/CPC palette swaps; constrained NTSC lores/hires with dithering; PAL/NTSC EHB and HAM6, each with no dither and Floyd–Steinberg |
 | Atari 2600 | NTSC/PAL unrestricted bitmap, independent/repeated/mirrored playfields, all with no dither and Floyd–Steinberg; eight-line chunky playfields with dithering; unrestricted C64 palette swaps |
+| Mega Drive | 256/320-wide, 224/240-line profiles; bitmap and tiles, each with no dither and Floyd–Steinberg |
+| SNES | Bitmap, 4bpp tiles and 8bpp indexed background, each with no dither and Floyd–Steinberg |
 
-Each source marked `adjusted` in the catalogue also gets 64 constrained examples
+Each source marked `adjusted` in the catalogue also gets 76 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. Both the local-only mountain landscape and the bundled lush
 landscape have these adjustments. With the current nine-source catalogue, the
-full local run produces 1082 converted PNGs and 63 comparison sheets; the
-public-only run produces 806 converted PNGs and 49 sheets.
+full local run produces 1304 converted PNGs and 81 comparison sheets; the
+public-only run produces 972 converted PNGs and 63 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because
@@ -188,12 +191,13 @@ recorded in each gallery manifest.
 ## Curated repository samples
 
 `generate_samples.py` reuses the converter, mode variants and constraint checks
-to maintain eight PNG panels, each 800 pixels wide with two columns and up to
-ten rows. The seven family panels show several modes and dithers: Teletext
+to maintain ten PNG panels, each 800 pixels wide with two columns and up to
+ten rows. The nine family panels show several modes and dithers: Teletext
 bitmap/mosaic and palette swaps; C64 geometry, multicolour and greener colour
 settings; CPC 0/1/2 bitmap/constrained; Spectrum bitmap/attributes; BBC 0/1/2/4/5;
 Amiga RGB12, indexed 2/4/8/16/32, EHB/HAM6 and hires; Atari bitmap, playfield,
-repeat/mirror and PAL/NTSC. The eighth retains the CPC macaws blue-gain,
+repeat/mirror and PAL/NTSC; Mega Drive palette-bank tiles; SNES tiles and indexed
+backgrounds. An additional panel retains the CPC macaws blue-gain,
 brightness and contrast recipe. This remains a bounded documentation set,
 defaulting to `samples/comparisons`; individual conversions are temporary.
 
@@ -208,7 +212,8 @@ The committed selection is under [samples/comparisons](../samples/comparisons/RE
 Only known sample files are refreshed, after successful generation. Unrelated
 files cause a refusal; failed conversion leaves existing panels intact. Individual
 PNG conversions are temporary and automatically removed. Converted thumbnails
-use nearest-neighbour fitting; source thumbnails use smooth fitting. Exact colour
+use area averaging when reduced and nearest-neighbour when enlarged; source
+thumbnails use smooth fitting. Exact colour
 counts refer to underlying conversions rather than whole labelled panels.
 Source-image rights remain separately
 documented in [samples/README.md](../samples/README.md).

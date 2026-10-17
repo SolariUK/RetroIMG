@@ -18,6 +18,7 @@ import retroimg.constraints.binary_groups
 import retroimg.constraints.cells
 import retroimg.constraints.shared_background
 import retroimg.constraints.global_palette
+import retroimg.constraints.palette_banks
 import sys
 assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
 '''
@@ -25,6 +26,9 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
 
 
 @pytest.mark.parametrize('profile,option,mode', [
+    *[(f'megadrive-{width}{suffix}', 'megadrive_mode', 'tiles')
+      for width in (320, 256) for suffix in ('', '-pal')],
+    *[('snes', 'snes_mode', mode) for mode in ('tiles', 'indexed')],
     *[(f'amiga-{resolution}{suffix}', 'amiga_mode', 'constrained')
       for resolution in ('lores', 'hires') for suffix in ('', '-ntsc')],
     *[(f'amiga-lores{suffix}', 'amiga_mode', mode)

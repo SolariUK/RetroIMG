@@ -9,7 +9,7 @@ from retroimg.ordered import validate_dither
 
 from retroimg.model import IndexedImage, Palette
 from retroimg.constraints.global_palette import select_palette_indices
-from retroimg.palettes.builtin import CPC
+from retroimg.palettes.cpc import CPC
 from retroimg.quantize import quantize
 
 CPC_COLOUR_LIMITS = {0: 16, 1: 4, 2: 2}

@@ -41,6 +41,8 @@ def convert_file(
     bbc_mode: str = "bitmap",
     amiga_mode: str = "bitmap",
     atari_mode: str = "bitmap",
+    megadrive_mode: str = "bitmap",
+    snes_mode: str = "bitmap",
     atari_row_height: int | None = None,
     colours: int | None = None,
 ) -> IndexedImage:
@@ -62,6 +64,7 @@ def convert_file(
         profile, teletext_mode=teletext_mode, spectrum_mode=spectrum_mode,
         c64_mode=c64_mode, cpc_mode=cpc_mode, bbc_mode=bbc_mode,
         amiga_mode=amiga_mode, atari_mode=atari_mode,
+        megadrive_mode=megadrive_mode, snes_mode=snes_mode,
         atari_row_height=atari_row_height, colours=colours, bayer_size=bayer_size,
     )
 

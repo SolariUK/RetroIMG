@@ -8,6 +8,8 @@ grouped under `constraints`.
 ```text
 retroimg/
     targets/
+        megadrive.py         # Four-bank single-plane tiles and CRAM words
+        snes.py              # Eight-bank 4bpp tiles, 8bpp BG and CGRAM words
         teletext.py          # Cells/pages, mosaic optimisation, rasterisation
         spectrum.py          # Ink/paper/BRIGHT cells and attribute optimisation
         c64.py               # Multicolour cells and shared-background optimisation
@@ -21,6 +23,7 @@ retroimg/
             ham.py           # Stateful greedy HAM6 encoding and decoding
             common.py        # Fixed register-table and code-grid validation
     constraints/
+        palette_banks.py     # Shared tile-to-bank fitting and local pixel codes
         binary_groups.py     # Exact binary fitting for groups sharing one selector
         cells.py             # Generic two-colour cell fitting, optional legal pairs
         shared_background.py # Generic local sets with an image-wide shared colour
@@ -28,7 +31,20 @@ retroimg/
         adaptive_palette.py  # Grid-snapped adaptive palette clustering
         histogram.py         # Shared deterministic frequency-weighted RGB sampling
         __init__.py          # Package description
-    palettes/                # Named RGB colour definitions
+    palettes/
+        __init__.py          # Public PALETTES / get_palette API
+        builtin.py           # Ordered registry and legacy constant exports
+        _shared.py           # Palette constructor and standard RGB primaries
+        teletext.py          # One palette module per machine family
+        c64.py
+        spectrum.py
+        cpc.py
+        bbc.py
+        amiga.py
+        atari.py
+        megadrive.py
+        snes.py
+        consoles.py          # Compatibility imports only; no definitions
     profiles/                # Geometry, default palette, constraint-model identifiers
     model.py                 # Shared Palette, Geometry, TargetProfile, IndexedImage
     colour_spaces.py         # Cartesian RGB grids and shared weighted RGB metric
@@ -49,6 +65,14 @@ retroimg/
 Machine modules live only under `targets`, and fitting implementations live
 only under `constraints`. The package root contains the shared conversion,
 image preparation, rendering, registry and CLI modules.
+
+Palette definitions and any RGB grid belong to their machine-family module.
+Target implementations import that module directly. `palettes.builtin` collects
+the definitions in a stable ordered registry and retains its earlier constant
+imports for compatibility. `palettes.consoles` only re-exports the Mega Drive
+and SNES constants for earlier callers; new code uses their individual modules.
+BBC and Teletext reuse the standard primary-colour tuple from `_shared`, while
+retaining separate named palettes. No palette module imports a target adapter.
 
 ## Dependencies and conversion flow
 
@@ -238,6 +262,25 @@ previous nearest-channel fast path and output. Bayer uses no error buffer.
 
 All dithering belongs to logical conversion. Preview scaling and future CRT
 post-processing remain independent.
+
+## Console palette banks
+
+`constraints.palette_banks` fits shared RGB banks and assigns one to each tile.
+`BankedImage` validates tile dimensions, bank selectors, local codes, equal bank
+capacities and the shared slot-zero backdrop. It contains no hardware register
+layout or target imports. Fitting seeds banks from farthest-error tiles, then
+alternates histogram error assignment and grid-snapped bank fitting for up to
+four rounds, retaining the best result. It is a deterministic bounded heuristic.
+Tile diffusion and Bayer selection use the existing quantiser; diffusion resets
+per tile and Bayer receives the original logical origin.
+
+Mega Drive and SNES adapters supply their RGB grids and bank counts and retain
+target-owned register words alongside the generic tile representation.
+Rasterisers flatten bank/local codes into an indexed preview; slot zero in
+every bank has the same opaque RGB. SNES indexed backgrounds separately reuse
+adaptive screen-palette fitting, with a validated CGRAM table and pixel grid.
+The file pipeline only forwards the declared mode options. Native packing,
+VRAM limits, sprites, multiple layers and console display effects are deferred.
 
 ## Guided CLI boundary
 

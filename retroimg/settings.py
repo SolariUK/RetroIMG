@@ -13,9 +13,11 @@ REQUIRED_PALETTES = {
     'spectrum_mode': ('spectrum',), 'c64_mode': ('c64',), 'cpc_mode': ('cpc',),
     'bbc_mode': ('bbc',), 'amiga_mode': ('amiga',),
     'atari_mode': ('atari2600-ntsc', 'atari2600-pal'),
+    'megadrive_mode': ('megadrive',), 'snes_mode': ('snes',),
 }
 CELL_DIMENSIONS = {
     'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-multicolour': (4, 8),
+    'megadrive-tiles': (8, 8), 'snes-background': (8, 8),
 }
 INTEGER_OPTIONS = {'width', 'height', 'scale', 'bayer_size', 'colours', 'atari_row_height'}
 FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain'}

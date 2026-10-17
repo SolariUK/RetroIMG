@@ -29,7 +29,7 @@
         1920
       ],
       "show_source": true,
-      "sha256": "a97d31e73567759bcba31313406484f25726d559b439b33124a96ed697a2b6fe",
+      "sha256": "f3218f54233b7e3f5f28f91cfa588f35709f6331085421531a9aa5d53721c629",
       "variants": [
         {
           "label": "Bitmap / No dither",
@@ -361,7 +361,7 @@
         2184
       ],
       "show_source": true,
-      "sha256": "84dcb5298f54c7266082272e7e7688a656d251a5fed3bf117842e7d709091295",
+      "sha256": "d157102f644967958fbeff52bb4595ebc16704dc00b1132048a9eadf0a0efae8",
       "variants": [
         {
           "label": "Hires geometry bitmap / No dither",
@@ -713,7 +713,7 @@
         2712
       ],
       "show_source": true,
-      "sha256": "e91d2a7bd7239fcbbef74d05e8f49685684b5f7fcb9c47fcdd4b47477c4a734e",
+      "sha256": "708d1be1538a216db5df135175de5e4d9cf988bc86d06e3a0d45ec5b4b68c944",
       "variants": [
         {
           "label": "Mode 0 / bitmap / No dither",
@@ -1151,7 +1151,7 @@
         1392
       ],
       "show_source": true,
-      "sha256": "7c8b3b338fb585db267cf3a8634dc0fbd3386793bac0ca874639387310be093e",
+      "sha256": "dd67d97ceaa16918090fee0cca7f044813f1123ac4809e65369bc1e507fa753b",
       "variants": [
         {
           "label": "Bitmap / No dither",
@@ -1361,7 +1361,7 @@
         2448
       ],
       "show_source": true,
-      "sha256": "00756fd72291df078450f13dc816b61332c37d8935bd777ab44a924d31354031",
+      "sha256": "76078438b36bf9b36cc90913c7bcb65f83a384ab4f8030853e64a0dc6160323c",
       "variants": [
         {
           "label": "Mode 0 / constrained / No dither",
@@ -1774,7 +1774,7 @@
         2712
       ],
       "show_source": true,
-      "sha256": "2ac74dcaec3d58efe7670a22c16590bcb702dce44cd9db859a174cb5f0b6c4d4",
+      "sha256": "85a089343ab90f4f531365e313a965aa301df3bc9eed7fe6b7308b9d043f934a",
       "variants": [
         {
           "label": "Lores / unrestricted RGB12 / No dither",
@@ -2239,7 +2239,7 @@
         2448
       ],
       "show_source": true,
-      "sha256": "a4161fa80e36be2e2e043041dde0f7c33672765fffc4e91d77136b9b98b2686b",
+      "sha256": "29d7cbb6e76cd4ca7c21cfb9d3ce1f18d0022018a7cdf2511392c1c78d1e518b",
       "variants": [
         {
           "label": "NTSC / bitmap / No dither",
@@ -2648,7 +2648,7 @@
         600
       ],
       "show_source": false,
-      "sha256": "aeabcbd301fdcb55b0a78e4122d2a52c7b8586037dfbdabc213161c2ff709960",
+      "sha256": "a279b70e1525d173d2b245f9b998f390e90a213f9b6076155f8b053a292d01a5",
       "variants": [
         {
           "label": "Baseline: saturation 1.1",
@@ -2751,6 +2751,407 @@
           "colours_used": 4,
           "palette": "cpc",
           "sha256": "c47fa60a6b7f97863a0de4945477936f0f1cb1665a087b320f5f7c16abd0f7aa"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "macaws",
+        "file": "macaws.jpg",
+        "title": "Blue-and-yellow macaws",
+        "fit": "cover",
+        "public": true,
+        "credit": "Adrian Pingstone (Arpingstone), July 2004",
+        "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+        "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+        "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+        "reference_size": [
+          750,
+          536
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
+      },
+      "family": "megadrive",
+      "title": "Sega Mega Drive / Genesis / bitmap and palette-bank tiles",
+      "sheet": "macaws-megadrive.png",
+      "panel_size": [
+        800,
+        1128
+      ],
+      "show_source": true,
+      "sha256": "b0cbbfbb8ce01c565b5b63da88fea972ad9bd079b3837ac58d41092e4540881a",
+      "variants": [
+        {
+          "label": "Bitmap / No dither",
+          "settings": {
+            "profile_name": "megadrive-320",
+            "megadrive_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-megadrive-bitmap-none.png --profile megadrive-320 --megadrive-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            224
+          ],
+          "colours_used": 157,
+          "palette": "megadrive",
+          "sha256": "3f47df37e32a5b135890e8d744ddab4c1b8631cd6359eb82e7cb766e9604f79b"
+        },
+        {
+          "label": "Tiles / No dither",
+          "settings": {
+            "profile_name": "megadrive-320",
+            "megadrive_mode": "tiles",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-megadrive-tiles-none.png --profile megadrive-320 --megadrive-mode tiles --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            224
+          ],
+          "colours_used": 44,
+          "palette": "megadrive",
+          "sha256": "8e68012c6d47c1ddcd9a13aa6f22895c3d6fa0dccc743e8ac66165bee083a422"
+        },
+        {
+          "label": "Bitmap / FS",
+          "settings": {
+            "profile_name": "megadrive-320",
+            "megadrive_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-megadrive-bitmap-floyd-steinberg.png --profile megadrive-320 --megadrive-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            224
+          ],
+          "colours_used": 182,
+          "palette": "megadrive",
+          "sha256": "3eecb55639f901fd95785da7d6c1377931f28b622ec1951e1483f2b740b9878f"
+        },
+        {
+          "label": "Tiles / FS",
+          "settings": {
+            "profile_name": "megadrive-320",
+            "megadrive_mode": "tiles",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-megadrive-tiles-floyd-steinberg.png --profile megadrive-320 --megadrive-mode tiles --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            224
+          ],
+          "colours_used": 44,
+          "palette": "megadrive",
+          "sha256": "f305b6e70ca4d5f27070539a8ddc21699c2a9f277992c151d0916dcd0062fc4c"
+        },
+        {
+          "label": "Bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "megadrive-320",
+            "megadrive_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-megadrive-bitmap-bayer.png --profile megadrive-320 --megadrive-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            224
+          ],
+          "colours_used": 156,
+          "palette": "megadrive",
+          "sha256": "f3c6d048bd0056ecd452ce3ab642dc387b80d09f0ef0a2704f8045bb6235e0f8"
+        },
+        {
+          "label": "Tiles / Bayer 4x4",
+          "settings": {
+            "profile_name": "megadrive-320",
+            "megadrive_mode": "tiles",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-megadrive-tiles-bayer.png --profile megadrive-320 --megadrive-mode tiles --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            224
+          ],
+          "colours_used": 44,
+          "palette": "megadrive",
+          "sha256": "67656d8449df1592da96906674ec4c0a7007a55036225c7c79612d5a73fb50f0"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "lush-landscape",
+        "file": "lush-landscape.jpg",
+        "title": "Green Landscape with Hills and Trees",
+        "fit": "cover",
+        "public": true,
+        "credit": "Baap8969",
+        "rights": "CC0 1.0 Universal Public Domain Dedication",
+        "source": "https://commons.wikimedia.org/wiki/File:Green_Landscape_with_Hills_and_Trees.jpg",
+        "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "download": "https://upload.wikimedia.org/wikipedia/commons/7/75/Green_Landscape_with_Hills_and_Trees.jpg",
+        "notes": "Uploader identifies this photograph as own work and explicitly applies CC0. Current Commons original includes the recorded rotation correction.",
+        "coverage": "Primary lush landscape: grass, leafy trees, distant green hill, blue-grey sky, haze and fine wire detail.",
+        "source_revision": "https://commons.wikimedia.org/w/index.php?title=File:Green_Landscape_with_Hills_and_Trees.jpg&oldid=1168022534",
+        "adjusted": true,
+        "reference_sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1",
+        "reference_size": [
+          1599,
+          896
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "29d3d56805edc2d3c02880975d8a29ad1c7a574e40e6a43cbc58e35a781a7fc1"
+      },
+      "family": "snes",
+      "title": "SNES / bitmap, 4bpp tiles and 8bpp indexed",
+      "sheet": "lush-landscape-snes.png",
+      "panel_size": [
+        800,
+        1392
+      ],
+      "show_source": true,
+      "sha256": "0286eb3cf286f99726f2b0d2d061bce91e846529c105b695de68c3905d0bb49c",
+      "variants": [
+        {
+          "label": "Bitmap / No dither",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-bitmap-none.png --profile snes --snes-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 2342,
+          "palette": "snes",
+          "sha256": "24092ea65cfc58445d794a18fd261fa880247c81fcfac4e6253b267befec9ed9"
+        },
+        {
+          "label": "Tiles / No dither",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "tiles",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-none.png --profile snes --snes-mode tiles --dither none --scale 2 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 115,
+          "palette": "snes",
+          "sha256": "253a318954d7b62a57a94895a94f2b21fb6db92f5dea4da4e3c3c7ed5391243e"
+        },
+        {
+          "label": "Indexed / No dither",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "indexed",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-none.png --profile snes --snes-mode indexed --dither none --scale 2 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 254,
+          "palette": "snes",
+          "sha256": "401cb1867f4eff452a184e4d44c7c329675e00273c82ae4a1dc6b97620dfcdc2"
+        },
+        {
+          "label": "Bitmap / FS",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-bitmap-floyd-steinberg.png --profile snes --snes-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 2469,
+          "palette": "snes",
+          "sha256": "26c2a42bd7d8881328c92a929f6253110dfd4ed4554ef43c09ab6fd16a644344"
+        },
+        {
+          "label": "Tiles / FS",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "tiles",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-floyd-steinberg.png --profile snes --snes-mode tiles --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 115,
+          "palette": "snes",
+          "sha256": "02cc89e5f913e62cae8a45f186a6d99f802ca0085ab60f258b64308e5f694505"
+        },
+        {
+          "label": "Indexed / FS",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "indexed",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-floyd-steinberg.png --profile snes --snes-mode indexed --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 254,
+          "palette": "snes",
+          "sha256": "7497511328b29af1e08c4806f47c34f82afecaa731febdc40f58b4ffbe213703"
+        },
+        {
+          "label": "Bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-bitmap-bayer.png --profile snes --snes-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 2423,
+          "palette": "snes",
+          "sha256": "de10a0446364451c2b72d4925ea42e7a949dccca881f459d31f990157fe501bc"
+        },
+        {
+          "label": "Tiles / Bayer 4x4",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "tiles",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-bayer.png --profile snes --snes-mode tiles --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 115,
+          "palette": "snes",
+          "sha256": "edcc471ebe82db01e6ebc015374bda373f6e5db7113cee464c972691ebed86dd"
+        },
+        {
+          "label": "Indexed / Bayer 4x4",
+          "settings": {
+            "profile_name": "snes",
+            "snes_mode": "indexed",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-bayer.png --profile snes --snes-mode indexed --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            597,
+            448
+          ],
+          "logical_size": [
+            256,
+            224
+          ],
+          "colours_used": 254,
+          "palette": "snes",
+          "sha256": "d4ae7107cf9d3cda45f63108e0bc3ea8e89cbc69695fc97ac14a944eaa7263ea"
         }
       ]
     }

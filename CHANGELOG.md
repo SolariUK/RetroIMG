@@ -2,6 +2,12 @@
 
 ## 0.2.0 — Unreleased
 
+- Organised palettes consistently into machine-family modules, with a separate
+  registry and compatibility imports; palette values and ordering are unchanged.
+- Added Mega Drive/Genesis and SNES profiles, shared tile-palette bank fitting,
+  opaque constrained previews and retained hardware register/index data.
+  SNES also offers a selected 256-colour background; both join guided mode,
+  presets, all dithers and the expanded ten-panel sample set.
 - Added constrained modes for Teletext mosaics, ZX Spectrum attributes, C64
   multicolour, Amstrad CPC, BBC Micro, Amiga indexed/EHB/HAM6 and Atari 2600
   playfields. Unrestricted bitmap conversion remains available.
@@ -11,6 +17,8 @@
 - Curated eight width-limited documentation panels with multiple modes,
   greener C64 settings, reproducible conversion commands and an explicit
   refresh command; comprehensive galleries remain optional.
+- Reduced sample thumbnails use area averaging to reduce dithering moiré;
+  enlarged previews retain crisp pixels and original conversions are unchanged.
 - Added a guided command builder, portable JSON presets and optional
   cross-platform path completion through the `guided` install extra.
 - Added a Windows x64 portable test-build workflow, bundled guided launcher,

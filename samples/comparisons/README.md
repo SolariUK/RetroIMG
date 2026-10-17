@@ -1,16 +1,19 @@
 # Sample mode comparisons
 
-Eight lossless PNG panels, **800 pixels wide**, arranged in two columns.
+Ten lossless PNG panels, **800 pixels wide**, arranged in two columns.
 Panels grow vertically to show more modes, with at most ten rows each.
 FS means Floyd–Steinberg. No dither, FS and Bayer are compared throughout.
 CPC covers modes 0/1/2; BBC covers 0/1/2/4/5; Amiga includes indexed/EHB/HAM.
 C64 includes neutral and greener saturation/hue/channel-gain examples.
 Teletext uses the colourful macaws for bitmap and mosaic comparisons.
 
-Converted previews are fitted with nearest-neighbour resizing for documentation.
+Mega Drive adds four-bank tiles; SNES compares eight-bank tiles and 256-colour indexed output.
+
+Converted thumbnails use area averaging when reduced to limit moiré and banding;
+enlarged conversions retain nearest-neighbour scaling for crisp pixels.
 They are thumbnails; inspect regenerated individual PNGs for exact pixel patterns.
 Source thumbnails use smooth resizing. Palette counts in the manifest refer to
-the original conversions, not labels, source photos or whole panels.
+the original conversions, not filtered thumbnails, labels, source photos or whole panels.
 
 Source credits and rights: [reference images](../README.md).
 
@@ -772,6 +775,118 @@ retroimg convert /path/to/image.jpg macaws-adjustments-brightness.png --profile 
 
 ```bash
 retroimg convert /path/to/image.jpg macaws-adjustments-contrast.png --profile cpc-mode1 --cpc-mode constrained --dither bayer --bayer-size 2 --saturation 1.1 --scale 2 --blue-gain 1.5 --brightness 1.5 --contrast 1.2 --fit cover
+```
+
+</details>
+
+## Sega Mega Drive / Genesis / bitmap and palette-bank tiles
+
+Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
+
+![Sega Mega Drive / Genesis / bitmap and palette-bank tiles](macaws-megadrive.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### Bitmap / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-megadrive-bitmap-none.png --profile megadrive-320 --megadrive-mode bitmap --dither none --scale 2 --fit cover
+```
+
+### Tiles / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-megadrive-tiles-none.png --profile megadrive-320 --megadrive-mode tiles --dither none --scale 2 --fit cover
+```
+
+### Bitmap / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-megadrive-bitmap-floyd-steinberg.png --profile megadrive-320 --megadrive-mode bitmap --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Tiles / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-megadrive-tiles-floyd-steinberg.png --profile megadrive-320 --megadrive-mode tiles --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Bitmap / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-megadrive-bitmap-bayer.png --profile megadrive-320 --megadrive-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### Tiles / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-megadrive-tiles-bayer.png --profile megadrive-320 --megadrive-mode tiles --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+</details>
+
+## SNES / bitmap, 4bpp tiles and 8bpp indexed
+
+Source: [lush-landscape.jpg](../sources/lush-landscape.jpg). Credit: Baap8969. CC0 1.0 Universal Public Domain Dedication
+
+![SNES / bitmap, 4bpp tiles and 8bpp indexed](lush-landscape-snes.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### Bitmap / No dither
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-bitmap-none.png --profile snes --snes-mode bitmap --dither none --scale 2 --fit cover
+```
+
+### Tiles / No dither
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-none.png --profile snes --snes-mode tiles --dither none --scale 2 --fit cover
+```
+
+### Indexed / No dither
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-none.png --profile snes --snes-mode indexed --dither none --scale 2 --fit cover
+```
+
+### Bitmap / FS
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-bitmap-floyd-steinberg.png --profile snes --snes-mode bitmap --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Tiles / FS
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-floyd-steinberg.png --profile snes --snes-mode tiles --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Indexed / FS
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-floyd-steinberg.png --profile snes --snes-mode indexed --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Bitmap / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-bitmap-bayer.png --profile snes --snes-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### Tiles / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-bayer.png --profile snes --snes-mode tiles --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### Indexed / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-bayer.png --profile snes --snes-mode indexed --dither bayer --scale 2 --bayer-size 4 --fit cover
 ```
 
 </details>

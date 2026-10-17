@@ -12,8 +12,8 @@ from retroimg.palettes import get_palette
 
 
 def test_example_matrix_covers_all_modes_and_adjustments():
-    assert sum(len(variants_for(family)) for family in FAMILIES) == 106
-    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 170
+    assert sum(len(variants_for(family)) for family in FAMILIES) == 128
+    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 204
     for family in FAMILIES:
         variants = variants_for(family, adjusted=True)
         assert len({variant.slug for variant in variants}) == len(variants)
@@ -105,6 +105,7 @@ def test_bundled_directory_contains_only_catalogued_public_assets():
     'macaws-cpc', 'macaws-teletext', 'lush-landscape-c64',
     'lush-landscape-spectrum', 'macaws-bbc', 'portrait-colour-amiga',
     'lush-landscape-atari2600', 'macaws-adjustments',
+    'macaws-megadrive', 'lush-landscape-snes',
 ])
 def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
     from hashlib import sha256
@@ -138,7 +139,7 @@ def test_curated_samples_are_bounded_and_cover_all_target_families():
     from examples.generate_samples import panel_size, selections
 
     panels = selections()
-    assert len(panels) == 8
+    assert len(panels) == 10
     assert set(FAMILIES) <= {panel.family for panel in panels}
     for panel in panels:
         assert panel_size(panel)[0] == 800
@@ -205,8 +206,8 @@ def test_catalogue_gallery_totals():
     def output_count(sources):
         return sum(len(variants_for(family, source.get('adjusted', False)))
                    for source in sources for family in FAMILIES)
-    assert output_count(catalog) == 1082
-    assert output_count(PUBLIC_SOURCES) == 806
+    assert output_count(catalog) == 1304
+    assert output_count(PUBLIC_SOURCES) == 972
 
 
 def test_dither_comparison_matrix_and_reproducible_options():
@@ -220,7 +221,7 @@ def test_dither_comparison_matrix_and_reproducible_options():
         assert {v.options['bayer_size'] for v in variants if v.options['dither'] == 'bayer'} == {2, 4, 8}
         assert all('bayer_size' not in v.options for v in variants if v.options['dither'] != 'bayer')
         total += len(variants)
-    assert total == 45
+    assert total == 60
 
 
 @pytest.mark.parametrize('source_ids', [('missing',), ('picard',)])

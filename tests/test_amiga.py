@@ -12,7 +12,7 @@ from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.convert import convert_file
 from retroimg.model import Colour, IndexedImage, Palette
 from retroimg.palettes import get_palette
-from retroimg.palettes.builtin import AMIGA, AMIGA_RGB
+from retroimg.palettes.amiga import AMIGA, AMIGA_RGB
 from retroimg.profiles import get_profile
 from retroimg.quantize import colour_distance, nearest_index, quantize
 from retroimg.render import render_indexed

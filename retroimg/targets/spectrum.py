@@ -9,7 +9,7 @@ from PIL import Image
 
 from retroimg.constraints.cells import quantize_cells
 from retroimg.model import IndexedImage, Palette
-from retroimg.palettes.builtin import SPECTRUM
+from retroimg.palettes.spectrum import SPECTRUM
 
 # The shared palette stores black once, then normal 1..7 and bright 1..7.
 # Hardware ink/paper codes remain 0..7, independently of palette storage.

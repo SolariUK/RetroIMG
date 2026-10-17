@@ -8,7 +8,7 @@ from retroimg.ordered import validate_dither
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.constraints.histogram import rgb_histogram
 from retroimg.model import IndexedImage, Palette
-from retroimg.palettes.builtin import AMIGA, AMIGA_RGB
+from retroimg.palettes.amiga import AMIGA, AMIGA_RGB
 from retroimg.quantize import colour_distance, quantize
 from .common import validate_screen
 

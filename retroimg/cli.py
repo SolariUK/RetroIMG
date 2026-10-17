@@ -77,6 +77,14 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
         help="Atari constraint: unrestricted bitmap, independent 40-block playfield, or repeated/mirrored 20-block halves",
     )
     convert.add_argument(
+        "--megadrive-mode", choices=("bitmap", "tiles"), default="bitmap",
+        help="Mega Drive: unrestricted 9-bit bitmap or 8x8 tiles selecting four shared palette banks",
+    )
+    convert.add_argument(
+        "--snes-mode", choices=("bitmap", "tiles", "indexed"), default="bitmap",
+        help="SNES: unrestricted 15-bit bitmap, 4bpp palette-bank tiles, or a 256-colour 8bpp background",
+    )
+    convert.add_argument(
         "--atari-row-height", type=int,
         help="scanlines sharing one playfield pattern and colour pair (default: 2; requires an Atari playfield mode)",
     )
@@ -170,6 +178,8 @@ def main(argv: list[str] | None = None) -> None:
             bbc_mode=args.bbc_mode,
             amiga_mode=args.amiga_mode,
             atari_mode=args.atari_mode,
+            megadrive_mode=args.megadrive_mode,
+            snes_mode=args.snes_mode,
             atari_row_height=args.atari_row_height,
             colours=args.colours,
         )
@@ -178,7 +188,8 @@ def main(argv: list[str] | None = None) -> None:
             f"palette={indexed.palette.name}, profile={args.profile}, dither={args.dither}, "
             f"teletext-mode={args.teletext_mode}, spectrum-mode={args.spectrum_mode}, "
             f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}, bbc-mode={args.bbc_mode}, "
-            f"amiga-mode={args.amiga_mode}, atari-mode={args.atari_mode}, palette-size={len(indexed.palette.colours)}"
+            f"amiga-mode={args.amiga_mode}, atari-mode={args.atari_mode}, "
+            f"megadrive-mode={args.megadrive_mode}, snes-mode={args.snes_mode}, palette-size={len(indexed.palette.colours)}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

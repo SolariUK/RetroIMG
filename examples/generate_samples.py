@@ -142,6 +142,20 @@ def selections() -> tuple[Panel, ...]:
     ):
         variants.append(Variant(slug, label, dict(base, **controls), (640, 400)))
     panels.append(Panel('macaws', 'adjustments', 'CPC mode 1 / Bayer 2x2 / source adjustments', tuple(variants), False))
+    for family, source, title, modes in (
+        ('megadrive', 'macaws', 'Sega Mega Drive / Genesis / bitmap and palette-bank tiles', ('bitmap', 'tiles')),
+        ('snes', 'lush-landscape', 'SNES / bitmap, 4bpp tiles and 8bpp indexed', ('bitmap', 'tiles', 'indexed')),
+    ):
+        variants = []
+        profile = 'megadrive-320' if family == 'megadrive' else 'snes'
+        size = (640, 480) if family == 'megadrive' else (597, 448)
+        for dither, label in dithers:
+            for mode in modes:
+                options = dict(profile_name=profile, **{family + '_mode': mode}, dither=dither, scale=2)
+                if dither == 'bayer':
+                    options['bayer_size'] = 4
+                variants.append(Variant(f'{mode}-{dither}', f'{mode.title()} / {label}', options, size))
+        panels.append(Panel(source, family, title, tuple(variants)))
     return tuple(panels)
 
 
@@ -164,8 +178,12 @@ def _tile(sheet: Image.Image, index: int, label: str, image: Image.Image, *, sou
     draw = ImageDraw.Draw(sheet)
     draw.multiline_text((x, y), '\n'.join(textwrap.wrap(label, width=43)),
                         fill='white', font=_font(14), spacing=2)
-    preview = ImageOps.contain(image.convert('RGB'), (376, 220),
-                              method=Image.Resampling.LANCZOS if source else Image.Resampling.NEAREST)
+    # Average reduced pixel patterns so Bayer textures do not alias into bands.
+    # Keep enlarged conversions crisp; photographs use smooth resizing throughout.
+    method = (Image.Resampling.LANCZOS if source else
+              Image.Resampling.BOX if image.width > 376 or image.height > 220 else
+              Image.Resampling.NEAREST)
+    preview = ImageOps.contain(image.convert('RGB'), (376, 220), method=method)
     sheet.paste(preview, (x + (376 - preview.width) // 2, y + 34 + (220 - preview.height) // 2))
 
 
@@ -182,16 +200,18 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest = {'version': 3, 'panel_width': PANEL_WIDTH, 'columns': 2, 'comparisons': []}
     lines = ['# Sample mode comparisons', '',
-             'Eight lossless PNG panels, **800 pixels wide**, arranged in two columns.',
+             'Ten lossless PNG panels, **800 pixels wide**, arranged in two columns.',
              'Panels grow vertically to show more modes, with at most ten rows each.',
              'FS means Floyd–Steinberg. No dither, FS and Bayer are compared throughout.',
              'CPC covers modes 0/1/2; BBC covers 0/1/2/4/5; Amiga includes indexed/EHB/HAM.',
              'C64 includes neutral and greener saturation/hue/channel-gain examples.',
              'Teletext uses the colourful macaws for bitmap and mosaic comparisons.', '',
-             'Converted previews are fitted with nearest-neighbour resizing for documentation.',
+             'Mega Drive adds four-bank tiles; SNES compares eight-bank tiles and 256-colour indexed output.', '',
+             'Converted thumbnails use area averaging when reduced to limit moiré and banding;',
+             'enlarged conversions retain nearest-neighbour scaling for crisp pixels.',
              'They are thumbnails; inspect regenerated individual PNGs for exact pixel patterns.',
              'Source thumbnails use smooth resizing. Palette counts in the manifest refer to',
-             'the original conversions, not labels, source photos or whole panels.', '',
+             'the original conversions, not filtered thumbnails, labels, source photos or whole panels.', '',
              'Source credits and rights: [reference images](../README.md).', '',
              'Refresh these panels from the project root:', '', '```bash',
              'python examples/generate_samples.py --replace', '```', '',

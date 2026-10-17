@@ -9,7 +9,7 @@ from retroimg.ordered import validate_dither
 
 from retroimg.model import IndexedImage, Palette
 from retroimg.constraints.global_palette import select_palette_indices
-from retroimg.palettes.builtin import BBC
+from retroimg.palettes.bbc import BBC
 from retroimg.quantize import quantize
 
 BBC_COLOUR_LIMITS = {0: 2, 1: 4, 2: 8, 4: 2, 5: 4}

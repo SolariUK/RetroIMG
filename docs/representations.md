@@ -96,6 +96,17 @@ Visual mosaic pages do not guarantee broadcast encodability. A future versioned
 cell-data export can preserve this model without pretending to be a transmitted
 page; no export schema is committed yet.
 
+`optimise_megadrive` and `optimise_snes_tiles` retain a generic validated
+`BankedImage` as their `.tiles` member, plus hardware CRAM/CGRAM `.registers`.
+The tile model contains RGB palette banks, `.tile_palettes` (one bank selector
+per 8x8 tile), and `.pixels` (local 0..15 codes). Every bank's slot zero is the
+shared backdrop. Mega Drive uses four banks and SNES 4bpp backgrounds eight.
+Register tables must decode exactly to the tile palettes. Separate rasterisers
+expand them into a flat indexed image, retaining duplicate backdrop slots so
+bank/local identities remain recoverable. SNES 8bpp uses `SNESIndexedImage`
+with a selected CGRAM table and ordinary palette indices. These representations
+do not claim packed native tile memory or complete multi-layer console screens.
+
 Future CRT effects belong after logical rasterisation, in an optional preview
 post-processing pipeline. Scanlines, bloom, phosphor scaling and bezels must not
 modify cells or the raw raster. No such effects are currently implemented.

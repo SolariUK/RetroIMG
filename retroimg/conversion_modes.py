@@ -16,6 +16,8 @@ from retroimg.targets.bbc import BBC_COLOUR_LIMITS, quantize_bbc
 from retroimg.model import IndexedImage, Palette, TargetProfile
 from retroimg.quantize import quantize
 from retroimg.targets.spectrum import quantize_spectrum_attributes
+from retroimg.targets.megadrive import quantize_megadrive
+from retroimg.targets.snes import quantize_snes_tiles, quantize_snes_indexed
 
 Quantizer = Callable[[Image.Image, Palette, str], IndexedImage]
 
@@ -27,6 +29,9 @@ COLOUR_COUNT_QUANTIZERS = {
 }
 
 CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
+    ("megadrive-tiles", "tiles"): quantize_megadrive,
+    ("snes-background", "tiles"): quantize_snes_tiles,
+    ("snes-background", "indexed"): quantize_snes_indexed,
     **COLOUR_COUNT_QUANTIZERS,
     **{("atari2600-playfield", mode): partial(quantize_atari_playfield, mode=mode)
        for mode in PLAYFIELD_MODES},
@@ -66,6 +71,8 @@ class ModeOption:
 
 
 MODE_OPTIONS = {
+    "megadrive_mode": ModeOption("Mega Drive", ("bitmap", "tiles"), ("megadrive-tiles",), "a megadrive-* profile"),
+    "snes_mode": ModeOption("SNES", ("bitmap", "tiles", "indexed"), ("snes-background",), "snes"),
     "atari_mode": ModeOption("Atari", ("bitmap", *PLAYFIELD_MODES), ("atari2600-playfield",),
                              "atari2600-ntsc or atari2600-pal"),
     "amiga_mode": ModeOption("Amiga", ("bitmap", "constrained", "ehb", "ham"), ("amiga-lores", "amiga-hires"), "an amiga-* profile"),

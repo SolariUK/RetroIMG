@@ -9,7 +9,7 @@ from retroimg.ordered import validate_dither
 
 from retroimg.constraints.shared_background import fit_shared_background
 from retroimg.model import IndexedImage, Palette
-from retroimg.palettes.builtin import C64
+from retroimg.palettes.c64 import C64
 from retroimg.quantize import quantize
 
 

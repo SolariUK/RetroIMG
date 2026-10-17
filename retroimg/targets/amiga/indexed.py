@@ -7,7 +7,7 @@ from retroimg.ordered import validate_dither
 
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.model import IndexedImage, Palette
-from retroimg.palettes.builtin import AMIGA, AMIGA_RGB
+from retroimg.palettes.amiga import AMIGA, AMIGA_RGB
 from retroimg.quantize import quantize
 
 AMIGA_COLOUR_LIMITS = {'lores': 32, 'hires': 16}

@@ -23,7 +23,7 @@ from retroimg.model import IndexedImage
 from retroimg.targets.spectrum import spectrum_from_indexed
 from retroimg.targets.teletext import page_from_indexed
 
-FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga", "atari2600")
+FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga", "atari2600", "megadrive", "snes")
 CATALOG = Path(__file__).with_name("sources.json")
 BUNDLED_SOURCES = Path(__file__).resolve().parents[1] / "samples" / "sources"
 
@@ -84,6 +84,14 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                     add(f"mode{mode}-{constraint}{suffix}", f"Mode {mode} / {constraint} / {label}",
                         dict(profile_name=f"cpc-mode{mode}", cpc_mode=constraint, dither=dither,
                              scale=1 if mode == 2 else 2), (640, 400))
+        elif family in {"megadrive", "snes"}:
+            profiles = (("megadrive-320", (640, 480)), ("megadrive-256", (597, 448)),
+                        ("megadrive-320-pal", (640, 480)), ("megadrive-256-pal", (640, 480))) if family == 'megadrive' else (("snes", (597, 448)),)
+            modes = ('bitmap', 'tiles') if family == 'megadrive' else ('bitmap', 'tiles', 'indexed')
+            for profile, size in profiles:
+                for mode in modes:
+                    add(f'{profile}-{mode}{suffix}', f'{profile} / {mode} / {label}',
+                        dict(profile_name=profile, **{family + '_mode': mode}, dither=dither, scale=2), size)
         else:
             raise ValueError(f"unknown example family: {family}")
 
@@ -139,7 +147,9 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                            options.get("cpc_mode") == "constrained" or
                            options.get("bbc_mode") == "constrained" or
                            options.get("amiga_mode") in {"constrained", "ehb", "ham"} or
-                           options.get("atari_mode") in {"playfield", "repeat", "mirror"})
+                           options.get("atari_mode") in {"playfield", "repeat", "mirror"} or
+                           options.get("megadrive_mode") == 'tiles' or
+                           options.get("snes_mode") in {'tiles', 'indexed'})
             if constrained and not any(key in options for key in ("palette_name", "width", "saturation")):
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
@@ -152,6 +162,7 @@ DITHER_EXAMPLES = {
     "c64": ("multicolour",), "cpc": ("mode1-constrained",),
     "bbc": ("mode0-constrained",), "amiga": ("lores-32", "ehb", "ham"),
     "atari2600": ("ntsc-playfield",),
+    "megadrive": ("megadrive-320-tiles",), "snes": ("snes-tiles", "snes-indexed"),
 }
 
 
@@ -177,6 +188,25 @@ def dither_variants_for(family: str) -> list[Variant]:
 def check_constraints(image: IndexedImage, options: dict) -> None:
     """Check actual output, including constraints shared across cells."""
     image.validate()
+    for family, count in (('megadrive', 4), ('snes', 8)):
+        if options.get(family + '_mode') == 'tiles':
+            from retroimg.palettes.megadrive import MEGADRIVE_RGB
+            from retroimg.palettes.snes import SNES_RGB
+            grid = MEGADRIVE_RGB if family == 'megadrive' else SNES_RGB
+            values = image.palette.rgb_values()
+            if len(values) != count * 16 or any(grid.snap(rgb) != rgb for rgb in values):
+                raise AssertionError('Console bank capacity/colour precision violated')
+            if len(set(values[::16])) != 1:
+                raise AssertionError('Console shared backdrop violated')
+            for y in range(0, image.height, 8):
+                for x in range(0, image.width, 8):
+                    banks = {image.pixels[dy][dx] // 16 for dy in range(y, y + 8) for dx in range(x, x + 8)}
+                    if len(banks) != 1:
+                        raise AssertionError('Console tile uses multiple banks')
+    if options.get('snes_mode') == 'indexed':
+        from retroimg.palettes.snes import SNES_RGB
+        if len(image.palette.colours) > 256 or any(SNES_RGB.snap(rgb) != rgb for rgb in image.palette.rgb_values()):
+            raise AssertionError('SNES 8bpp palette limit/precision violated')
     if options.get("atari_mode") in {"playfield", "repeat", "mirror"}:
         height = options.get("atari_row_height", 2)
         if image.width != 160 or image.palette.name not in {"atari2600-ntsc", "atari2600-pal"}:
