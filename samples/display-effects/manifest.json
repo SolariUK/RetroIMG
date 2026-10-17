@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "source": {
+    "id": "macaws",
+    "file": "macaws.jpg",
+    "title": "Blue-and-yellow macaws",
+    "fit": "cover",
+    "public": true,
+    "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+    "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+    "reference_size": [
+      750,
+      536
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  "logical_size": [
+    160,
+    144
+  ],
+  "examples": [
+    {
+      "filename": "gameboy-plain.png",
+      "size": [
+        1280,
+        1152
+      ],
+      "crop": "gameboy-plain-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "41009feafc3a073a12ecd6300daadfa574b77ab395b666664ff7e5f5857850c0",
+      "crop_sha256": "a2c5ac8d78ee211733c0500473a0bc9c4cfd15402821369483ea224a0a21255a",
+      "settings": {
+        "profile_name": "gameboy",
+        "gameboy_mode": "tiles",
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "scale": 8
+      },
+      "command": "retroimg convert /path/to/image.jpg gameboy-plain.png --profile gameboy --gameboy-mode tiles --fit cover --dither bayer --bayer-size 4 --scale 8"
+    },
+    {
+      "filename": "gameboy-lcd-subtle.png",
+      "size": [
+        1280,
+        1152
+      ],
+      "crop": "gameboy-lcd-subtle-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "b9ebd4086b32d83e95358920005ef66eb9e822ca831f1518691325c1898e18a9",
+      "crop_sha256": "d0f0e9f01e8ce68d2a205edf5104b482c53fa548579d6815f5b632c9b226e6d0",
+      "settings": {
+        "profile_name": "gameboy",
+        "gameboy_mode": "tiles",
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "scale": 8,
+        "display_effect": "gameboy-lcd",
+        "effect_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg gameboy-lcd-subtle.png --profile gameboy --gameboy-mode tiles --fit cover --dither bayer --bayer-size 4 --scale 8 --display-effect gameboy-lcd --effect-strength 0.35"
+    },
+    {
+      "filename": "gameboy-lcd-strong.png",
+      "size": [
+        1280,
+        1152
+      ],
+      "crop": "gameboy-lcd-strong-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "6db4f6044c4090a3ca52c90e2fe5415831bd9252330d40c7b436528d08ecc447",
+      "crop_sha256": "08307449010ba0f44f711eadbd33abbf7b04db474ffabe09a5399afa09c82b90",
+      "settings": {
+        "profile_name": "gameboy",
+        "gameboy_mode": "tiles",
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "scale": 8,
+        "display_effect": "gameboy-lcd",
+        "effect_strength": 0.85
+      },
+      "command": "retroimg convert /path/to/image.jpg gameboy-lcd-strong.png --profile gameboy --gameboy-mode tiles --fit cover --dither bayer --bayer-size 4 --scale 8 --display-effect gameboy-lcd --effect-strength 0.85"
+    }
+  ]
+}

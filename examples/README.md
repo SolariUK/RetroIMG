@@ -198,6 +198,16 @@ recorded in each gallery manifest.
 
 ## Curated repository samples
 
+For the separate small set of Game Boy LCD display examples, run
+`python examples/generate_display_effects.py --replace`. These retain full-size
+PNGs and unscaled detail crops in [samples/display-effects](../samples/display-effects/README.md),
+with source credits, checksums and reproduction commands. They do not change
+the mode-comparison sheets below.
+
+Use `python examples/generate_display_effects.py --effect scanlines --replace`
+for [scanline examples](../samples/scanlines/README.md): a Mega Drive macaws
+conversion shown plain and at two strengths, with full-size PNGs and unscaled crops.
+
 `generate_samples.py` reuses the converter, mode variants and constraint checks
 to maintain fifteen comparison groups across 40 PNG sheets, each 1328 pixels
 wide with two columns and at most three rows. The fourteen family groups show several modes and dithers: Teletext

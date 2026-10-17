@@ -8,6 +8,7 @@ from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
+from retroimg.display_effects import validate_display_effect
 
 REQUIRED_PALETTES = {
     'spectrum_mode': ('spectrum',), 'c64_mode': ('c64',), 'cpc_mode': ('cpc',),
@@ -29,8 +30,8 @@ CELL_DIMENSIONS = {
     'nes-attributes': (16, 16), 'mastersystem-tiles': (8, 8), 'gameboy-tiles': (8, 8),
 }
 INTEGER_OPTIONS = {'width', 'height', 'scale', 'bayer_size', 'colours', 'atari_row_height'}
-FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain'}
-OPTIONAL_OPTIONS = {'palette', 'width', 'height', 'bayer_size', 'colours', 'atari_row_height'}
+FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain', 'effect_strength'}
+OPTIONAL_OPTIONS = {'palette', 'width', 'height', 'bayer_size', 'colours', 'atari_row_height', 'effect_strength'}
 NON_SETTINGS = {'command', 'input', 'output', 'preset', 'presets_dir', 'print_only'}
 
 
@@ -62,6 +63,7 @@ def normalize_settings(raw: dict, defaults: dict) -> dict:
             valid = type(value) is str
         if not valid:
             raise ValueError(f'invalid value for preset setting {key}')
+    validate_display_effect(values['display_effect'], values['effect_strength'], values['scale'])
     if values['profile'] not in PROFILES:
         raise ValueError('unknown preset profile: ' + values['profile'])
     profile = PROFILES[values['profile']]
@@ -118,12 +120,15 @@ def compact_settings(values: dict) -> dict:
     profile = PROFILES[values['profile']]
     active = {key for key, spec in MODE_OPTIONS.items() if profile.constraint_model in spec.constraint_models}
     return {key: value for key, value in values.items() if value is not None
+            and not (key == 'display_effect' and value == 'none')
             and (key not in MODE_OPTIONS or key in active)}
 
 
 def merge_settings(saved: dict, overrides: dict, defaults: dict) -> dict:
     """Explicit CLI flags win; discard inherited options made inapplicable."""
     values = dict(saved, **overrides)
+    if values.get('display_effect', 'none') == 'none' and 'effect_strength' not in overrides:
+        values['effect_strength'] = None
     if values.get('dither') != 'bayer' and 'bayer_size' not in overrides:
         values['bayer_size'] = None
     profile = PROFILES.get(values.get('profile', defaults['profile']))

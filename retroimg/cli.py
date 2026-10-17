@@ -9,6 +9,7 @@ from retroimg.convert import convert_file
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
+from retroimg.display_effects import DEFAULT_EFFECT_STRENGTH, DISPLAY_EFFECTS
 
 
 def build_parser(*, conversion_defaults: dict | None = None) -> argparse.ArgumentParser:
@@ -37,6 +38,10 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
         convert.add_argument(f"--{channel}-gain", type=float, default=1.0,
                              help=f"non-negative {channel} multiplier (default: 1)")
     convert.add_argument("--scale", type=int, default=8, help="integer preview enlargement")
+    convert.add_argument('--display-effect', choices=DISPLAY_EFFECTS, default='none',
+                         help='optional LCD cells or scanlines; available with any profile (scale >= 3)')
+    convert.add_argument('--effect-strength', type=float,
+                         help=f'display effect strength from 0 to 1 (default: {DEFAULT_EFFECT_STRENGTH}; requires a display effect)')
     convert.add_argument(
         "--teletext-mode",
         choices=("bitmap", "mosaic"),
@@ -191,6 +196,8 @@ def main(argv: list[str] | None = None) -> None:
             green_gain=args.green_gain,
             blue_gain=args.blue_gain,
             scale=args.scale,
+            display_effect=args.display_effect,
+            effect_strength=args.effect_strength,
             teletext_mode=args.teletext_mode,
             spectrum_mode=args.spectrum_mode,
             c64_mode=args.c64_mode,
@@ -217,7 +224,7 @@ def main(argv: list[str] | None = None) -> None:
             f"megadrive-mode={args.megadrive_mode}, snes-mode={args.snes_mode}, "
             f"nes-mode={args.nes_mode}, mastersystem-mode={args.mastersystem_mode}, "
             f"gameboy-mode={args.gameboy_mode}, cga-mode={args.cga_mode}, ega-mode={args.ega_mode}, "
-            f"palette-size={len(indexed.palette.colours)}"
+            f"palette-size={len(indexed.palette.colours)}, display-effect={args.display_effect}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

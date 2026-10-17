@@ -46,6 +46,9 @@ Changing profiles clears inherited mode flags unsupported by the new profile
 and selects its default palette unless a palette override is supplied. Changing
 profile or screen mode also resets an inherited screen-colour count when needed.
 An inherited Atari band height is cleared outside playfield conversion.
+Display effects are retained when changing profiles for experimentation.
+`--display-effect none` disables an inherited effect and clears its strength;
+an explicitly supplied strength still requires an active effect.
 Explicitly invalid combinations and incompatible custom dimensions produce an
 error before image conversion begins.
 

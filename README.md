@@ -176,7 +176,11 @@ red/green/blue gains. For example, add `--brightness 1.1 --contrast 1.2` for a
 and the guide includes them under **Adjust source colours**.
 Resolution, fitting, palettes and preview scaling are configurable. See
 [conversion options and comparison commands](docs/conversion.md) for details.
-CRT/scanline effects and native hardware export are deferred.
+Optional [display effects](docs/display-effects.md) add Game Boy LCD cells and
+shadows or smooth scanlines to enlarged previews, with any profile. See the
+[full-size examples and detail crops](samples/display-effects/README.md).
+Separate [scanline examples](samples/scanlines/README.md) show plain, subtle and
+stronger treatments. CRT masks, bloom and native hardware export are deferred.
 
 ## Example results
 

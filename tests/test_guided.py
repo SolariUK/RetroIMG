@@ -58,6 +58,17 @@ def test_defaults_build_an_ordinary_command_without_writing(paths):
     assert shlex.split(format_command(arguments, platform='posix'))[1:] == arguments
 
 
+@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines'])
+@pytest.mark.parametrize('machine', ['gameboy', 'teletext'])
+def test_display_effect_is_explicit_and_available_for_other_machines(paths, machine, effect):
+    replies = Replies({'Choose machine': machine, 'Choose display effect': effect,
+                       'Display effect strength': '.8', 'Preview scale': '6'})
+    arguments = guide(paths, replies)
+    args = build_parser().parse_args(arguments)
+    assert args.display_effect == effect and args.effect_strength == .8 and args.scale == 6
+    assert any(f'Display effect: {effect}; strength: 0.8' in message for message in replies.messages)
+
+
 CASES = []
 for name, profile in PROFILES.items():
     CASES.append((name, None, 'bitmap'))

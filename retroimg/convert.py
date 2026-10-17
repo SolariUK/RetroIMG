@@ -13,6 +13,7 @@ from retroimg.model import Geometry, IndexedImage
 from retroimg.palettes import get_palette
 from retroimg.profiles import get_profile
 from retroimg.render import render_indexed
+from retroimg.display_effects import validate_display_effect
 
 
 def convert_file(
@@ -34,6 +35,8 @@ def convert_file(
     green_gain: float = 1.0,
     blue_gain: float = 1.0,
     scale: int = 8,
+    display_effect: str = 'none',
+    effect_strength: float | None = None,
     teletext_mode: str = "bitmap",
     spectrum_mode: str = "bitmap",
     c64_mode: str = "bitmap",
@@ -51,6 +54,7 @@ def convert_file(
     atari_row_height: int | None = None,
     colours: int | None = None,
 ) -> IndexedImage:
+    validate_display_effect(display_effect, effect_strength, scale)
     validate_dither(dither, 4 if bayer_size is None else bayer_size)
     if bayer_size is not None and dither != "bayer":
         raise ValueError("--bayer-size requires --dither bayer")
@@ -85,5 +89,6 @@ def convert_file(
         indexed = quantizer(prepared, palette, dither)
 
     preview_aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1.0
-    render_indexed(indexed, scale=scale, pixel_aspect=preview_aspect).save(output_path)
+    render_indexed(indexed, scale=scale, pixel_aspect=preview_aspect,
+                   display_effect=display_effect, effect_strength=effect_strength).save(output_path)
     return indexed

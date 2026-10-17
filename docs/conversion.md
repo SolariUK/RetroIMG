@@ -1,5 +1,9 @@
 # Conversion options
 
+Optional [display effects](display-effects.md) apply after conversion and preview
+scaling. Game Boy LCD cells are available with any profile using
+`--display-effect gameboy-lcd --scale 8`; the default is plain output.
+
 ## Palette/profile independence
 
 Palettes can be mixed with geometries for experimentation:

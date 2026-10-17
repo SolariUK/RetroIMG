@@ -2,6 +2,12 @@
 
 ## 0.2.0 — Unreleased
 
+- Added optional smooth scanlines aligned to logical rows, with linear-light
+  dimming, adjustable strength, CLI/guided/preset support and separate Mega Drive
+  macaws examples. Conversion codes and output dimensions remain unchanged.
+- Added an optional Game Boy LCD display treatment with inset cells and shadows,
+  adjustable strength, CLI/guided/preset support, and separate full-size examples
+  and detail crops. Available with every profile; indexed conversion is unchanged.
 - Added CGA standard four-colour/monochrome graphics and EGA RGBI/selected RGB6
   screens, guided palette choices, register models and comparison panels.
 - Added NES background attributes, Master System Mode 4 tile palettes and

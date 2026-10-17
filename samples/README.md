@@ -2,7 +2,11 @@
 
 `sources/` contains the seven public-domain/CC0 or locally generated reference images used by the gallery. Keeping these modest source files in Git makes comparisons reproducible from a fresh checkout, without a download service or access to a developer scratchpad. The files total approximately 6 MB.
 
-The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. [comparisons/](comparisons/README.md) holds eight curated **800-pixel-wide PNG panels**, covering the seven target families and a macaws adjustment recipe. Each uses two columns and up to ten rows, so extra modes scroll vertically without making the page wider. CPC includes modes 0/1/2, BBC includes 0/1/2/4/5, and Amiga includes RGB12, indexed palettes, EHB and HAM6. C64 shows greener saturation/hue/gain settings, and Teletext uses colourful macaws. Settings, checksums and reproduction commands accompany each panel. Intermediate conversions are automatically cleaned up; large galleries are optional development diagnostics.
+The two earlier user-supplied sources remain outside the repository and are excluded from public galleries. [comparisons/](comparisons/README.md) holds fifteen comparison groups across forty **1328-pixel-wide PNG sheets**, with two columns and at most three rows per sheet. Fourteen target families and a macaws adjustment recipe have labelled previews, settings, checksums and reproduction commands. Converted previews retain their generated dimensions without further resampling. Intermediate conversions are automatically cleaned up; large galleries are optional development diagnostics.
+
+[display-effects/](display-effects/README.md) holds a separate handful of full-size Game Boy LCD examples and unscaled detail crops. These demonstrate display treatments without expanding the mode-comparison sheets.
+
+[scanlines/](scanlines/README.md) shows plain, subtle and stronger scanline treatments of a Mega Drive macaws conversion, also with full-size examples and unscaled crops.
 
 ## Generate examples
 
@@ -10,9 +14,11 @@ Run from the project root with retroimg installed:
 
 ```bash
 python examples/generate_samples.py --replace
+python examples/generate_display_effects.py --replace
+python examples/generate_display_effects.py --effect scanlines --replace
 ```
 
-This refreshes only the known documentation artifacts in `samples/comparisons` and refuses directories with unrelated files. Use `--output-dir /path/to/new-samples` to generate elsewhere. Source images stay in `samples/sources`; only presentation thumbnails are resized. Panels use nearest-neighbour fitting for converted previews, so inspect individual regenerated PNGs when evaluating exact dither patterns.
+This refreshes only the known documentation artifacts in `samples/comparisons` and refuses directories with unrelated files. Use `--output-dir /path/to/new-samples` to generate elsewhere. Source images stay in `samples/sources`; source-photo thumbnails are smoothly fitted, while converted previews keep their generated pixels. View sheets at 100% when evaluating exact dither patterns.
 
 For an optional comprehensive gallery, use `python examples/generate_gallery.py --public-only --output-dir /path/to/new-gallery`. See [gallery documentation](../examples/README.md) for family/source filters. Avoid committing full galleries or accumulating them during routine sample refreshes.
 

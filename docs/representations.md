@@ -123,6 +123,8 @@ six-bit palette-register values and local indices. Separate rasterisers
 interpret these values for preview rendering. EGA's register-bit order is
 independent of the full RGB grid's internal palette order.
 
-Future CRT effects belong after logical rasterisation, in an optional preview
-post-processing pipeline. Scanlines, bloom, phosphor scaling and bezels must not
-modify cells or the raw raster. No such effects are currently implemented.
+[Display effects](display-effects.md) run after logical rasterisation and preview
+scaling. Optional Game Boy LCD cells and shadows or row-aligned scanlines modify
+the RGB preview without changing cells, palettes or the raw indexed raster.
+Future bloom, phosphor scaling and bezels belong to the same separate
+presentation layer.

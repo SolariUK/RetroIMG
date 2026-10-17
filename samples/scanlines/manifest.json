@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "source": {
+    "id": "macaws",
+    "file": "macaws.jpg",
+    "title": "Blue-and-yellow macaws",
+    "fit": "cover",
+    "public": true,
+    "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+    "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+    "reference_size": [
+      750,
+      536
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  "logical_size": [
+    320,
+    224
+  ],
+  "examples": [
+    {
+      "filename": "megadrive-plain.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-plain-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "4e88e370cc41d344cefa0b2e8cae61994740eaa517bcd841ba8243f7346b1c24",
+      "crop_sha256": "cb9ef627634954796086c1225b067f8cb33ed3e614d150c0badeb7274c8b20b2",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-plain.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4"
+    },
+    {
+      "filename": "megadrive-scanlines-subtle.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-scanlines-subtle-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "2721d30b00df8f31791b2157a5aad5634fd82d795823cd2acb2e2e71757a9d13",
+      "crop_sha256": "ba8b064ebf55f52679e3ff2d57205ee35e81c23e1727c4a431a982138ea0e87f",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "scanlines",
+        "effect_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-scanlines-subtle.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect scanlines --effect-strength 0.35"
+    },
+    {
+      "filename": "megadrive-scanlines-strong.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-scanlines-strong-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "3c540f0976ad34dc3a072498039e4ed99ef3c2da12fd9a49080e06eb2cf47e83",
+      "crop_sha256": "739d93a9b1d6b4bfb1705233483550400dfedfc820bdb6842518f6b71961043b",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "scanlines",
+        "effect_strength": 0.85
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-scanlines-strong.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect scanlines --effect-strength 0.85"
+    }
+  ]
+}

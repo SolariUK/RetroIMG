@@ -38,3 +38,9 @@ unique tiles. Sprites, window composition, LCD ghosting, native exports and
 Game Boy Color features are deferred. No input-alpha feature is introduced.
 
 [View the green/grey comparisons](../../samples/comparisons/README.md).
+
+Optional [LCD display effects](../display-effects.md) add inset pixel cells and
+subtle shadows: append `--display-effect gameboy-lcd --scale 8`. They affect only
+the rendered preview, preserve the selected green/grey tint, and are also
+available for experiments with other platforms. See the separate
+[full-size examples and crops](../../samples/display-effects/README.md).

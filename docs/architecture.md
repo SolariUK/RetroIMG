@@ -270,8 +270,15 @@ the shared ordered selector to their decoded RGBs. It retains the chosen code
 and updates held state, resetting at each scanline. Plain/FS HAM keeps its
 previous nearest-channel fast path and output. Bayer uses no error buffer.
 
-All dithering belongs to logical conversion. Preview scaling and future CRT
-post-processing remain independent.
+All dithering belongs to logical conversion. Preview scaling and display
+post-processing remain independent. `display_effects.py` implements the optional
+Game Boy LCD and scanline treatments of enlarged RGB previews and imports no target adapters.
+`render_indexed` supplies the logical grid and the palette's lightest colour;
+`convert_file` still returns the unmodified indexed raster. Future CRT effects
+belong in this presentation layer. See [display effects](display-effects.md).
+Scanline weights are integrated over each output row in logical coordinates,
+then applied with linear-light sRGB lookup tables. They preserve the logical
+beam count through aspect correction, including fractional row heights.
 
 ## Console palette banks
 

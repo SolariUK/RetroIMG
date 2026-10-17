@@ -20,6 +20,7 @@ from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
 from retroimg.settings import CELL_DIMENSIONS, REQUIRED_PALETTES, CONSTRAINT_PALETTES
+from retroimg.display_effects import DEFAULT_EFFECT_STRENGTH, MINIMUM_EFFECT_SCALES
 from retroimg.presets import list_presets, load_preset, preset_directory, preset_slug, save_preset
 
 # Presentation and input hints only. Target adapters remain the authority on
@@ -266,13 +267,29 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
         options['bayer_size'] = int(ui.choice('Bayer matrix', [(str(n), f'{n}x{n}') for n in BAYER_SIZES],
                                               str(preferred.get('bayer_size') or 4)))
     options.update(_adjustment_options(ui, defaults, preferred))
+    effect = ui.choice('Display effect', [
+        ('none', 'none: plain converted pixels'),
+        ('gameboy-lcd', 'gameboy-lcd: pixel cells and shadows; recommended for Game Boy, available for any machine'),
+        ('scanlines', 'scanlines: smooth horizontal beams aligned to the original image rows'),
+    ], preferred.get('display_effect', 'none'))
+    minimum_scale = 1
+    if effect != 'none':
+        options['display_effect'] = effect
+        options['effect_strength'] = ui.number(
+            'Display effect strength (0 to 1)',
+            preferred.get('effect_strength') if preferred.get('effect_strength') is not None else DEFAULT_EFFECT_STRENGTH,
+            valid=lambda n: 0 <= n <= 1, hint='Enter a number between 0 and 1.')
+        minimum_scale = MINIMUM_EFFECT_SCALES[effect]
+        ui.write(f'{effect} needs scale {minimum_scale} or greater; 6 or 8 is recommended for close inspection.')
     geometry = profile.geometry
     width, height = options.get('width', geometry.width), options.get('height', geometry.height)
     aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1
     longest = max(width * max(1, aspect), height * max(1, 1 / aspect))
-    suggested = max(1, min(defaults['scale'], int(640 // longest)))
-    options['scale'] = ui.number('Preview scale (integer enlargement)', previous.get('scale', suggested) if same_profile else suggested,
-                                 integer=True, valid=lambda n: n > 0, hint='Enter a positive whole number.')
+    suggested = max(minimum_scale, min(defaults['scale'], int(640 // longest)))
+    scale_default = max(minimum_scale, previous.get('scale', suggested)) if same_profile else suggested
+    options['scale'] = ui.number('Preview scale (integer enlargement)', scale_default,
+                                 integer=True, valid=lambda n: n >= minimum_scale,
+                                 hint=f'Enter a whole number of at least {minimum_scale}.')
     return options
 
 
@@ -360,6 +377,9 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
              f'hue shift: {options.get("hue_shift", defaults["hue_shift"])} degrees')
     ui.write('  RGB gains: ' + ', '.join(str(options.get(c + '_gain', defaults[c + '_gain'])) for c in ('red', 'green', 'blue')))
     ui.write(f'  Preview: {preview[0]}x{preview[1]} (scale {scale})')
+    effect = options.get('display_effect', 'none')
+    ui.write(f'  Display effect: {effect}' + (
+        f'; strength: {options.get("effect_strength", DEFAULT_EFFECT_STRENGTH)}' if effect != 'none' else ''))
 
 
 def _save_new_preset(ui: Prompts, directory: Path, options: dict, parser, loaded):
