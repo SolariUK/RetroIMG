@@ -23,7 +23,7 @@ from retroimg.model import IndexedImage
 from retroimg.targets.spectrum import spectrum_from_indexed
 from retroimg.targets.teletext import page_from_indexed
 
-FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga", "atari2600", "megadrive", "snes")
+FAMILIES = ("teletext", "spectrum", "c64", "cpc", "bbc", "amiga", "atari2600", "megadrive", "snes", "nes", "mastersystem", "gameboy", "cga", "ega")
 CATALOG = Path(__file__).with_name("sources.json")
 BUNDLED_SOURCES = Path(__file__).resolve().parents[1] / "samples" / "sources"
 
@@ -92,6 +92,45 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                 for mode in modes:
                     add(f'{profile}-{mode}{suffix}', f'{profile} / {mode} / {label}',
                         dict(profile_name=profile, **{family + '_mode': mode}, dither=dither, scale=2), size)
+        elif family in {'nes', 'mastersystem', 'gameboy'}:
+            if family == 'nes':
+                profiles = (('nes', (640, 480)),)
+                modes = ('bitmap', 'attributes')
+            elif family == 'mastersystem':
+                profiles = (('mastersystem', (512, 384)), ('mastersystem-224', (597, 448)),
+                            ('mastersystem-240', (640, 480)))
+                modes = ('bitmap', 'tiles')
+            else:
+                profiles = (('gameboy', (640, 576)),)
+                modes = ('bitmap', 'tiles')
+            for profile, size in profiles:
+                for mode in modes:
+                    add(f'{profile}-{mode}{suffix}', f'{profile} / {mode} / {label}',
+                        dict(profile_name=profile, **{family + '_mode': mode}, dither=dither,
+                             scale=4 if family == 'gameboy' else 2), size)
+            if family == 'gameboy':
+                add(f'gameboy-tiles-grey{suffix}', f'Game Boy / grey tiles / {label}',
+                    dict(profile_name='gameboy', gameboy_mode='tiles', palette_name='gameboy-grey',
+                         dither=dither, scale=4), (640, 576))
+        elif family == 'cga':
+            add(f'bitmap{suffix}', f'320 / unrestricted RGBI / {label}',
+                dict(profile_name='cga-320', cga_mode='bitmap', palette_name='cga', dither=dither, scale=2), (640, 480))
+            for number in (0, 1):
+                for intensity in ('low', 'high'):
+                    palette = f'cga-pal{number}-{intensity}'
+                    add(f'pal{number}-{intensity}{suffix}', f'320 / palette {number} {intensity} / {label}',
+                        dict(profile_name='cga-320', cga_mode='constrained', palette_name=palette, dither=dither, scale=2), (640, 480))
+            add(f'mono{suffix}', f'640 / monochrome / {label}',
+                dict(profile_name='cga-640', cga_mode='constrained', dither=dither, scale=1), (640, 480))
+        elif family == 'ega':
+            for profile in ('ega-320', 'ega-640-200', 'ega-640'):
+                for mode in ('bitmap', 'constrained'):
+                    options = dict(profile_name=profile, ega_mode=mode, dither=dither, scale=2 if profile=='ega-320' else 1)
+                    if mode == 'bitmap':
+                        options['palette_name'] = 'ega'
+                    add(f'{profile}-{mode}{suffix}', f'{profile} / {mode} / {label}', options, (640, 480))
+            add(f'classic{suffix}', f'640x350 / fixed RGBI / {label}',
+                dict(profile_name='ega-640', ega_mode='constrained', palette_name='ega-default', dither=dither, scale=1), (640, 480))
         else:
             raise ValueError(f"unknown example family: {family}")
 
@@ -149,7 +188,12 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                            options.get("amiga_mode") in {"constrained", "ehb", "ham"} or
                            options.get("atari_mode") in {"playfield", "repeat", "mirror"} or
                            options.get("megadrive_mode") == 'tiles' or
-                           options.get("snes_mode") in {'tiles', 'indexed'})
+                           options.get("snes_mode") in {'tiles', 'indexed'} or
+                           options.get("nes_mode") == 'attributes' or
+                           options.get("mastersystem_mode") == 'tiles' or
+                           options.get("gameboy_mode") == 'tiles' or
+                           options.get("cga_mode") == 'constrained' or
+                           options.get("ega_mode") == 'constrained')
             if constrained and not any(key in options for key in ("palette_name", "width", "saturation")):
                 add(variant.slug + "-adjusted", variant.label + " / hue +20, G x1.15",
                     dict(options, hue_shift=20, green_gain=1.15), variant.size)
@@ -163,6 +207,10 @@ DITHER_EXAMPLES = {
     "bbc": ("mode0-constrained",), "amiga": ("lores-32", "ehb", "ham"),
     "atari2600": ("ntsc-playfield",),
     "megadrive": ("megadrive-320-tiles",), "snes": ("snes-tiles", "snes-indexed"),
+    "nes": ("nes-attributes",), "mastersystem": ("mastersystem-tiles",),
+    "gameboy": ("gameboy-tiles", "gameboy-tiles-grey"),
+    "cga": ('pal0-low', 'pal0-high', 'pal1-low', 'pal1-high', 'mono'),
+    "ega": ('ega-320-constrained', 'ega-640-constrained', 'classic'),
 }
 
 
@@ -188,6 +236,40 @@ def dither_variants_for(family: str) -> list[Variant]:
 def check_constraints(image: IndexedImage, options: dict) -> None:
     """Check actual output, including constraints shared across cells."""
     image.validate()
+    if options.get('cga_mode') == 'constrained':
+        from retroimg.palettes.cga import CGA_PALETTES, CGA_MONO
+        profile = options['profile_name']
+        allowed = CGA_MONO if profile == 'cga-640' else CGA_PALETTES[options.get('palette_name', 'cga-pal1-high')]
+        if image.palette != allowed:
+            raise AssertionError('CGA fixed palette constraint violated')
+    if options.get('ega_mode') == 'constrained':
+        from retroimg.palettes.ega import EGA_RGB, EGA_DEFAULT
+        values = image.palette.rgb_values()
+        if len(values)>16 or any(EGA_RGB.snap(rgb)!=rgb for rgb in values):
+            raise AssertionError('EGA colour limit/precision violated')
+        if options['profile_name'] != 'ega-640' and not set(values)<=set(EGA_DEFAULT.rgb_values()):
+            raise AssertionError('EGA 200-line RGBI constraint violated')
+    if options.get('nes_mode') == 'attributes':
+        from retroimg.palettes.nes import NES
+        values = image.palette.rgb_values()
+        if len(values) != 16 or len(set(values[::4])) != 1 or not set(values) <= set(NES.rgb_values()):
+            raise AssertionError('NES palette banks/shared backdrop violated')
+        for y in range(0, image.height, 16):
+            for x in range(0, image.width, 16):
+                if len({image.pixels[dy][dx] // 4 for dy in range(y, y + 16) for dx in range(x, x + 16)}) != 1:
+                    raise AssertionError('NES 16x16 attribute constraint violated')
+    if options.get('mastersystem_mode') == 'tiles':
+        from retroimg.palettes.mastersystem import MASTERSYSTEM_RGB
+        if len(image.palette.colours) != 32 or any(MASTERSYSTEM_RGB.snap(rgb) != rgb for rgb in image.palette.rgb_values()):
+            raise AssertionError('Master System colour precision/bank limit violated')
+        for y in range(0, image.height, 8):
+            for x in range(0, image.width, 8):
+                if len({image.pixels[dy][dx] // 16 for dy in range(y, y + 8) for dx in range(x, x + 8)}) != 1:
+                    raise AssertionError('Master System 8x8 bank constraint violated')
+    if options.get('gameboy_mode') == 'tiles':
+        from retroimg.palettes.gameboy import GAMEBOY, GAMEBOY_GREY
+        if image.palette not in (GAMEBOY, GAMEBOY_GREY):
+            raise AssertionError('Game Boy four-shade palette violated')
     for family, count in (('megadrive', 4), ('snes', 8)):
         if options.get(family + '_mode') == 'tiles':
             from retroimg.palettes.megadrive import MEGADRIVE_RGB

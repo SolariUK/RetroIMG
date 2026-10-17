@@ -10,6 +10,11 @@ retroimg/
     targets/
         megadrive.py         # Four-bank single-plane tiles and CRAM words
         snes.py              # Eight-bank 4bpp tiles, 8bpp BG and CGRAM words
+        nes.py               # Four palettes and 16x16 background attributes
+        mastersystem.py      # Two independent RGB6 background tile palettes
+        gameboy.py           # DMG luminance codes and BGP mapping
+        cga.py               # Fixed graphics palettes and Colour Select register
+        ega.py               # RGBI/RGB6 screen palettes and EGA register bits
         teletext.py          # Cells/pages, mosaic optimisation, rasterisation
         spectrum.py          # Ink/paper/BRIGHT cells and attribute optimisation
         c64.py               # Multicolour cells and shared-background optimisation
@@ -44,6 +49,11 @@ retroimg/
         atari.py
         megadrive.py
         snes.py
+        nes.py
+        mastersystem.py
+        gameboy.py
+        cga.py
+        ega.py
         consoles.py          # Compatibility imports only; no definitions
     profiles/                # Geometry, default palette, constraint-model identifiers
     model.py                 # Shared Palette, Geometry, TargetProfile, IndexedImage
@@ -267,7 +277,7 @@ post-processing remain independent.
 
 `constraints.palette_banks` fits shared RGB banks and assigns one to each tile.
 `BankedImage` validates tile dimensions, bank selectors, local codes, equal bank
-capacities and the shared slot-zero backdrop. It contains no hardware register
+capacities and, when requested, the shared slot-zero backdrop. It contains no hardware register
 layout or target imports. Fitting seeds banks from farthest-error tiles, then
 alternates histogram error assignment and grid-snapped bank fitting for up to
 four rounds, retaining the best result. It is a deterministic bounded heuristic.
@@ -281,6 +291,25 @@ every bank has the same opaque RGB. SNES indexed backgrounds separately reuse
 adaptive screen-palette fitting, with a validated CGRAM table and pixel grid.
 The file pipeline only forwards the declared mode options. Native packing,
 VRAM limits, sprites, multiple layers and console display effects are deferred.
+
+The same fitter accepts either a regular RGB grid or a fixed candidate palette.
+NES supplies fixed PPU colours and four four-entry banks, with one bank selected
+per 16x16 attribute region and a common backdrop. Fixed-palette fitting reuses
+the generic global selector. Master System supplies RGB6 and two independent
+sixteen-entry banks, with `shared_backdrop=False`; every entry is available to
+background tiles. Existing RGB-grid/shared-backdrop defaults are unchanged.
+Game Boy uses the shared luminance conversion and quantiser with four neutral
+shades, retaining two-bit codes and a BGP register. Its renderer maps shades to
+green or grey; the tint does not influence fitting. Game Boy Color is deferred.
+
+CGA uses fixed palette variants and retains the Colour Select register; no
+free palette fitting is applied in its constrained modes. EGA 200-line screens
+use standard RGBI colours, while 350-line screens may reuse adaptive RGB-grid
+fitting to select sixteen RGB6 colours. `EGAImage` validates the register table
+and its display-family limits. Standard RGBI definitions live in palette
+`_shared`, independently of either target. Presentation hints in settings
+restrict palette choices by constraint model; target adapters perform final
+validation. These additions do not change the shared file pipeline.
 
 ## Guided CLI boundary
 

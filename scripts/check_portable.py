@@ -53,7 +53,7 @@ def check(archive: Path) -> None:
                                  and (profile.constraint_model, mode) in CONSTRAINED_QUANTIZERS)
         for index, (profile, modes) in enumerate(cases):
             options = dict(profile_name=profile, width=160 if profile.startswith('atari') else 16,
-                           height=24, scale=1, dither='bayer', bayer_size=2,
+                           height=32 if profile == 'nes' else 24, scale=1, dither='bayer', bayer_size=2,
                            brightness=1.1, contrast=1.2, hue_shift=10, green_gain=1.1, **modes)
             reference, actual = directory / 'reference.png', directory / f'actual-{index}.png'
             convert_file(source, reference, **options)

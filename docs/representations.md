@@ -107,6 +107,22 @@ bank/local identities remain recoverable. SNES 8bpp uses `SNESIndexedImage`
 with a selected CGRAM table and ordinary palette indices. These representations
 do not claim packed native tile memory or complete multi-layer console screens.
 
+`NESImage` retains four background palettes of PPU colour codes and an
+`.attributes` banked model with 16x16 selectors and two-bit local pixel codes.
+`MasterSystemImage` retains two CRAM palettes and `.tiles` with 8x8 selectors
+and four-bit local codes. These banks have no shared-backdrop requirement:
+all sixteen entries in each bank are available to background tiles.
+`GameBoyImage` retains two-bit pixel codes, a BGP byte and a selected green or
+grey display palette. Rasterisation applies the BGP mapping to codes before
+looking up display shades. No sprite, window, memory packing or native export
+is implied by these models.
+
+`CGAImage` stores the chosen fixed palette, resolution family, Colour Select
+byte and local pixel codes. `EGAImage` stores the scanline family, up to sixteen
+six-bit palette-register values and local indices. Separate rasterisers
+interpret these values for preview rendering. EGA's register-bit order is
+independent of the full RGB grid's internal palette order.
+
 Future CRT effects belong after logical rasterisation, in an optional preview
 post-processing pipeline. Scanlines, bloom, phosphor scaling and bezels must not
 modify cells or the raw raster. No such effects are currently implemented.

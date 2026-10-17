@@ -13,6 +13,10 @@ from retroimg.palettes import builtin, consoles
     ('bbc', 'BBC', 'bbc'), ('amiga', 'AMIGA', 'amiga'),
     ('atari', 'ATARI_NTSC', 'atari2600-ntsc'), ('atari', 'ATARI_PAL', 'atari2600-pal'),
     ('megadrive', 'MEGADRIVE', 'megadrive'), ('snes', 'SNES', 'snes'),
+    ('nes', 'NES', 'nes'), ('mastersystem', 'MASTERSYSTEM', 'mastersystem'),
+    ('gameboy', 'GAMEBOY', 'gameboy'), ('gameboy', 'GAMEBOY_GREY', 'gameboy-grey'),
+    ('cga', 'CGA', 'cga'), ('cga', 'CGA_MONO', 'cga-mono'),
+    ('ega', 'EGA', 'ega'), ('ega', 'EGA_DEFAULT', 'ega-default'),
 ])
 def test_palette_definitions_registry_and_legacy_exports_share_objects(module, constant, name):
     owner = import_module('retroimg.palettes.' + module)

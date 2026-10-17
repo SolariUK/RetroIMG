@@ -1,7 +1,8 @@
 {
-  "version": 3,
-  "panel_width": 800,
+  "version": 4,
+  "panel_width": 1328,
   "columns": 2,
+  "tiles_per_sheet": 6,
   "comparisons": [
     {
       "source": {
@@ -25,11 +26,43 @@
       "title": "Teletext / bitmap, mosaics and palette swaps",
       "sheet": "macaws-teletext.png",
       "panel_size": [
-        800,
-        1920
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "f3218f54233b7e3f5f28f91cfa588f35709f6331085421531a9aa5d53721c629",
+      "sha256": "e64ea9ad4b68f0a5ca40d994a178105bb3acbb00caa56f4743dd2197166f642e",
+      "sheets": [
+        {
+          "filename": "macaws-teletext.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "e64ea9ad4b68f0a5ca40d994a178105bb3acbb00caa56f4743dd2197166f642e"
+        },
+        {
+          "filename": "macaws-teletext-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "68672915a0750dbc1ad179ac5ab5539ea17111c46581886a56bcc07c9fe5095d"
+        },
+        {
+          "filename": "macaws-teletext-3.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 12,
+          "tiles": 2,
+          "sha256": "c25c2f892046038bebed215fa7ab94421d6e66eae9d9a13b9cb534beaace2cf1"
+        }
+      ],
       "variants": [
         {
           "label": "Bitmap / No dither",
@@ -357,11 +390,43 @@
       "title": "Commodore 64 / geometry, constraints and greener colour",
       "sheet": "lush-landscape-c64.png",
       "panel_size": [
-        800,
-        2184
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "d157102f644967958fbeff52bb4595ebc16704dc00b1132048a9eadf0a0efae8",
+      "sha256": "cfd3a9233e529403ecb8ef3c2ca311ea0460a0e36bb2eb982297ae27559dc77f",
+      "sheets": [
+        {
+          "filename": "lush-landscape-c64.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "cfd3a9233e529403ecb8ef3c2ca311ea0460a0e36bb2eb982297ae27559dc77f"
+        },
+        {
+          "filename": "lush-landscape-c64-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "77bced894d6f451e3387ccd6f5fa198838726d05936fd56f25afe0dd35bc8aa4"
+        },
+        {
+          "filename": "lush-landscape-c64-3.png",
+          "size": [
+            1328,
+            1320
+          ],
+          "first_tile": 12,
+          "tiles": 3,
+          "sha256": "c19b0f33ece3033cf4e4ce1e9b11f9ba6b367b96205bacf77d4a68ec0068173f"
+        }
+      ],
       "variants": [
         {
           "label": "Hires geometry bitmap / No dither",
@@ -709,11 +774,53 @@
       "title": "Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained",
       "sheet": "macaws-cpc.png",
       "panel_size": [
-        800,
-        2712
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "708d1be1538a216db5df135175de5e4d9cf988bc86d06e3a0d45ec5b4b68c944",
+      "sha256": "5db8bf06933bc48e63e5a06a8158fb7954eefd23f6495b6e4a7cd968760d255f",
+      "sheets": [
+        {
+          "filename": "macaws-cpc.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "5db8bf06933bc48e63e5a06a8158fb7954eefd23f6495b6e4a7cd968760d255f"
+        },
+        {
+          "filename": "macaws-cpc-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "58dfdd58a419ba3cc06b9f10a9d9035886ff65caaad9086e7166e03aac64d71f"
+        },
+        {
+          "filename": "macaws-cpc-3.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 12,
+          "tiles": 6,
+          "sha256": "20c4c96fbb015e0467cadcaa343a26bb4a2f85a7ce5b2f0e00fbb0372d08da99"
+        },
+        {
+          "filename": "macaws-cpc-4.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 18,
+          "tiles": 1,
+          "sha256": "21211b96d03ed7f1cb5fc319acb6694575f89d46ac2976834f4780e65dbcfc9e"
+        }
+      ],
       "variants": [
         {
           "label": "Mode 0 / bitmap / No dither",
@@ -1147,11 +1254,33 @@
       "title": "ZX Spectrum / bitmap and attribute cells",
       "sheet": "lush-landscape-spectrum.png",
       "panel_size": [
-        800,
-        1392
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "dd67d97ceaa16918090fee0cca7f044813f1123ac4809e65369bc1e507fa753b",
+      "sha256": "e389b8cb021b22da6481f2d68bb2220bf4d0476c446ac0a6d9de3729f6b8c7d5",
+      "sheets": [
+        {
+          "filename": "lush-landscape-spectrum.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "e389b8cb021b22da6481f2d68bb2220bf4d0476c446ac0a6d9de3729f6b8c7d5"
+        },
+        {
+          "filename": "lush-landscape-spectrum-2.png",
+          "size": [
+            1328,
+            1320
+          ],
+          "first_tile": 6,
+          "tiles": 3,
+          "sha256": "5bd8ab3291f6ceb46597a4add1b316e2e493fe5b60b2bae9323f2da05811de12"
+        }
+      ],
       "variants": [
         {
           "label": "Bitmap / No dither",
@@ -1357,11 +1486,43 @@
       "title": "BBC Micro / modes 0, 1, 2, 4 and 5",
       "sheet": "macaws-bbc.png",
       "panel_size": [
-        800,
-        2448
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "76078438b36bf9b36cc90913c7bcb65f83a384ab4f8030853e64a0dc6160323c",
+      "sha256": "04084a7d780e93301f75c089e43298f67c83ad4cd9a2973994de613f4a9cd45c",
+      "sheets": [
+        {
+          "filename": "macaws-bbc.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "04084a7d780e93301f75c089e43298f67c83ad4cd9a2973994de613f4a9cd45c"
+        },
+        {
+          "filename": "macaws-bbc-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "32cb97f69fbc411b6ca93440ef0e17dbefc7ebbc2891c4a646882d51c47ccc75"
+        },
+        {
+          "filename": "macaws-bbc-3.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 12,
+          "tiles": 6,
+          "sha256": "779225a1248dfbf0ed49d6e065553a90000c82a5f607945f484a4e3385f8f9c9"
+        }
+      ],
       "variants": [
         {
           "label": "Mode 0 / constrained / No dither",
@@ -1770,11 +1931,53 @@
       "title": "Amiga / RGB12, indexed palettes, EHB and HAM6",
       "sheet": "portrait-colour-amiga.png",
       "panel_size": [
-        800,
-        2712
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "85a089343ab90f4f531365e313a965aa301df3bc9eed7fe6b7308b9d043f934a",
+      "sha256": "8296fb7ef03b383ff2de409f9c5a1d432f73371102dc9fb60dbdde529e7231b9",
+      "sheets": [
+        {
+          "filename": "portrait-colour-amiga.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "8296fb7ef03b383ff2de409f9c5a1d432f73371102dc9fb60dbdde529e7231b9"
+        },
+        {
+          "filename": "portrait-colour-amiga-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "57d6caecba40bc6f79906b57965f8011be1b11b6d146f91d971c52d5da6dfa24"
+        },
+        {
+          "filename": "portrait-colour-amiga-3.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 12,
+          "tiles": 6,
+          "sha256": "251b10638d928c33e13c255ac6d7c6f8b0d572c3b8b1af9740ad056f7c7ef3a7"
+        },
+        {
+          "filename": "portrait-colour-amiga-4.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 18,
+          "tiles": 2,
+          "sha256": "a1273c350a0cf448c97565b118910e8db349960d335d6c3a43889ceeceb7e868"
+        }
+      ],
       "variants": [
         {
           "label": "Lores / unrestricted RGB12 / No dither",
@@ -2235,11 +2438,43 @@
       "title": "Atari 2600 / bitmap, playfield, repeat and mirror",
       "sheet": "lush-landscape-atari2600.png",
       "panel_size": [
-        800,
-        2448
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "29d7cbb6e76cd4ca7c21cfb9d3ce1f18d0022018a7cdf2511392c1c78d1e518b",
+      "sha256": "4c2498919f32df1106d208fb75df30cc26fae60067a27662b960bbc7c19ba598",
+      "sheets": [
+        {
+          "filename": "lush-landscape-atari2600.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "4c2498919f32df1106d208fb75df30cc26fae60067a27662b960bbc7c19ba598"
+        },
+        {
+          "filename": "lush-landscape-atari2600-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "2305a8171fe0b3c811e3793c97f25738c205ff784f895f0c9d062451b477b473"
+        },
+        {
+          "filename": "lush-landscape-atari2600-3.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 12,
+          "tiles": 6,
+          "sha256": "129fdc48c82347178e7a426ea9a7748d5eca533a5bd00a9055ce0f3ede726509"
+        }
+      ],
       "variants": [
         {
           "label": "NTSC / bitmap / No dither",
@@ -2644,11 +2879,23 @@
       "title": "CPC mode 1 / Bayer 2x2 / source adjustments",
       "sheet": "macaws-adjustments.png",
       "panel_size": [
-        800,
-        600
+        1328,
+        1320
       ],
       "show_source": false,
-      "sha256": "a279b70e1525d173d2b245f9b998f390e90a213f9b6076155f8b053a292d01a5",
+      "sha256": "ade9c1ca9bc686859578bf9ecaf10d460ab3a342ad1ad7876a11f32b2ce6813d",
+      "sheets": [
+        {
+          "filename": "macaws-adjustments.png",
+          "size": [
+            1328,
+            1320
+          ],
+          "first_tile": 0,
+          "tiles": 4,
+          "sha256": "ade9c1ca9bc686859578bf9ecaf10d460ab3a342ad1ad7876a11f32b2ce6813d"
+        }
+      ],
       "variants": [
         {
           "label": "Baseline: saturation 1.1",
@@ -2776,11 +3023,33 @@
       "title": "Sega Mega Drive / Genesis / bitmap and palette-bank tiles",
       "sheet": "macaws-megadrive.png",
       "panel_size": [
-        800,
-        1128
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "b0cbbfbb8ce01c565b5b63da88fea972ad9bd079b3837ac58d41092e4540881a",
+      "sha256": "f94ad4dc430e993d766711f49bc97709a8c717db31e9102b012c92aea3237440",
+      "sheets": [
+        {
+          "filename": "macaws-megadrive.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "f94ad4dc430e993d766711f49bc97709a8c717db31e9102b012c92aea3237440"
+        },
+        {
+          "filename": "macaws-megadrive-2.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 6,
+          "tiles": 1,
+          "sha256": "a355fc7ca6f125a8b5682ef3cb96224fe2922b0bd6765361d98d4025cd73de7f"
+        }
+      ],
       "variants": [
         {
           "label": "Bitmap / No dither",
@@ -2946,11 +3215,33 @@
       "title": "SNES / bitmap, 4bpp tiles and 8bpp indexed",
       "sheet": "lush-landscape-snes.png",
       "panel_size": [
-        800,
-        1392
+        1328,
+        1944
       ],
       "show_source": true,
-      "sha256": "0286eb3cf286f99726f2b0d2d061bce91e846529c105b695de68c3905d0bb49c",
+      "sha256": "6f6cd60ef5dd40e2289bc51c11e490048b3dff12222cb06fb65453a93238d35b",
+      "sheets": [
+        {
+          "filename": "lush-landscape-snes.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "6f6cd60ef5dd40e2289bc51c11e490048b3dff12222cb06fb65453a93238d35b"
+        },
+        {
+          "filename": "lush-landscape-snes-2.png",
+          "size": [
+            1328,
+            1320
+          ],
+          "first_tile": 6,
+          "tiles": 4,
+          "sha256": "f33766448d63dc779d88df9775363f48ef32c2645b524b346b90e177c5ea470d"
+        }
+      ],
       "variants": [
         {
           "label": "Bitmap / No dither",
@@ -3152,6 +3443,1467 @@
           "colours_used": 254,
           "palette": "snes",
           "sha256": "d4ae7107cf9d3cda45f63108e0bc3ea8e89cbc69695fc97ac14a944eaa7263ea"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "macaws",
+        "file": "macaws.jpg",
+        "title": "Blue-and-yellow macaws",
+        "fit": "cover",
+        "public": true,
+        "credit": "Adrian Pingstone (Arpingstone), July 2004",
+        "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+        "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+        "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+        "reference_size": [
+          750,
+          536
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
+      },
+      "family": "nes",
+      "title": "NES / unrestricted and 16x16 background attributes",
+      "sheet": "macaws-nes.png",
+      "panel_size": [
+        1328,
+        1944
+      ],
+      "show_source": true,
+      "sha256": "f9dc33c46ac826d0772b395a232a158cb37b8fc111402c529fddbff8eb6088b8",
+      "sheets": [
+        {
+          "filename": "macaws-nes.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "f9dc33c46ac826d0772b395a232a158cb37b8fc111402c529fddbff8eb6088b8"
+        },
+        {
+          "filename": "macaws-nes-2.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 6,
+          "tiles": 1,
+          "sha256": "c41c9b9f555b37f2063aa24233533d2d6f06bfdbccab86bcedeaea767d03e607"
+        }
+      ],
+      "variants": [
+        {
+          "label": "Bitmap / No dither",
+          "settings": {
+            "profile_name": "nes",
+            "nes_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-nes-bitmap-none.png --profile nes --nes-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            256,
+            240
+          ],
+          "colours_used": 32,
+          "palette": "nes",
+          "sha256": "d88134cb835346536bb7f91c41fafd9133df1f08f8db20143ac994131632b07e"
+        },
+        {
+          "label": "Attributes / No dither",
+          "settings": {
+            "profile_name": "nes",
+            "nes_mode": "attributes",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-nes-attributes-none.png --profile nes --nes-mode attributes --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            256,
+            240
+          ],
+          "colours_used": 9,
+          "palette": "nes",
+          "sha256": "a24cefbb4f512d47385b8a06716bd00b1233ff22ce15fd236d49d3b92e0d1b05"
+        },
+        {
+          "label": "Bitmap / FS",
+          "settings": {
+            "profile_name": "nes",
+            "nes_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-nes-bitmap-floyd-steinberg.png --profile nes --nes-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            256,
+            240
+          ],
+          "colours_used": 51,
+          "palette": "nes",
+          "sha256": "a43ddd98e26eb080fa678abd8d6e7e3a5576cde06a8210769c80f96e390b8185"
+        },
+        {
+          "label": "Attributes / FS",
+          "settings": {
+            "profile_name": "nes",
+            "nes_mode": "attributes",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-nes-attributes-floyd-steinberg.png --profile nes --nes-mode attributes --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            256,
+            240
+          ],
+          "colours_used": 9,
+          "palette": "nes",
+          "sha256": "9a2dadd64e8b7a589c611571f208cac1f7218180ec7eadc642e8df16f94f6bf6"
+        },
+        {
+          "label": "Bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "nes",
+            "nes_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-nes-bitmap-bayer.png --profile nes --nes-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            256,
+            240
+          ],
+          "colours_used": 54,
+          "palette": "nes",
+          "sha256": "625efe8e03e33e54fd4925ea20d10b3d1b78454358780b34109dffb6076a2f7f"
+        },
+        {
+          "label": "Attributes / Bayer 4x4",
+          "settings": {
+            "profile_name": "nes",
+            "nes_mode": "attributes",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-nes-attributes-bayer.png --profile nes --nes-mode attributes --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            256,
+            240
+          ],
+          "colours_used": 9,
+          "palette": "nes",
+          "sha256": "e66903fb27e1780721ff25a5b9938ae6e622cce3cf533539debaa6c8fbdbf299"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "macaws",
+        "file": "macaws.jpg",
+        "title": "Blue-and-yellow macaws",
+        "fit": "cover",
+        "public": true,
+        "credit": "Adrian Pingstone (Arpingstone), July 2004",
+        "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+        "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+        "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+        "reference_size": [
+          750,
+          536
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
+      },
+      "family": "mastersystem",
+      "title": "Master System / RGB6 bitmap and two-bank tiles",
+      "sheet": "macaws-mastersystem.png",
+      "panel_size": [
+        1328,
+        1944
+      ],
+      "show_source": true,
+      "sha256": "4f72171feaab04b9482eb2ede6d595305bb1edc6e3441094ba9b90f61723dd91",
+      "sheets": [
+        {
+          "filename": "macaws-mastersystem.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "4f72171feaab04b9482eb2ede6d595305bb1edc6e3441094ba9b90f61723dd91"
+        },
+        {
+          "filename": "macaws-mastersystem-2.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 6,
+          "tiles": 1,
+          "sha256": "1440de77c1ccf965fa474b31d3308717b47fe06c50be26f1f7aa6753b11c5225"
+        }
+      ],
+      "variants": [
+        {
+          "label": "Bitmap / No dither",
+          "settings": {
+            "profile_name": "mastersystem",
+            "mastersystem_mode": "bitmap",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-mastersystem-bitmap-none.png --profile mastersystem --mastersystem-mode bitmap --dither none --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 33,
+          "palette": "mastersystem",
+          "sha256": "fd6fbcdaef6b43f7884af75880a1dc92cd31d1f8e3dc597b592b31cf007f9f20"
+        },
+        {
+          "label": "Tiles / No dither",
+          "settings": {
+            "profile_name": "mastersystem",
+            "mastersystem_mode": "tiles",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-mastersystem-tiles-none.png --profile mastersystem --mastersystem-mode tiles --dither none --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 22,
+          "palette": "mastersystem",
+          "sha256": "fd68ca9395e36a18c8837f6c687cc6bd206f678d7e20bf13320e225f85c94596"
+        },
+        {
+          "label": "Bitmap / FS",
+          "settings": {
+            "profile_name": "mastersystem",
+            "mastersystem_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-mastersystem-bitmap-floyd-steinberg.png --profile mastersystem --mastersystem-mode bitmap --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 44,
+          "palette": "mastersystem",
+          "sha256": "97ce07cd6188118054389b3f52c65d4638dde6d4347f2e47e28c5da1be9c7e7b"
+        },
+        {
+          "label": "Tiles / FS",
+          "settings": {
+            "profile_name": "mastersystem",
+            "mastersystem_mode": "tiles",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-mastersystem-tiles-floyd-steinberg.png --profile mastersystem --mastersystem-mode tiles --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 22,
+          "palette": "mastersystem",
+          "sha256": "cc7e0dc5c2a1a07b9620f1cd423a511bcc94f378ba498063e488e0b6382f91b0"
+        },
+        {
+          "label": "Bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "mastersystem",
+            "mastersystem_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-mastersystem-bitmap-bayer.png --profile mastersystem --mastersystem-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 34,
+          "palette": "mastersystem",
+          "sha256": "0debbbf9ae66ece349a059e3d11730d4410a8902df25781532e4359c536c2c37"
+        },
+        {
+          "label": "Tiles / Bayer 4x4",
+          "settings": {
+            "profile_name": "mastersystem",
+            "mastersystem_mode": "tiles",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-mastersystem-tiles-bayer.png --profile mastersystem --mastersystem-mode tiles --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            512,
+            384
+          ],
+          "logical_size": [
+            256,
+            192
+          ],
+          "colours_used": 22,
+          "palette": "mastersystem",
+          "sha256": "6fa445959cbb1ab1a4384798fc2cfac78e5d8d93f95ab8c2b0690f9f783bc06b"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "portrait-colour",
+        "file": "portrait-colour.jpg",
+        "title": "Summer Girl Portrait",
+        "fit": "cover",
+        "public": true,
+        "credit": "Petr Kratochvil",
+        "rights": "CC0 1.0 Universal Public Domain Dedication",
+        "source": "https://www.publicdomainpictures.net/en/view-image.php?image=392516&picture=summer-girl-portrait",
+        "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "download": "https://www.publicdomainpictures.net/pictures/400000/velka/summer-girl-portrait-1619788328kKQ.jpg",
+        "notes": "Source explicitly identifies CC0 and reports obtaining a model release. It also cautions against offensive or derogatory depictions of the person. Do not imply model endorsement. Download is the free standard-resolution version, not the paid original.",
+        "coverage": "Primary colour portrait: skin tones, eyes, hair, hat texture, soft shadows and bright background.",
+        "reference_sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602",
+        "reference_size": [
+          1920,
+          1593
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602"
+      },
+      "family": "gameboy",
+      "title": "Original Game Boy / green and grey four-shade backgrounds",
+      "sheet": "portrait-colour-gameboy.png",
+      "panel_size": [
+        1328,
+        1944
+      ],
+      "show_source": true,
+      "sha256": "3b272e4c44d0b36ff3144d248e051feca5f834971a0fc1da4736d6f92805a549",
+      "sheets": [
+        {
+          "filename": "portrait-colour-gameboy.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "3b272e4c44d0b36ff3144d248e051feca5f834971a0fc1da4736d6f92805a549"
+        },
+        {
+          "filename": "portrait-colour-gameboy-2.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 6,
+          "tiles": 1,
+          "sha256": "98048d9ff4e9bd2d772843eb061b0280c522f3a290c7ba0fc7958ccdf13329a6"
+        }
+      ],
+      "variants": [
+        {
+          "label": "Green / No dither",
+          "settings": {
+            "profile_name": "gameboy",
+            "gameboy_mode": "tiles",
+            "dither": "none",
+            "scale": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-gameboy-green-none.png --profile gameboy --gameboy-mode tiles --dither none --scale 4 --fit cover",
+          "preview_size": [
+            640,
+            576
+          ],
+          "logical_size": [
+            160,
+            144
+          ],
+          "colours_used": 3,
+          "palette": "gameboy",
+          "sha256": "136686666fc9a40dbf7abd0d598802c618ba1bc76d7df187fc7239b6d742aa69"
+        },
+        {
+          "label": "Grey / No dither",
+          "settings": {
+            "profile_name": "gameboy",
+            "gameboy_mode": "tiles",
+            "dither": "none",
+            "scale": 4,
+            "palette_name": "gameboy-grey",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-gameboy-grey-none.png --profile gameboy --gameboy-mode tiles --dither none --scale 4 --palette gameboy-grey --fit cover",
+          "preview_size": [
+            640,
+            576
+          ],
+          "logical_size": [
+            160,
+            144
+          ],
+          "colours_used": 3,
+          "palette": "gameboy-grey",
+          "sha256": "f5b51b8c3a46364c2c3d309a4375c4a2480adc9893ac500977f3368ec0fa6f1d"
+        },
+        {
+          "label": "Green / FS",
+          "settings": {
+            "profile_name": "gameboy",
+            "gameboy_mode": "tiles",
+            "dither": "floyd-steinberg",
+            "scale": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-gameboy-green-floyd-steinberg.png --profile gameboy --gameboy-mode tiles --dither floyd-steinberg --scale 4 --fit cover",
+          "preview_size": [
+            640,
+            576
+          ],
+          "logical_size": [
+            160,
+            144
+          ],
+          "colours_used": 4,
+          "palette": "gameboy",
+          "sha256": "38bae7283ccbdcc5349735e5852e073a58ae347ce29017b0ad6e237c6a21bfe3"
+        },
+        {
+          "label": "Grey / FS",
+          "settings": {
+            "profile_name": "gameboy",
+            "gameboy_mode": "tiles",
+            "dither": "floyd-steinberg",
+            "scale": 4,
+            "palette_name": "gameboy-grey",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-gameboy-grey-floyd-steinberg.png --profile gameboy --gameboy-mode tiles --dither floyd-steinberg --scale 4 --palette gameboy-grey --fit cover",
+          "preview_size": [
+            640,
+            576
+          ],
+          "logical_size": [
+            160,
+            144
+          ],
+          "colours_used": 4,
+          "palette": "gameboy-grey",
+          "sha256": "67169843d81992cc38d081c5b83007bc54d77ce86f0ce3912e447685f2e5d577"
+        },
+        {
+          "label": "Green / Bayer 4x4",
+          "settings": {
+            "profile_name": "gameboy",
+            "gameboy_mode": "tiles",
+            "dither": "bayer",
+            "scale": 4,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-gameboy-green-bayer.png --profile gameboy --gameboy-mode tiles --dither bayer --scale 4 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            576
+          ],
+          "logical_size": [
+            160,
+            144
+          ],
+          "colours_used": 4,
+          "palette": "gameboy",
+          "sha256": "67fed567dcfe7e3faeacacb8891b1e81ae4245af25c42cce7e8de97f62efb38f"
+        },
+        {
+          "label": "Grey / Bayer 4x4",
+          "settings": {
+            "profile_name": "gameboy",
+            "gameboy_mode": "tiles",
+            "dither": "bayer",
+            "scale": 4,
+            "palette_name": "gameboy-grey",
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-gameboy-grey-bayer.png --profile gameboy --gameboy-mode tiles --dither bayer --scale 4 --palette gameboy-grey --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            576
+          ],
+          "logical_size": [
+            160,
+            144
+          ],
+          "colours_used": 4,
+          "palette": "gameboy-grey",
+          "sha256": "34e4708f2c15fa7bf02cdd781179160c2e3d72d781a92f1ce6f07f9152fbfea4"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "macaws",
+        "file": "macaws.jpg",
+        "title": "Blue-and-yellow macaws",
+        "fit": "cover",
+        "public": true,
+        "credit": "Adrian Pingstone (Arpingstone), July 2004",
+        "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+        "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+        "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+        "reference_size": [
+          750,
+          536
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e"
+      },
+      "family": "cga",
+      "title": "IBM CGA / four standard palettes and monochrome",
+      "sheet": "macaws-cga.png",
+      "panel_size": [
+        1328,
+        1944
+      ],
+      "show_source": true,
+      "sha256": "641084fd8eb4e5aff8e812d6359ac2d3e7899ec84a28d2a1db4b7ac5504e0649",
+      "sheets": [
+        {
+          "filename": "macaws-cga.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "641084fd8eb4e5aff8e812d6359ac2d3e7899ec84a28d2a1db4b7ac5504e0649"
+        },
+        {
+          "filename": "macaws-cga-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "2b520d25c6f14d4ec53376cad1e9b02df86032dbdadcf88972af74bede3beb63"
+        },
+        {
+          "filename": "macaws-cga-3.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 12,
+          "tiles": 6,
+          "sha256": "d8486eb331bce5976490f49e9cc637b9a9b848af2eff219416c9cf3b422b0f3d"
+        },
+        {
+          "filename": "macaws-cga-4.png",
+          "size": [
+            1328,
+            696
+          ],
+          "first_tile": 18,
+          "tiles": 1,
+          "sha256": "d421fcb73011beb29396338611eb94177cb57ddddde7c2a353b4d7e5023a8bad"
+        }
+      ],
+      "variants": [
+        {
+          "label": "320 / unrestricted RGBI / No dither",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "bitmap",
+            "palette_name": "cga",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-bitmap-none.png --profile cga-320 --cga-mode bitmap --palette cga --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 11,
+          "palette": "cga",
+          "sha256": "ec08c285080f616fc6b8b0b42e794a934d46a54c10def9f4a24edbb8fc6a6039"
+        },
+        {
+          "label": "320 / palette 0 low / No dither",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal0-low",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal0-low-none.png --profile cga-320 --cga-mode constrained --palette cga-pal0-low --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal0-low",
+          "sha256": "9817b83fa3fcda64196735d8158719a36271e8f0f76df0af6eba86ab86c558ca"
+        },
+        {
+          "label": "320 / palette 0 high / No dither",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal0-high",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal0-high-none.png --profile cga-320 --cga-mode constrained --palette cga-pal0-high --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal0-high",
+          "sha256": "56c121893cbbb5c529cf4c51a8beb663de465e08edda2564634e9d70d7d818cb"
+        },
+        {
+          "label": "320 / palette 1 low / No dither",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal1-low",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal1-low-none.png --profile cga-320 --cga-mode constrained --palette cga-pal1-low --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal1-low",
+          "sha256": "a2944076a9301e3f8747e14b544e6a3e01fcff7a1740d26c804583ad91359908"
+        },
+        {
+          "label": "320 / palette 1 high / No dither",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal1-high",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal1-high-none.png --profile cga-320 --cga-mode constrained --palette cga-pal1-high --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal1-high",
+          "sha256": "42579ec100d5864e12463bfd39aabb565684699df2ecdc3562e99cb591980524"
+        },
+        {
+          "label": "640 / monochrome / No dither",
+          "settings": {
+            "profile_name": "cga-640",
+            "cga_mode": "constrained",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-mono-none.png --profile cga-640 --cga-mode constrained --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 2,
+          "palette": "cga-mono",
+          "sha256": "1b320009e7d71cd00ffb209b659455e280c8d8a26cb12064ee37f8d19552e3b4"
+        },
+        {
+          "label": "320 / unrestricted RGBI / FS",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "bitmap",
+            "palette_name": "cga",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-bitmap-floyd-steinberg.png --profile cga-320 --cga-mode bitmap --palette cga --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "cga",
+          "sha256": "da34fdd7516610649e5f89452093dc96e834d5469d1f1eefa417fc3ece30de59"
+        },
+        {
+          "label": "320 / palette 0 low / FS",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal0-low",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal0-low-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal0-low --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal0-low",
+          "sha256": "08601f3003d9fb9f9c8602579877a572db91d9b706671baaf3f72cc7b2c5b84d"
+        },
+        {
+          "label": "320 / palette 0 high / FS",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal0-high",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal0-high-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal0-high --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal0-high",
+          "sha256": "f443ec68c1aa5646ad041e5a3f30616808f578c93fe4c875707d773a493d42f7"
+        },
+        {
+          "label": "320 / palette 1 low / FS",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal1-low",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal1-low-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal1-low --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal1-low",
+          "sha256": "cf4350eb7ff035d8187da9cc46cf379537caf3b92a4065f7eab86aa8c0263549"
+        },
+        {
+          "label": "320 / palette 1 high / FS",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal1-high",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal1-high-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal1-high --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal1-high",
+          "sha256": "9730e80ad2fc15a6c879f1efa8e21bae312acda7e1c0850964cd3d9f9c749efb"
+        },
+        {
+          "label": "640 / monochrome / FS",
+          "settings": {
+            "profile_name": "cga-640",
+            "cga_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-mono-floyd-steinberg.png --profile cga-640 --cga-mode constrained --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 2,
+          "palette": "cga-mono",
+          "sha256": "7a05ccc89382aebbb51864a942be8c6673e99eaf956cfa1f746a79b6d7dd6b9b"
+        },
+        {
+          "label": "320 / unrestricted RGBI / Bayer 4x4",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "bitmap",
+            "palette_name": "cga",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-bitmap-bayer.png --profile cga-320 --cga-mode bitmap --palette cga --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "cga",
+          "sha256": "3a8fa724aa0575e134c03166b37814e6fe229efbc5dde11886aa82b1deb20566"
+        },
+        {
+          "label": "320 / palette 0 low / Bayer 4x4",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal0-low",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal0-low-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal0-low --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal0-low",
+          "sha256": "93db20e1bebff1ebed5ec21ee143d44d40ad3a2c636ded81f0109121242069a4"
+        },
+        {
+          "label": "320 / palette 0 high / Bayer 4x4",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal0-high",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal0-high-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal0-high --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal0-high",
+          "sha256": "26821fb91f49f3694dd209c32b8726c25a3fd54ce86c9c733f4cf8a23be3454d"
+        },
+        {
+          "label": "320 / palette 1 low / Bayer 4x4",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal1-low",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal1-low-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal1-low --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal1-low",
+          "sha256": "9f07774df8536b94442862790e80a998294c16ce018e0dea49a3941c6ab673c7"
+        },
+        {
+          "label": "320 / palette 1 high / Bayer 4x4",
+          "settings": {
+            "profile_name": "cga-320",
+            "cga_mode": "constrained",
+            "palette_name": "cga-pal1-high",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-pal1-high-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal1-high --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 4,
+          "palette": "cga-pal1-high",
+          "sha256": "139f9d049a4c210dec2eddd143fdb814dd09b72f45b0addb0fba2f5743aeec85"
+        },
+        {
+          "label": "640 / monochrome / Bayer 4x4",
+          "settings": {
+            "profile_name": "cga-640",
+            "cga_mode": "constrained",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg macaws-cga-mono-bayer.png --profile cga-640 --cga-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 2,
+          "palette": "cga-mono",
+          "sha256": "c91c5ee6017c9379f855a86aadd31b159575cfa32d8886fdff9eca7b28ce6540"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "portrait-colour",
+        "file": "portrait-colour.jpg",
+        "title": "Summer Girl Portrait",
+        "fit": "cover",
+        "public": true,
+        "credit": "Petr Kratochvil",
+        "rights": "CC0 1.0 Universal Public Domain Dedication",
+        "source": "https://www.publicdomainpictures.net/en/view-image.php?image=392516&picture=summer-girl-portrait",
+        "rights_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "download": "https://www.publicdomainpictures.net/pictures/400000/velka/summer-girl-portrait-1619788328kKQ.jpg",
+        "notes": "Source explicitly identifies CC0 and reports obtaining a model release. It also cautions against offensive or derogatory depictions of the person. Do not imply model endorsement. Download is the free standard-resolution version, not the paid original.",
+        "coverage": "Primary colour portrait: skin tones, eyes, hair, hat texture, soft shadows and bright background.",
+        "reference_sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602",
+        "reference_size": [
+          1920,
+          1593
+        ],
+        "rights_checked": "2026-10-16",
+        "sha256": "8eb9944c64a0b2601e3ebff852dcfa48136d6309607f64267107e0161c2e7602"
+      },
+      "family": "ega",
+      "title": "IBM EGA / RGBI and selected RGB6 screen colours",
+      "sheet": "portrait-colour-ega.png",
+      "panel_size": [
+        1328,
+        1944
+      ],
+      "show_source": true,
+      "sha256": "8877b0f60ccf3dd348b2900cd9f84df33404af71d5f1bd6cedc63dd373ccdce1",
+      "sheets": [
+        {
+          "filename": "portrait-colour-ega.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 0,
+          "tiles": 6,
+          "sha256": "8877b0f60ccf3dd348b2900cd9f84df33404af71d5f1bd6cedc63dd373ccdce1"
+        },
+        {
+          "filename": "portrait-colour-ega-2.png",
+          "size": [
+            1328,
+            1944
+          ],
+          "first_tile": 6,
+          "tiles": 6,
+          "sha256": "33c40b87f32ff27dee746bfe908935e90d259b888dba08684184517821e8964b"
+        },
+        {
+          "filename": "portrait-colour-ega-3.png",
+          "size": [
+            1328,
+            1320
+          ],
+          "first_tile": 12,
+          "tiles": 4,
+          "sha256": "004cd9ea76a51af4551e93a8f818604c628463980b3f7b2803569663e8b5a531"
+        }
+      ],
+      "variants": [
+        {
+          "label": "ega-320 / constrained / No dither",
+          "settings": {
+            "profile_name": "ega-320",
+            "ega_mode": "constrained",
+            "dither": "none",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-320-constrained-none.png --profile ega-320 --ega-mode constrained --dither none --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 7,
+          "palette": "ega",
+          "sha256": "35a8910c42230129d67b0e5aa9b62cf77987a5b78851623b261edc16a37ae37c"
+        },
+        {
+          "label": "ega-640-200 / constrained / No dither",
+          "settings": {
+            "profile_name": "ega-640-200",
+            "ega_mode": "constrained",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-200-constrained-none.png --profile ega-640-200 --ega-mode constrained --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 7,
+          "palette": "ega",
+          "sha256": "57400a26f3a7dfa26df3c08f0e23d963c219df39e0d304535d64d389251d5609"
+        },
+        {
+          "label": "ega-640 / constrained / No dither",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "constrained",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-constrained-none.png --profile ega-640 --ega-mode constrained --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 10,
+          "palette": "ega",
+          "sha256": "39a1be675deff6b1e2127113cfb5eea1bd6b3d5e521487198b2a865610fc08d0"
+        },
+        {
+          "label": "640x350 / fixed RGBI / No dither",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "constrained",
+            "palette_name": "ega-default",
+            "dither": "none",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-classic-none.png --profile ega-640 --ega-mode constrained --palette ega-default --dither none --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 7,
+          "palette": "ega",
+          "sha256": "100e102b12f32af58f95c6ab7d2364604cd8ec603b7437ab478e9dd059e1ce3f"
+        },
+        {
+          "label": "ega-640 / bitmap / No dither",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "bitmap",
+            "dither": "none",
+            "scale": 1,
+            "palette_name": "ega",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-bitmap-none.png --profile ega-640 --ega-mode bitmap --dither none --scale 1 --palette ega --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 20,
+          "palette": "ega",
+          "sha256": "f5c0ca5a3e957e817d769f37c14f4621a6aad54f8ced0fd4601823fa4eac9104"
+        },
+        {
+          "label": "ega-320 / constrained / FS",
+          "settings": {
+            "profile_name": "ega-320",
+            "ega_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 2,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-320-constrained-floyd-steinberg.png --profile ega-320 --ega-mode constrained --dither floyd-steinberg --scale 2 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 9,
+          "palette": "ega",
+          "sha256": "a43b430bec6a885cca3eb251287c133ac0e2a92b1f2b6144ccabe617e15a3581"
+        },
+        {
+          "label": "ega-640-200 / constrained / FS",
+          "settings": {
+            "profile_name": "ega-640-200",
+            "ega_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-200-constrained-floyd-steinberg.png --profile ega-640-200 --ega-mode constrained --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 10,
+          "palette": "ega",
+          "sha256": "68f9888b2a3bd28b986aef80c12c1b9f96e27289d5c71989a525c45a4200baa3"
+        },
+        {
+          "label": "ega-640 / constrained / FS",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "constrained",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-constrained-floyd-steinberg.png --profile ega-640 --ega-mode constrained --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 10,
+          "palette": "ega",
+          "sha256": "af61a4322d5fa62f9a17470155ae478918551655ad582afcc9608baf3388b3f1"
+        },
+        {
+          "label": "640x350 / fixed RGBI / FS",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "constrained",
+            "palette_name": "ega-default",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-classic-floyd-steinberg.png --profile ega-640 --ega-mode constrained --palette ega-default --dither floyd-steinberg --scale 1 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 11,
+          "palette": "ega",
+          "sha256": "33f87c5e99dad75e1e38b2c499f0a779e763aa647f76b9b90fc5e58ca8e3abd7"
+        },
+        {
+          "label": "ega-640 / bitmap / FS",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "bitmap",
+            "dither": "floyd-steinberg",
+            "scale": 1,
+            "palette_name": "ega",
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-bitmap-floyd-steinberg.png --profile ega-640 --ega-mode bitmap --dither floyd-steinberg --scale 1 --palette ega --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 34,
+          "palette": "ega",
+          "sha256": "ba61a2da3a64b8d64e9ac68640c93a626a11caa2944b4b978b01954964957efb"
+        },
+        {
+          "label": "ega-320 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "ega-320",
+            "ega_mode": "constrained",
+            "dither": "bayer",
+            "scale": 2,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-320-constrained-bayer.png --profile ega-320 --ega-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            320,
+            200
+          ],
+          "colours_used": 14,
+          "palette": "ega",
+          "sha256": "17b3302e9d6b6fc31d81fd92ed57ff1b0af3583b7fc689a10f45aed6d27e6e2c"
+        },
+        {
+          "label": "ega-640-200 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "ega-640-200",
+            "ega_mode": "constrained",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-200-constrained-bayer.png --profile ega-640-200 --ega-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            200
+          ],
+          "colours_used": 16,
+          "palette": "ega",
+          "sha256": "233a6217415b4b8205efe5829999ee32db6325241634f98b629dcf22b2eca362"
+        },
+        {
+          "label": "ega-640 / constrained / Bayer 4x4",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "constrained",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-constrained-bayer.png --profile ega-640 --ega-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 10,
+          "palette": "ega",
+          "sha256": "53624f6dfa120dadd25a59d3e65ab9a23918bee0ceb5df4cfb4186cc0a6c8320"
+        },
+        {
+          "label": "640x350 / fixed RGBI / Bayer 4x4",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "constrained",
+            "palette_name": "ega-default",
+            "dither": "bayer",
+            "scale": 1,
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-classic-bayer.png --profile ega-640 --ega-mode constrained --palette ega-default --dither bayer --scale 1 --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 15,
+          "palette": "ega",
+          "sha256": "21595e54133df1c61ab88d415f26ed8e0f938a52e8850fbb8e02494171586b55"
+        },
+        {
+          "label": "ega-640 / bitmap / Bayer 4x4",
+          "settings": {
+            "profile_name": "ega-640",
+            "ega_mode": "bitmap",
+            "dither": "bayer",
+            "scale": 1,
+            "palette_name": "ega",
+            "bayer_size": 4,
+            "fit": "cover"
+          },
+          "command": "retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-bitmap-bayer.png --profile ega-640 --ega-mode bitmap --dither bayer --scale 1 --palette ega --bayer-size 4 --fit cover",
+          "preview_size": [
+            640,
+            480
+          ],
+          "logical_size": [
+            640,
+            350
+          ],
+          "colours_used": 19,
+          "palette": "ega",
+          "sha256": "4592803b7723918c6334a02d21dba7fe8257f02784285c174f04cb5e1caed00d"
         }
       ]
     }

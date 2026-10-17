@@ -19,7 +19,11 @@ if __package__:
 else:
     from generate_gallery import BUNDLED_SOURCES, CATALOG, Variant, check_constraints, command_for, variants_for
 
-PANEL_WIDTH = 800
+PANEL_WIDTH = 1328
+TILE_WIDTH = 640
+TILE_HEIGHT = 576
+ROW_HEIGHT = 624
+TILES_PER_SHEET = 6
 DEFAULT_OUTPUT = BUNDLED_SOURCES.parent / 'comparisons'
 LEGACY_SHEETS = {'macaws-cpc.jpg', 'portrait-colour-teletext.jpg', 'lush-landscape-c64.jpg',
                  'portrait-colour-teletext.png'}
@@ -156,6 +160,39 @@ def selections() -> tuple[Panel, ...]:
                     options['bayer_size'] = 4
                 variants.append(Variant(f'{mode}-{dither}', f'{mode.title()} / {label}', options, size))
         panels.append(Panel(source, family, title, tuple(variants)))
+    for family, source, title, mode, size in (
+        ('nes', 'macaws', 'NES / unrestricted and 16x16 background attributes', 'attributes', (640, 480)),
+        ('mastersystem', 'macaws', 'Master System / RGB6 bitmap and two-bank tiles', 'tiles', (512, 384)),
+        ('gameboy', 'portrait-colour', 'Original Game Boy / green and grey four-shade backgrounds', 'tiles', (640, 576)),
+    ):
+        variants = []
+        for dither, label in dithers:
+            choices = (('green', {}), ('grey', {'palette_name': 'gameboy-grey'})) if family == 'gameboy' else (
+                ('bitmap', {family + '_mode': 'bitmap'}), (mode, {family + '_mode': mode}))
+            for slug, controls in choices:
+                options = dict(profile_name=family, **{family + '_mode': mode}, dither=dither,
+                               scale=4 if family == 'gameboy' else 2)
+                options.update(controls)
+                if dither == 'bayer':
+                    options['bayer_size'] = 4
+                variants.append(Variant(f'{slug}-{dither}', f'{slug.title()} / {label}', options, size))
+        panels.append(Panel(source, family, title, tuple(variants)))
+    for family, source, title, slugs in (
+        ('cga', 'macaws', 'IBM CGA / four standard palettes and monochrome',
+         ('bitmap', 'pal0-low', 'pal0-high', 'pal1-low', 'pal1-high', 'mono')),
+        ('ega', 'portrait-colour', 'IBM EGA / RGBI and selected RGB6 screen colours',
+         ('ega-320-constrained', 'ega-640-200-constrained', 'ega-640-constrained', 'classic', 'ega-640-bitmap')),
+    ):
+        base_variants = {v.slug:v for v in variants_for(family)}
+        variants = []
+        for dither, label in dithers:
+            for slug in slugs:
+                base = base_variants[slug]
+                options = dict(base.options, dither=dither)
+                if dither == 'bayer':
+                    options['bayer_size'] = 4
+                variants.append(Variant(f'{slug}-{dither}', base.label.removesuffix(' / no dither')+' / '+label, options, base.size))
+        panels.append(Panel(source, family, title, tuple(variants)))
     return tuple(panels)
 
 
@@ -163,7 +200,39 @@ def panel_size(panel: Panel) -> tuple[int, int]:
     tiles = len(panel.variants) + int(panel.show_source)
     if not 1 <= tiles <= 20:
         raise ValueError('sample panels must contain between one and twenty tiles')
-    return PANEL_WIDTH, 72 + 264 * ((tiles + 1) // 2)
+    return PANEL_WIDTH, 72 + ROW_HEIGHT * ((tiles + 1) // 2)
+
+
+def sheet_names(panel: Panel) -> tuple[str, ...]:
+    tiles = len(panel.variants) + int(panel.show_source)
+    return tuple(panel.filename if i == 0 else panel.filename.removesuffix('.png') + f'-{i + 1}.png'
+                 for i in range((tiles + TILES_PER_SHEET - 1) // TILES_PER_SHEET))
+
+
+def _save_sheets(sheet: Image.Image, panel: Panel, stage: Path) -> list[dict]:
+    """Split the working canvas into short sheets without resampling pixels."""
+    tiles = len(panel.variants) + int(panel.show_source)
+    names = sheet_names(panel)
+    records = []
+    for part, name in enumerate(names):
+        first = part * TILES_PER_SHEET
+        count = min(TILES_PER_SHEET, tiles - first)
+        rows = (count + 1) // 2
+        height = 72 + ROW_HEIGHT * rows
+        page = Image.new('RGB', (PANEL_WIDTH, height), '#202020')
+        # Tile labels and images start at y=48; keep the original row spacing.
+        top = 48 + (first // 2) * ROW_HEIGHT
+        page.paste(sheet.crop((0, top, PANEL_WIDTH, top + rows * ROW_HEIGHT)), (0, 48))
+        draw = ImageDraw.Draw(page)
+        title = panel.title + (f' / {part + 1} of {len(names)}' if len(names) > 1 else '')
+        draw.text((16, 12), title, fill='white', font=_font(18))
+        draw.text((16, height - 20), f'{PANEL_WIDTH} x {height} | View at 100%; source credits and settings: README.md',
+                  fill='#cccccc', font=_font(12))
+        page.save(stage / name)
+        records.append(dict(filename=name, size=[PANEL_WIDTH, height], first_tile=first, tiles=count,
+                            sha256=sha256((stage / name).read_bytes()).hexdigest()))
+        page.close()
+    return records
 
 
 def _font(size: int):
@@ -174,22 +243,26 @@ def _font(size: int):
 
 
 def _tile(sheet: Image.Image, index: int, label: str, image: Image.Image, *, source: bool = False) -> None:
-    x, y = 16 + (index % 2) * 392, 48 + (index // 2) * 264
+    x, y = 16 + (index % 2) * 656, 48 + (index // 2) * ROW_HEIGHT
     draw = ImageDraw.Draw(sheet)
-    draw.multiline_text((x, y), '\n'.join(textwrap.wrap(label, width=43)),
+    draw.multiline_text((x, y), '\n'.join(textwrap.wrap(label, width=76)),
                         fill='white', font=_font(14), spacing=2)
-    # Average reduced pixel patterns so Bayer textures do not alias into bands.
-    # Keep enlarged conversions crisp; photographs use smooth resizing throughout.
-    method = (Image.Resampling.LANCZOS if source else
-              Image.Resampling.BOX if image.width > 376 or image.height > 220 else
-              Image.Resampling.NEAREST)
-    preview = ImageOps.contain(image.convert('RGB'), (376, 220), method=method)
-    sheet.paste(preview, (x + (376 - preview.width) // 2, y + 34 + (220 - preview.height) // 2))
+    preview = image.convert('RGB')
+    if source:
+        preview = ImageOps.contain(preview, (TILE_WIDTH, TILE_HEIGHT), method=Image.Resampling.LANCZOS)
+    elif preview.width > TILE_WIDTH or preview.height > TILE_HEIGHT:
+        raise ValueError('converted preview exceeds the 640x576 tile; use a smaller conversion scale')
+    sheet.paste(preview, (x + (TILE_WIDTH - preview.width) // 2,
+                         y + 34 + (TILE_HEIGHT - preview.height) // 2))
 
 
 def generate_samples(output: Path, *, replace: bool = False) -> None:
     panels = selections()
-    managed = {'README.md', 'manifest.json', *LEGACY_SHEETS, *(p.filename for p in panels)}
+    # Reserve up to four pages for each known group (the selection limit is 20
+    # tiles). This also lets a refresh remove obsolete pages after a selection shrinks.
+    managed = {'README.md', 'manifest.json', *LEGACY_SHEETS,
+               *(p.filename for p in panels),
+               *(p.filename.removesuffix('.png') + f'-{i}.png' for p in panels for i in range(2, 5))}
     if output.exists():
         if not replace:
             raise ValueError('sample directory exists; use --replace to refresh the curated panels')
@@ -198,20 +271,23 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
     records = json.loads(CATALOG.read_text(encoding='utf-8'))
     sources = {r['id']: r for r in records if r['public']}
     output.parent.mkdir(parents=True, exist_ok=True)
-    manifest = {'version': 3, 'panel_width': PANEL_WIDTH, 'columns': 2, 'comparisons': []}
+    manifest = {'version': 4, 'panel_width': PANEL_WIDTH, 'columns': 2,
+                'tiles_per_sheet': TILES_PER_SHEET, 'comparisons': []}
     lines = ['# Sample mode comparisons', '',
-             'Ten lossless PNG panels, **800 pixels wide**, arranged in two columns.',
-             'Panels grow vertically to show more modes, with at most ten rows each.',
+             'Fifteen comparison groups, split into short lossless PNG sheets **1328 pixels wide**.',
+             'Each sheet has two columns and at most three rows, with room for 640-pixel-wide previews.',
              'FS means Floyd–Steinberg. No dither, FS and Bayer are compared throughout.',
              'CPC covers modes 0/1/2; BBC covers 0/1/2/4/5; Amiga includes indexed/EHB/HAM.',
              'C64 includes neutral and greener saturation/hue/channel-gain examples.',
              'Teletext uses the colourful macaws for bitmap and mosaic comparisons.', '',
              'Mega Drive adds four-bank tiles; SNES compares eight-bank tiles and 256-colour indexed output.', '',
-             'Converted thumbnails use area averaging when reduced to limit moiré and banding;',
-             'enlarged conversions retain nearest-neighbour scaling for crisp pixels.',
-             'They are thumbnails; inspect regenerated individual PNGs for exact pixel patterns.',
-             'Source thumbnails use smooth resizing. Palette counts in the manifest refer to',
-             'the original conversions, not filtered thumbnails, labels, source photos or whole panels.', '',
+             'NES adds 16x16 attributes; Master System compares two-bank tiles; Game Boy shows green/grey shades.', '',
+             'CGA compares its four standard palettes and monochrome; EGA compares RGBI and selected RGB6.', '',
+             'Converted previews are pasted at their generated dimensions without further resizing.',
+             'Existing picture proportions are preserved. Smaller previews are centred, not enlarged.',
+             'GitHub and browsers may still shrink the sheets: open the original PNG at 100% to judge dithering.',
+             'Source photographs use smooth resizing. Palette counts in the manifest refer to',
+             'the original conversions, not labels, source photos or whole sheets.', '',
              'Source credits and rights: [reference images](../README.md).', '',
              'Refresh these panels from the project root:', '', '```bash',
              'python examples/generate_samples.py --replace', '```', '',
@@ -231,15 +307,15 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
             source['sha256'] = sha256(path.read_bytes()).hexdigest()
             size = panel_size(panel)
             sheet = Image.new('RGB', size, '#202020')
-            draw = ImageDraw.Draw(sheet)
-            draw.text((16, 12), panel.title, fill='white', font=_font(18))
             if panel.show_source:
                 with Image.open(path) as original:
                     _tile(sheet, 0, 'Source photograph', original, source=True)
             lines.extend([f'## {panel.title}', '',
                           f'Source: [{source["file"]}](../sources/{source["file"]}). '
                           f'Credit: {source["credit"]}. {source["rights"]}', '',
-                          f'![{panel.title}]({panel.filename})', '', '<details>',
+                          *[line for i, name in enumerate(sheet_names(panel), 1) for line in (
+                              f'[Open sheet {i} at full size]({name})', '',
+                              f'![{panel.title} / sheet {i}]({name})', '')], '<details>',
                           '<summary>Settings and reproduction commands</summary>', ''])
             variants = []
             for index, variant in enumerate(panel.variants):
@@ -262,12 +338,11 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
                                      colours_used=len(colours), palette=indexed.palette.name,
                                      sha256=sha256(rendered_path.read_bytes()).hexdigest()))
                 lines.extend([f'### {variant.label}', '', '```bash', command, '```', ''])
-            draw.text((16, size[1] - 20), f'{size[0]} x {size[1]} | Source credits and exact settings: README.md',
-                      fill='#cccccc', font=_font(12))
-            sheet.save(stage / panel.filename)
+            sheets = _save_sheets(sheet, panel, stage)
+            sheet.close()
             manifest['comparisons'].append(dict(
-                source=source, family=panel.family, title=panel.title, sheet=panel.filename, panel_size=list(size),
-                show_source=panel.show_source, sha256=sha256((stage / panel.filename).read_bytes()).hexdigest(), variants=variants))
+                source=source, family=panel.family, title=panel.title, sheet=panel.filename, panel_size=sheets[0]['size'],
+                show_source=panel.show_source, sha256=sheets[0]['sha256'], sheets=sheets, variants=variants))
             lines.extend(['</details>', ''])
             print(f'{panel.filename}: {len(variants)} conversions checked', flush=True)
         (stage / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
@@ -276,7 +351,8 @@ def generate_samples(output: Path, *, replace: bool = False) -> None:
         for path in stage.iterdir():
             if path.is_file():
                 os.replace(path, output / path.name)
-        for name in LEGACY_SHEETS:
+        expected = {'README.md', 'manifest.json', *(name for panel in panels for name in sheet_names(panel))}
+        for name in managed - expected:
             (output / name).unlink(missing_ok=True)
 
 

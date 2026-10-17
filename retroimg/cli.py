@@ -77,6 +77,26 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
         help="Atari constraint: unrestricted bitmap, independent 40-block playfield, or repeated/mirrored 20-block halves",
     )
     convert.add_argument(
+        '--cga-mode', choices=('bitmap', 'constrained'), default='bitmap',
+        help='CGA: unrestricted palette conversion or standard four-colour/monochrome graphics palettes',
+    )
+    convert.add_argument(
+        '--ega-mode', choices=('bitmap', 'constrained'), default='bitmap',
+        help='EGA: unrestricted palette conversion or sixteen colours; 200-line RGBI / 350-line selected RGB6',
+    )
+    convert.add_argument(
+        "--nes-mode", choices=("bitmap", "attributes"), default="bitmap",
+        help="NES: unrestricted colour codes or four shared palettes selected per 16x16 background region",
+    )
+    convert.add_argument(
+        "--mastersystem-mode", choices=("bitmap", "tiles"), default="bitmap",
+        help="Master System: unrestricted RGB6 or 8x8 background tiles selecting two 16-colour palettes",
+    )
+    convert.add_argument(
+        "--gameboy-mode", choices=("bitmap", "tiles"), default="bitmap",
+        help="Original Game Boy: unrestricted palette conversion or four luminance shades with 2-bit tile codes",
+    )
+    convert.add_argument(
         "--megadrive-mode", choices=("bitmap", "tiles"), default="bitmap",
         help="Mega Drive: unrestricted 9-bit bitmap or 8x8 tiles selecting four shared palette banks",
     )
@@ -180,6 +200,11 @@ def main(argv: list[str] | None = None) -> None:
             atari_mode=args.atari_mode,
             megadrive_mode=args.megadrive_mode,
             snes_mode=args.snes_mode,
+            nes_mode=args.nes_mode,
+            mastersystem_mode=args.mastersystem_mode,
+            gameboy_mode=args.gameboy_mode,
+            cga_mode=args.cga_mode,
+            ega_mode=args.ega_mode,
             atari_row_height=args.atari_row_height,
             colours=args.colours,
         )
@@ -189,7 +214,10 @@ def main(argv: list[str] | None = None) -> None:
             f"teletext-mode={args.teletext_mode}, spectrum-mode={args.spectrum_mode}, "
             f"c64-mode={args.c64_mode}, cpc-mode={args.cpc_mode}, bbc-mode={args.bbc_mode}, "
             f"amiga-mode={args.amiga_mode}, atari-mode={args.atari_mode}, "
-            f"megadrive-mode={args.megadrive_mode}, snes-mode={args.snes_mode}, palette-size={len(indexed.palette.colours)}"
+            f"megadrive-mode={args.megadrive_mode}, snes-mode={args.snes_mode}, "
+            f"nes-mode={args.nes_mode}, mastersystem-mode={args.mastersystem_mode}, "
+            f"gameboy-mode={args.gameboy_mode}, cga-mode={args.cga_mode}, ega-mode={args.ega_mode}, "
+            f"palette-size={len(indexed.palette.colours)}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

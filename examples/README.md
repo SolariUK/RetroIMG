@@ -83,7 +83,8 @@ which prevents stale local-only files from surviving in a public export. Open
 access is needed to browse the gallery. JPEG sheets are convenient overviews;
 use the linked PNGs to judge exact converted pixels.
 
-`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga`, `atari2600`, `megadrive`, `snes` or `all`. The generated
+`--family` accepts `teletext`, `spectrum`, `c64`, `cpc`, `bbc`, `amiga`, `atari2600`,
+`megadrive`, `snes`, `nes`, `mastersystem`, `gameboy`, `cga`, `ega` or `all`. The generated
 commands use placeholder source paths; replace `/path/to/filename` and run the
 commands from the gallery directory, or adjust the output paths.
 
@@ -93,7 +94,9 @@ The optional `--dither-comparison` matrix compares no dithering, Floyd–Steinbe
 and Bayer 2x2/4x4/8x8 with otherwise identical conversion settings. It selects
 Teletext mosaic, Spectrum attributes, C64 multicolour, CPC mode 1, BBC mode 0,
 Amiga lores 32-colour/EHB/HAM6, Atari NTSC independent playfields, Mega Drive
-320-wide tiles, and SNES tiles/indexed backgrounds. Each
+320-wide tiles, SNES tiles/indexed backgrounds, NES attributes, Master System
+tiles, Game Boy green/grey shades, CGA standard palettes/monochrome and EGA
+classic/selected screen palettes. Each
 comparison sheet has five columns, one per dithering setting. These runs use
 neutral source adjustments so the dithering difference is easy to compare.
 
@@ -107,7 +110,7 @@ python examples/generate_gallery.py --public-only --dither-comparison \
     --output-dir /path/to/new-cpc-dither-gallery
 ```
 
-The complete public dithering run generates 420 PNGs and 63 comparison sheets
+The complete public dithering run generates 840 PNGs and 98 comparison sheets
 from the seven bundled sources. The normal gallery matrix below remains
 unchanged. `--source` also works for normal gallery runs. Unknown IDs and IDs
 excluded by `--public-only` are rejected. Bayer matrix sizes and exact CLI
@@ -115,7 +118,7 @@ commands are retained in the output manifest and reproduction commands.
 
 ## Comparison matrix
 
-Each source gets the same 128 neutral conversions:
+Each source gets the same 176 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
@@ -128,13 +131,18 @@ Each source gets the same 128 neutral conversions:
 | Atari 2600 | NTSC/PAL unrestricted bitmap, independent/repeated/mirrored playfields, all with no dither and Floyd–Steinberg; eight-line chunky playfields with dithering; unrestricted C64 palette swaps |
 | Mega Drive | 256/320-wide, 224/240-line profiles; bitmap and tiles, each with no dither and Floyd–Steinberg |
 | SNES | Bitmap, 4bpp tiles and 8bpp indexed background, each with no dither and Floyd–Steinberg |
+| NES | Bitmap and 16x16 attributes, each with no dither and Floyd–Steinberg |
+| Master System | 192/224/240-line bitmap and Mode 4 tiles, each with no dither and Floyd–Steinberg |
+| Game Boy | Bitmap and four-shade tiles, plus grey tiles, each with no dither and Floyd–Steinberg |
+| CGA | Four 320x200 palettes, 640x200 monochrome and unrestricted RGBI, each with no dither and Floyd–Steinberg |
+| EGA | 320x200, 640x200 and 640x350 bitmap/constrained modes plus classic RGBI in 350 lines, each with no dither and Floyd–Steinberg |
 
-Each source marked `adjusted` in the catalogue also gets 76 constrained examples
+Each source marked `adjusted` in the catalogue also gets 94 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. Both the local-only mountain landscape and the bundled lush
 landscape have these adjustments. With the current nine-source catalogue, the
-full local run produces 1304 converted PNGs and 81 comparison sheets; the
-public-only run produces 972 converted PNGs and 63 sheets.
+full local run produces 1772 converted PNGs and 126 comparison sheets; the
+public-only run produces 1326 converted PNGs and 98 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because
@@ -191,13 +199,15 @@ recorded in each gallery manifest.
 ## Curated repository samples
 
 `generate_samples.py` reuses the converter, mode variants and constraint checks
-to maintain ten PNG panels, each 800 pixels wide with two columns and up to
-ten rows. The nine family panels show several modes and dithers: Teletext
+to maintain fifteen comparison groups across 40 PNG sheets, each 1328 pixels
+wide with two columns and at most three rows. The fourteen family groups show several modes and dithers: Teletext
 bitmap/mosaic and palette swaps; C64 geometry, multicolour and greener colour
 settings; CPC 0/1/2 bitmap/constrained; Spectrum bitmap/attributes; BBC 0/1/2/4/5;
 Amiga RGB12, indexed 2/4/8/16/32, EHB/HAM6 and hires; Atari bitmap, playfield,
 repeat/mirror and PAL/NTSC; Mega Drive palette-bank tiles; SNES tiles and indexed
-backgrounds. An additional panel retains the CPC macaws blue-gain,
+backgrounds; NES attributes; Master System tiles; Game Boy green/grey shades;
+CGA four-colour/monochrome palettes; EGA RGBI/selected RGB6 screens.
+An additional panel retains the CPC macaws blue-gain,
 brightness and contrast recipe. This remains a bounded documentation set,
 defaulting to `samples/comparisons`; individual conversions are temporary.
 
@@ -211,9 +221,9 @@ python examples/generate_samples.py --output-dir /path/to/new-samples
 The committed selection is under [samples/comparisons](../samples/comparisons/README.md).
 Only known sample files are refreshed, after successful generation. Unrelated
 files cause a refusal; failed conversion leaves existing panels intact. Individual
-PNG conversions are temporary and automatically removed. Converted thumbnails
-use area averaging when reduced and nearest-neighbour when enlarged; source
-thumbnails use smooth fitting. Exact colour
+PNG conversions are temporary and automatically removed. Converted previews retain their generated size and picture proportions without
+further resampling; smaller previews are centred. Source photographs use smooth
+fitting. View sheets at 100% to avoid browser scaling of dithering patterns. Exact colour
 counts refer to underlying conversions rather than whole labelled panels.
 Source-image rights remain separately
 documented in [samples/README.md](../samples/README.md).

@@ -43,6 +43,11 @@ def convert_file(
     atari_mode: str = "bitmap",
     megadrive_mode: str = "bitmap",
     snes_mode: str = "bitmap",
+    nes_mode: str = "bitmap",
+    mastersystem_mode: str = "bitmap",
+    gameboy_mode: str = "bitmap",
+    cga_mode: str = "bitmap",
+    ega_mode: str = "bitmap",
     atari_row_height: int | None = None,
     colours: int | None = None,
 ) -> IndexedImage:
@@ -65,6 +70,8 @@ def convert_file(
         c64_mode=c64_mode, cpc_mode=cpc_mode, bbc_mode=bbc_mode,
         amiga_mode=amiga_mode, atari_mode=atari_mode,
         megadrive_mode=megadrive_mode, snes_mode=snes_mode,
+        nes_mode=nes_mode, mastersystem_mode=mastersystem_mode, gameboy_mode=gameboy_mode,
+        cga_mode=cga_mode, ega_mode=ega_mode,
         atari_row_height=atari_row_height, colours=colours, bayer_size=bayer_size,
     )
 

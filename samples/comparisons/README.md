@@ -1,7 +1,7 @@
 # Sample mode comparisons
 
-Ten lossless PNG panels, **800 pixels wide**, arranged in two columns.
-Panels grow vertically to show more modes, with at most ten rows each.
+Fifteen comparison groups, split into short lossless PNG sheets **1328 pixels wide**.
+Each sheet has two columns and at most three rows, with room for 640-pixel-wide previews.
 FS means Floyd–Steinberg. No dither, FS and Bayer are compared throughout.
 CPC covers modes 0/1/2; BBC covers 0/1/2/4/5; Amiga includes indexed/EHB/HAM.
 C64 includes neutral and greener saturation/hue/channel-gain examples.
@@ -9,11 +9,15 @@ Teletext uses the colourful macaws for bitmap and mosaic comparisons.
 
 Mega Drive adds four-bank tiles; SNES compares eight-bank tiles and 256-colour indexed output.
 
-Converted thumbnails use area averaging when reduced to limit moiré and banding;
-enlarged conversions retain nearest-neighbour scaling for crisp pixels.
-They are thumbnails; inspect regenerated individual PNGs for exact pixel patterns.
-Source thumbnails use smooth resizing. Palette counts in the manifest refer to
-the original conversions, not filtered thumbnails, labels, source photos or whole panels.
+NES adds 16x16 attributes; Master System compares two-bank tiles; Game Boy shows green/grey shades.
+
+CGA compares its four standard palettes and monochrome; EGA compares RGBI and selected RGB6.
+
+Converted previews are pasted at their generated dimensions without further resizing.
+Existing picture proportions are preserved. Smaller previews are centred, not enlarged.
+GitHub and browsers may still shrink the sheets: open the original PNG at 100% to judge dithering.
+Source photographs use smooth resizing. Palette counts in the manifest refer to
+the original conversions, not labels, source photos or whole sheets.
 
 Source credits and rights: [reference images](../README.md).
 
@@ -35,7 +39,17 @@ directory. Commands are single-line POSIX syntax; the shown options also work in
 
 Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
 
-![Teletext / bitmap, mosaics and palette swaps](macaws-teletext.png)
+[Open sheet 1 at full size](macaws-teletext.png)
+
+![Teletext / bitmap, mosaics and palette swaps / sheet 1](macaws-teletext.png)
+
+[Open sheet 2 at full size](macaws-teletext-2.png)
+
+![Teletext / bitmap, mosaics and palette swaps / sheet 2](macaws-teletext-2.png)
+
+[Open sheet 3 at full size](macaws-teletext-3.png)
+
+![Teletext / bitmap, mosaics and palette swaps / sheet 3](macaws-teletext-3.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -124,7 +138,17 @@ retroimg convert /path/to/image.jpg macaws-teletext-mosaic-spectrum-floyd-steinb
 
 Source: [lush-landscape.jpg](../sources/lush-landscape.jpg). Credit: Baap8969. CC0 1.0 Universal Public Domain Dedication
 
-![Commodore 64 / geometry, constraints and greener colour](lush-landscape-c64.png)
+[Open sheet 1 at full size](lush-landscape-c64.png)
+
+![Commodore 64 / geometry, constraints and greener colour / sheet 1](lush-landscape-c64.png)
+
+[Open sheet 2 at full size](lush-landscape-c64-2.png)
+
+![Commodore 64 / geometry, constraints and greener colour / sheet 2](lush-landscape-c64-2.png)
+
+[Open sheet 3 at full size](lush-landscape-c64-3.png)
+
+![Commodore 64 / geometry, constraints and greener colour / sheet 3](lush-landscape-c64-3.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -219,7 +243,21 @@ retroimg convert /path/to/image.jpg lush-landscape-c64-multicolour-bayer-saturat
 
 Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
 
-![Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained](macaws-cpc.png)
+[Open sheet 1 at full size](macaws-cpc.png)
+
+![Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained / sheet 1](macaws-cpc.png)
+
+[Open sheet 2 at full size](macaws-cpc-2.png)
+
+![Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained / sheet 2](macaws-cpc-2.png)
+
+[Open sheet 3 at full size](macaws-cpc-3.png)
+
+![Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained / sheet 3](macaws-cpc-3.png)
+
+[Open sheet 4 at full size](macaws-cpc-4.png)
+
+![Amstrad CPC / modes 0, 1 and 2 / bitmap vs constrained / sheet 4](macaws-cpc-4.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -338,7 +376,13 @@ retroimg convert /path/to/image.jpg macaws-cpc-mode2-constrained-bayer.png --pro
 
 Source: [lush-landscape.jpg](../sources/lush-landscape.jpg). Credit: Baap8969. CC0 1.0 Universal Public Domain Dedication
 
-![ZX Spectrum / bitmap and attribute cells](lush-landscape-spectrum.png)
+[Open sheet 1 at full size](lush-landscape-spectrum.png)
+
+![ZX Spectrum / bitmap and attribute cells / sheet 1](lush-landscape-spectrum.png)
+
+[Open sheet 2 at full size](lush-landscape-spectrum-2.png)
+
+![ZX Spectrum / bitmap and attribute cells / sheet 2](lush-landscape-spectrum-2.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -397,7 +441,17 @@ retroimg convert /path/to/image.jpg lush-landscape-spectrum-attributes-bayer-bay
 
 Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
 
-![BBC Micro / modes 0, 1, 2, 4 and 5](macaws-bbc.png)
+[Open sheet 1 at full size](macaws-bbc.png)
+
+![BBC Micro / modes 0, 1, 2, 4 and 5 / sheet 1](macaws-bbc.png)
+
+[Open sheet 2 at full size](macaws-bbc-2.png)
+
+![BBC Micro / modes 0, 1, 2, 4 and 5 / sheet 2](macaws-bbc-2.png)
+
+[Open sheet 3 at full size](macaws-bbc-3.png)
+
+![BBC Micro / modes 0, 1, 2, 4 and 5 / sheet 3](macaws-bbc-3.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -510,7 +564,21 @@ retroimg convert /path/to/image.jpg macaws-bbc-mode0-bitmap-floyd-steinberg.png 
 
 Source: [portrait-colour.jpg](../sources/portrait-colour.jpg). Credit: Petr Kratochvil. CC0 1.0 Universal Public Domain Dedication
 
-![Amiga / RGB12, indexed palettes, EHB and HAM6](portrait-colour-amiga.png)
+[Open sheet 1 at full size](portrait-colour-amiga.png)
+
+![Amiga / RGB12, indexed palettes, EHB and HAM6 / sheet 1](portrait-colour-amiga.png)
+
+[Open sheet 2 at full size](portrait-colour-amiga-2.png)
+
+![Amiga / RGB12, indexed palettes, EHB and HAM6 / sheet 2](portrait-colour-amiga-2.png)
+
+[Open sheet 3 at full size](portrait-colour-amiga-3.png)
+
+![Amiga / RGB12, indexed palettes, EHB and HAM6 / sheet 3](portrait-colour-amiga-3.png)
+
+[Open sheet 4 at full size](portrait-colour-amiga-4.png)
+
+![Amiga / RGB12, indexed palettes, EHB and HAM6 / sheet 4](portrait-colour-amiga-4.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -635,7 +703,17 @@ retroimg convert /path/to/image.jpg portrait-colour-amiga-hires-16-floyd-steinbe
 
 Source: [lush-landscape.jpg](../sources/lush-landscape.jpg). Credit: Baap8969. CC0 1.0 Universal Public Domain Dedication
 
-![Atari 2600 / bitmap, playfield, repeat and mirror](lush-landscape-atari2600.png)
+[Open sheet 1 at full size](lush-landscape-atari2600.png)
+
+![Atari 2600 / bitmap, playfield, repeat and mirror / sheet 1](lush-landscape-atari2600.png)
+
+[Open sheet 2 at full size](lush-landscape-atari2600-2.png)
+
+![Atari 2600 / bitmap, playfield, repeat and mirror / sheet 2](lush-landscape-atari2600-2.png)
+
+[Open sheet 3 at full size](lush-landscape-atari2600-3.png)
+
+![Atari 2600 / bitmap, playfield, repeat and mirror / sheet 3](lush-landscape-atari2600-3.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -748,7 +826,9 @@ retroimg convert /path/to/image.jpg lush-landscape-atari2600-ntsc-chunky-floyd-s
 
 Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
 
-![CPC mode 1 / Bayer 2x2 / source adjustments](macaws-adjustments.png)
+[Open sheet 1 at full size](macaws-adjustments.png)
+
+![CPC mode 1 / Bayer 2x2 / source adjustments / sheet 1](macaws-adjustments.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -783,7 +863,13 @@ retroimg convert /path/to/image.jpg macaws-adjustments-contrast.png --profile cp
 
 Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
 
-![Sega Mega Drive / Genesis / bitmap and palette-bank tiles](macaws-megadrive.png)
+[Open sheet 1 at full size](macaws-megadrive.png)
+
+![Sega Mega Drive / Genesis / bitmap and palette-bank tiles / sheet 1](macaws-megadrive.png)
+
+[Open sheet 2 at full size](macaws-megadrive-2.png)
+
+![Sega Mega Drive / Genesis / bitmap and palette-bank tiles / sheet 2](macaws-megadrive-2.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -830,7 +916,13 @@ retroimg convert /path/to/image.jpg macaws-megadrive-tiles-bayer.png --profile m
 
 Source: [lush-landscape.jpg](../sources/lush-landscape.jpg). Credit: Baap8969. CC0 1.0 Universal Public Domain Dedication
 
-![SNES / bitmap, 4bpp tiles and 8bpp indexed](lush-landscape-snes.png)
+[Open sheet 1 at full size](lush-landscape-snes.png)
+
+![SNES / bitmap, 4bpp tiles and 8bpp indexed / sheet 1](lush-landscape-snes.png)
+
+[Open sheet 2 at full size](lush-landscape-snes-2.png)
+
+![SNES / bitmap, 4bpp tiles and 8bpp indexed / sheet 2](lush-landscape-snes-2.png)
 
 <details>
 <summary>Settings and reproduction commands</summary>
@@ -887,6 +979,409 @@ retroimg convert /path/to/image.jpg lush-landscape-snes-tiles-bayer.png --profil
 
 ```bash
 retroimg convert /path/to/image.jpg lush-landscape-snes-indexed-bayer.png --profile snes --snes-mode indexed --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+</details>
+
+## NES / unrestricted and 16x16 background attributes
+
+Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
+
+[Open sheet 1 at full size](macaws-nes.png)
+
+![NES / unrestricted and 16x16 background attributes / sheet 1](macaws-nes.png)
+
+[Open sheet 2 at full size](macaws-nes-2.png)
+
+![NES / unrestricted and 16x16 background attributes / sheet 2](macaws-nes-2.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### Bitmap / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-nes-bitmap-none.png --profile nes --nes-mode bitmap --dither none --scale 2 --fit cover
+```
+
+### Attributes / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-nes-attributes-none.png --profile nes --nes-mode attributes --dither none --scale 2 --fit cover
+```
+
+### Bitmap / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-nes-bitmap-floyd-steinberg.png --profile nes --nes-mode bitmap --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Attributes / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-nes-attributes-floyd-steinberg.png --profile nes --nes-mode attributes --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Bitmap / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-nes-bitmap-bayer.png --profile nes --nes-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### Attributes / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-nes-attributes-bayer.png --profile nes --nes-mode attributes --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+</details>
+
+## Master System / RGB6 bitmap and two-bank tiles
+
+Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
+
+[Open sheet 1 at full size](macaws-mastersystem.png)
+
+![Master System / RGB6 bitmap and two-bank tiles / sheet 1](macaws-mastersystem.png)
+
+[Open sheet 2 at full size](macaws-mastersystem-2.png)
+
+![Master System / RGB6 bitmap and two-bank tiles / sheet 2](macaws-mastersystem-2.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### Bitmap / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-mastersystem-bitmap-none.png --profile mastersystem --mastersystem-mode bitmap --dither none --scale 2 --fit cover
+```
+
+### Tiles / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-mastersystem-tiles-none.png --profile mastersystem --mastersystem-mode tiles --dither none --scale 2 --fit cover
+```
+
+### Bitmap / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-mastersystem-bitmap-floyd-steinberg.png --profile mastersystem --mastersystem-mode bitmap --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Tiles / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-mastersystem-tiles-floyd-steinberg.png --profile mastersystem --mastersystem-mode tiles --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### Bitmap / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-mastersystem-bitmap-bayer.png --profile mastersystem --mastersystem-mode bitmap --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### Tiles / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-mastersystem-tiles-bayer.png --profile mastersystem --mastersystem-mode tiles --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+</details>
+
+## Original Game Boy / green and grey four-shade backgrounds
+
+Source: [portrait-colour.jpg](../sources/portrait-colour.jpg). Credit: Petr Kratochvil. CC0 1.0 Universal Public Domain Dedication
+
+[Open sheet 1 at full size](portrait-colour-gameboy.png)
+
+![Original Game Boy / green and grey four-shade backgrounds / sheet 1](portrait-colour-gameboy.png)
+
+[Open sheet 2 at full size](portrait-colour-gameboy-2.png)
+
+![Original Game Boy / green and grey four-shade backgrounds / sheet 2](portrait-colour-gameboy-2.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### Green / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-gameboy-green-none.png --profile gameboy --gameboy-mode tiles --dither none --scale 4 --fit cover
+```
+
+### Grey / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-gameboy-grey-none.png --profile gameboy --gameboy-mode tiles --dither none --scale 4 --palette gameboy-grey --fit cover
+```
+
+### Green / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-gameboy-green-floyd-steinberg.png --profile gameboy --gameboy-mode tiles --dither floyd-steinberg --scale 4 --fit cover
+```
+
+### Grey / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-gameboy-grey-floyd-steinberg.png --profile gameboy --gameboy-mode tiles --dither floyd-steinberg --scale 4 --palette gameboy-grey --fit cover
+```
+
+### Green / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-gameboy-green-bayer.png --profile gameboy --gameboy-mode tiles --dither bayer --scale 4 --bayer-size 4 --fit cover
+```
+
+### Grey / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-gameboy-grey-bayer.png --profile gameboy --gameboy-mode tiles --dither bayer --scale 4 --palette gameboy-grey --bayer-size 4 --fit cover
+```
+
+</details>
+
+## IBM CGA / four standard palettes and monochrome
+
+Source: [macaws.jpg](../sources/macaws.jpg). Credit: Adrian Pingstone (Arpingstone), July 2004. Released into the public domain by the photographer, with an unrestricted-use fallback.
+
+[Open sheet 1 at full size](macaws-cga.png)
+
+![IBM CGA / four standard palettes and monochrome / sheet 1](macaws-cga.png)
+
+[Open sheet 2 at full size](macaws-cga-2.png)
+
+![IBM CGA / four standard palettes and monochrome / sheet 2](macaws-cga-2.png)
+
+[Open sheet 3 at full size](macaws-cga-3.png)
+
+![IBM CGA / four standard palettes and monochrome / sheet 3](macaws-cga-3.png)
+
+[Open sheet 4 at full size](macaws-cga-4.png)
+
+![IBM CGA / four standard palettes and monochrome / sheet 4](macaws-cga-4.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### 320 / unrestricted RGBI / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-bitmap-none.png --profile cga-320 --cga-mode bitmap --palette cga --dither none --scale 2 --fit cover
+```
+
+### 320 / palette 0 low / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal0-low-none.png --profile cga-320 --cga-mode constrained --palette cga-pal0-low --dither none --scale 2 --fit cover
+```
+
+### 320 / palette 0 high / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal0-high-none.png --profile cga-320 --cga-mode constrained --palette cga-pal0-high --dither none --scale 2 --fit cover
+```
+
+### 320 / palette 1 low / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal1-low-none.png --profile cga-320 --cga-mode constrained --palette cga-pal1-low --dither none --scale 2 --fit cover
+```
+
+### 320 / palette 1 high / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal1-high-none.png --profile cga-320 --cga-mode constrained --palette cga-pal1-high --dither none --scale 2 --fit cover
+```
+
+### 640 / monochrome / No dither
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-mono-none.png --profile cga-640 --cga-mode constrained --dither none --scale 1 --fit cover
+```
+
+### 320 / unrestricted RGBI / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-bitmap-floyd-steinberg.png --profile cga-320 --cga-mode bitmap --palette cga --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### 320 / palette 0 low / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal0-low-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal0-low --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### 320 / palette 0 high / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal0-high-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal0-high --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### 320 / palette 1 low / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal1-low-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal1-low --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### 320 / palette 1 high / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal1-high-floyd-steinberg.png --profile cga-320 --cga-mode constrained --palette cga-pal1-high --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### 640 / monochrome / FS
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-mono-floyd-steinberg.png --profile cga-640 --cga-mode constrained --dither floyd-steinberg --scale 1 --fit cover
+```
+
+### 320 / unrestricted RGBI / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-bitmap-bayer.png --profile cga-320 --cga-mode bitmap --palette cga --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### 320 / palette 0 low / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal0-low-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal0-low --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### 320 / palette 0 high / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal0-high-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal0-high --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### 320 / palette 1 low / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal1-low-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal1-low --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### 320 / palette 1 high / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-pal1-high-bayer.png --profile cga-320 --cga-mode constrained --palette cga-pal1-high --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### 640 / monochrome / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg macaws-cga-mono-bayer.png --profile cga-640 --cga-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover
+```
+
+</details>
+
+## IBM EGA / RGBI and selected RGB6 screen colours
+
+Source: [portrait-colour.jpg](../sources/portrait-colour.jpg). Credit: Petr Kratochvil. CC0 1.0 Universal Public Domain Dedication
+
+[Open sheet 1 at full size](portrait-colour-ega.png)
+
+![IBM EGA / RGBI and selected RGB6 screen colours / sheet 1](portrait-colour-ega.png)
+
+[Open sheet 2 at full size](portrait-colour-ega-2.png)
+
+![IBM EGA / RGBI and selected RGB6 screen colours / sheet 2](portrait-colour-ega-2.png)
+
+[Open sheet 3 at full size](portrait-colour-ega-3.png)
+
+![IBM EGA / RGBI and selected RGB6 screen colours / sheet 3](portrait-colour-ega-3.png)
+
+<details>
+<summary>Settings and reproduction commands</summary>
+
+### ega-320 / constrained / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-320-constrained-none.png --profile ega-320 --ega-mode constrained --dither none --scale 2 --fit cover
+```
+
+### ega-640-200 / constrained / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-200-constrained-none.png --profile ega-640-200 --ega-mode constrained --dither none --scale 1 --fit cover
+```
+
+### ega-640 / constrained / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-constrained-none.png --profile ega-640 --ega-mode constrained --dither none --scale 1 --fit cover
+```
+
+### 640x350 / fixed RGBI / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-classic-none.png --profile ega-640 --ega-mode constrained --palette ega-default --dither none --scale 1 --fit cover
+```
+
+### ega-640 / bitmap / No dither
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-bitmap-none.png --profile ega-640 --ega-mode bitmap --dither none --scale 1 --palette ega --fit cover
+```
+
+### ega-320 / constrained / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-320-constrained-floyd-steinberg.png --profile ega-320 --ega-mode constrained --dither floyd-steinberg --scale 2 --fit cover
+```
+
+### ega-640-200 / constrained / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-200-constrained-floyd-steinberg.png --profile ega-640-200 --ega-mode constrained --dither floyd-steinberg --scale 1 --fit cover
+```
+
+### ega-640 / constrained / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-constrained-floyd-steinberg.png --profile ega-640 --ega-mode constrained --dither floyd-steinberg --scale 1 --fit cover
+```
+
+### 640x350 / fixed RGBI / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-classic-floyd-steinberg.png --profile ega-640 --ega-mode constrained --palette ega-default --dither floyd-steinberg --scale 1 --fit cover
+```
+
+### ega-640 / bitmap / FS
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-bitmap-floyd-steinberg.png --profile ega-640 --ega-mode bitmap --dither floyd-steinberg --scale 1 --palette ega --fit cover
+```
+
+### ega-320 / constrained / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-320-constrained-bayer.png --profile ega-320 --ega-mode constrained --dither bayer --scale 2 --bayer-size 4 --fit cover
+```
+
+### ega-640-200 / constrained / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-200-constrained-bayer.png --profile ega-640-200 --ega-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover
+```
+
+### ega-640 / constrained / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-constrained-bayer.png --profile ega-640 --ega-mode constrained --dither bayer --scale 1 --bayer-size 4 --fit cover
+```
+
+### 640x350 / fixed RGBI / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-classic-bayer.png --profile ega-640 --ega-mode constrained --palette ega-default --dither bayer --scale 1 --bayer-size 4 --fit cover
+```
+
+### ega-640 / bitmap / Bayer 4x4
+
+```bash
+retroimg convert /path/to/image.jpg portrait-colour-ega-ega-640-bitmap-bayer.png --profile ega-640 --ega-mode bitmap --dither bayer --scale 1 --palette ega --bayer-size 4 --fit cover
 ```
 
 </details>

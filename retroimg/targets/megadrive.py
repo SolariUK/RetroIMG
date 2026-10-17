@@ -34,7 +34,7 @@ class MegaDriveImage:
         if len(self.registers) != 4 or any(len(bank) != 16 for bank in self.registers):
             raise ValueError('Mega Drive requires four 16-entry palette banks')
         decoded = tuple(tuple(decode_colour(v) for v in bank) for bank in self.registers)
-        if self.tiles.tile_size != 8 or decoded != self.tiles.palettes:
+        if self.tiles.tile_size != 8 or not self.tiles.shared_backdrop or decoded != self.tiles.palettes:
             raise ValueError('Mega Drive registers must match the 8x8 tile representation')
 
 

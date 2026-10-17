@@ -14,10 +14,19 @@ REQUIRED_PALETTES = {
     'bbc_mode': ('bbc',), 'amiga_mode': ('amiga',),
     'atari_mode': ('atari2600-ntsc', 'atari2600-pal'),
     'megadrive_mode': ('megadrive',), 'snes_mode': ('snes',),
+    'nes_mode': ('nes',), 'mastersystem_mode': ('mastersystem',),
+    'gameboy_mode': ('gameboy', 'gameboy-grey'),
+}
+CONSTRAINT_PALETTES = {
+    'cga-320': tuple(f'cga-pal{number}-{intensity}' for number in (0, 1) for intensity in ('low', 'high')),
+    'cga-640': ('cga-mono',),
+    'ega-200': ('ega-default',),
+    'ega-350': ('ega', 'ega-default'),
 }
 CELL_DIMENSIONS = {
     'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-multicolour': (4, 8),
     'megadrive-tiles': (8, 8), 'snes-background': (8, 8),
+    'nes-attributes': (16, 16), 'mastersystem-tiles': (8, 8), 'gameboy-tiles': (8, 8),
 }
 INTEGER_OPTIONS = {'width', 'height', 'scale', 'bayer_size', 'colours', 'atari_row_height'}
 FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain'}
@@ -85,7 +94,7 @@ def normalize_settings(raw: dict, defaults: dict) -> dict:
     get_profile_quantizer(profile, colours=values['colours'], atari_row_height=values['atari_row_height'],
                           bayer_size=values['bayer_size'], **{key: values[key] for key in MODE_OPTIONS})
     if mode != 'bitmap':
-        required = REQUIRED_PALETTES.get(option)
+        required = CONSTRAINT_PALETTES.get(profile.constraint_model, REQUIRED_PALETTES.get(option))
         if required and values['palette'] not in required:
             raise ValueError(f'{mode} requires a palette from: ' + ', '.join(required))
         cw, ch = CELL_DIMENSIONS.get(profile.constraint_model, (1, 1))

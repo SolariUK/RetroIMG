@@ -57,5 +57,5 @@ four CRAM register banks, local pixel codes and tile bank selectors. Register
 words use `0x0BGR` with even channel nibbles, e.g. red is `0x00e`.
 `rasterize_megadrive` separately expands it for PNG rendering. This milestone
 does not pack VRAM, budget tile memory, compose sprites/layers or export a ROM.
-The [comparison panel](../../samples/comparisons/macaws-megadrive.png) shows
+The [comparison sheets](../../samples/comparisons/README.md) show
 bitmap and tile-constrained output with each dither.

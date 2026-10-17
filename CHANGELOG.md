@@ -2,6 +2,11 @@
 
 ## 0.2.0 — Unreleased
 
+- Added CGA standard four-colour/monochrome graphics and EGA RGBI/selected RGB6
+  screens, guided palette choices, register models and comparison panels.
+- Added NES background attributes, Master System Mode 4 tile palettes and
+  original Game Boy four-shade backgrounds, with green/grey previews, retained
+  register/index models, guided options, presets and comparison panels.
 - Organised palettes consistently into machine-family modules, with a separate
   registry and compatibility imports; palette values and ordering are unchanged.
 - Added Mega Drive/Genesis and SNES profiles, shared tile-palette bank fitting,
@@ -17,8 +22,9 @@
 - Curated eight width-limited documentation panels with multiple modes,
   greener C64 settings, reproducible conversion commands and an explicit
   refresh command; comprehensive galleries remain optional.
-- Reduced sample thumbnails use area averaging to reduce dithering moiré;
-  enlarged previews retain crisp pixels and original conversions are unchanged.
+- Enlarged comparison sheets to 1328 pixels wide and split them into at most
+  three rows per sheet. Converted previews retain their generated pixels and
+  picture proportions, avoiding additional resampling of dithering patterns.
 - Added a guided command builder, portable JSON presets and optional
   cross-platform path completion through the `guided` install extra.
 - Added a Windows x64 portable test-build workflow, bundled guided launcher,

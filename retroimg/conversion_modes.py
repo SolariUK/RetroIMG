@@ -18,6 +18,11 @@ from retroimg.quantize import quantize
 from retroimg.targets.spectrum import quantize_spectrum_attributes
 from retroimg.targets.megadrive import quantize_megadrive
 from retroimg.targets.snes import quantize_snes_tiles, quantize_snes_indexed
+from retroimg.targets.nes import quantize_nes
+from retroimg.targets.mastersystem import quantize_mastersystem
+from retroimg.targets.gameboy import quantize_gameboy
+from retroimg.targets.cga import quantize_cga
+from retroimg.targets.ega import quantize_ega
 
 Quantizer = Callable[[Image.Image, Palette, str], IndexedImage]
 
@@ -29,6 +34,11 @@ COLOUR_COUNT_QUANTIZERS = {
 }
 
 CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
+    **{(f'cga-{width}', 'constrained'): partial(quantize_cga, resolution=width) for width in (320, 640)},
+    **{(f'ega-{height}', 'constrained'): partial(quantize_ega, scanlines=height) for height in (200, 350)},
+    ("nes-attributes", "attributes"): quantize_nes,
+    ("mastersystem-tiles", "tiles"): quantize_mastersystem,
+    ("gameboy-tiles", "tiles"): quantize_gameboy,
     ("megadrive-tiles", "tiles"): quantize_megadrive,
     ("snes-background", "tiles"): quantize_snes_tiles,
     ("snes-background", "indexed"): quantize_snes_indexed,
@@ -71,6 +81,11 @@ class ModeOption:
 
 
 MODE_OPTIONS = {
+    'cga_mode': ModeOption('CGA', ('bitmap', 'constrained'), ('cga-320', 'cga-640'), 'a cga-* profile'),
+    'ega_mode': ModeOption('EGA', ('bitmap', 'constrained'), ('ega-200', 'ega-350'), 'an ega-* profile'),
+    "nes_mode": ModeOption("NES", ("bitmap", "attributes"), ("nes-attributes",), "nes"),
+    "mastersystem_mode": ModeOption("Master System", ("bitmap", "tiles"), ("mastersystem-tiles",), "a mastersystem profile"),
+    "gameboy_mode": ModeOption("Game Boy", ("bitmap", "tiles"), ("gameboy-tiles",), "gameboy"),
     "megadrive_mode": ModeOption("Mega Drive", ("bitmap", "tiles"), ("megadrive-tiles",), "a megadrive-* profile"),
     "snes_mode": ModeOption("SNES", ("bitmap", "tiles", "indexed"), ("snes-background",), "snes"),
     "atari_mode": ModeOption("Atari", ("bitmap", *PLAYFIELD_MODES), ("atari2600-playfield",),

@@ -45,5 +45,5 @@ produce the displayed indexed image. These models do not pack native tile data.
 
 Mode 7 transforms, direct colour, high resolution, colour math, sprites,
 multiple layers, interlace, memory budgeting and native exports remain deferred.
-The [comparison panel](../../samples/comparisons/lush-landscape-snes.png)
-shows the three conversion modes with each dither.
+The [comparison sheets](../../samples/comparisons/README.md)
+show the three conversion modes with each dither.

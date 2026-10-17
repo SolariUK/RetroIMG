@@ -108,7 +108,36 @@ SNES_PROFILE = TargetProfile(
     constraint_model='snes-background', aspect_correct_preview=True,
 )
 
-PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES, *ATARI_PROFILES, *MEGADRIVE_PROFILES, SNES_PROFILE)}
+NES_PROFILE = TargetProfile(
+    name='nes', geometry=Geometry(256, 240, pixel_aspect=1.25), default_palette='nes',
+    description='NES 256x240; one palette per 16x16 background attribute region.',
+    constraint_model='nes-attributes', aspect_correct_preview=True,
+)
+MASTERSYSTEM_PROFILES = tuple(TargetProfile(
+    name=f'mastersystem{suffix}', geometry=Geometry(256, height, pixel_aspect=height / 192),
+    default_palette='mastersystem', description=f'Master System Mode 4 256x{height}; two 16-colour tile palettes.',
+    constraint_model='mastersystem-tiles', aspect_correct_preview=True,
+) for height, suffix in ((192, ''), (224, '-224'), (240, '-240')))
+GAMEBOY_PROFILE = TargetProfile(
+    name='gameboy', geometry=Geometry(160, 144), default_palette='gameboy',
+    description='Original monochrome Game Boy 160x144; four background shades.',
+    constraint_model='gameboy-tiles',
+)
+
+CGA_PROFILES = tuple(TargetProfile(
+    name=f'cga-{width}', geometry=Geometry(width, 200, pixel_aspect=800 / (width * 3)),
+    default_palette='cga-pal1-high' if width == 320 else 'cga-mono',
+    description=f'CGA {width}x200; ' + ('four-colour RGBI palette combinations.' if width == 320 else 'two-colour monochrome graphics.'),
+    constraint_model=f'cga-{width}', aspect_correct_preview=True,
+) for width in (320, 640))
+EGA_PROFILES = tuple(TargetProfile(
+    name=name, geometry=Geometry(width, height, pixel_aspect=height * 4 / (width * 3)),
+    default_palette='ega-default' if height == 200 else 'ega',
+    description=f'EGA {width}x{height}; ' + ('sixteen standard RGBI colours.' if height == 200 else 'sixteen selected RGB6 colours.'),
+    constraint_model=f'ega-{height}', aspect_correct_preview=True,
+) for name, width, height in (('ega-320', 320, 200), ('ega-640-200', 640, 200), ('ega-640', 640, 350)))
+
+PROFILES = {p.name: p for p in (TELETEXT, C64, C64_MULTICOLOUR, SPECTRUM, *CPC_PROFILES, *BBC_PROFILES, *AMIGA_PROFILES, *ATARI_PROFILES, *MEGADRIVE_PROFILES, SNES_PROFILE, NES_PROFILE, *MASTERSYSTEM_PROFILES, GAMEBOY_PROFILE, *CGA_PROFILES, *EGA_PROFILES)}
 
 
 def get_profile(name: str) -> TargetProfile:

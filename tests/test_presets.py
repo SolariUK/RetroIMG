@@ -62,7 +62,8 @@ for name, profile in PROFILES.items():
 
 @pytest.mark.parametrize('name,flag,mode', CASES)
 def test_round_trip_every_supported_mode(tmp_path, name, flag, mode):
-    settings = dict(profile=name, dither='bayer', width=160 if name.startswith('atari') else 16, height=24)
+    settings = dict(profile=name, dither='bayer', width=160 if name.startswith('atari') else 16,
+                    height=32 if name == 'nes' else 24)
     if flag:
         settings[flag] = mode
     path = tmp_path / 'preset.json'

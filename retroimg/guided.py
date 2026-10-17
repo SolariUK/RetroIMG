@@ -19,7 +19,7 @@ from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
-from retroimg.settings import CELL_DIMENSIONS, REQUIRED_PALETTES
+from retroimg.settings import CELL_DIMENSIONS, REQUIRED_PALETTES, CONSTRAINT_PALETTES
 from retroimg.presets import list_presets, load_preset, preset_directory, preset_slug, save_preset
 
 # Presentation and input hints only. Target adapters remain the authority on
@@ -28,6 +28,8 @@ FAMILY_LABELS = {
     'teletext': 'Teletext', 'spectrum': 'ZX Spectrum', 'c64': 'Commodore 64',
     'cpc': 'Amstrad CPC', 'bbc': 'BBC Micro', 'amiga': 'Amiga', 'atari2600': 'Atari 2600',
     'megadrive': 'Sega Mega Drive / Genesis', 'snes': 'Super Nintendo / SNES',
+    'nes': 'Nintendo / NES', 'mastersystem': 'Sega Master System', 'gameboy': 'Original Game Boy',
+    'cga': 'IBM CGA', 'ega': 'IBM EGA',
 }
 MODE_HELP = {
     'bitmap': 'unrestricted palette conversion',
@@ -135,7 +137,7 @@ def profile_modes(profile: TargetProfile) -> tuple[str | None, tuple[str, ...]]:
 
 
 def palette_choices(profile: TargetProfile, mode: str, option: str | None) -> tuple[str, ...]:
-    names = (REQUIRED_PALETTES.get(option, tuple(PALETTES)) if mode != 'bitmap'
+    names = (CONSTRAINT_PALETTES.get(profile.constraint_model, REQUIRED_PALETTES.get(option, tuple(PALETTES))) if mode != 'bitmap'
              else tuple(PALETTES))
     return tuple(sorted(names, key=lambda name: (name != profile.default_palette, name)))
 
@@ -210,7 +212,18 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
         default_mode = preferred.get(option, 'bitmap')
         if default_mode not in modes:
             default_mode = 'bitmap'
-        mode = ui.choice('Conversion mode', [(m, f'{m}: {MODE_HELP.get(m, m)}') for m in modes], default_mode)
+        help_text = dict(MODE_HELP)
+        if option == 'nes_mode':
+            help_text['attributes'] = 'four shared palettes, three local colours plus backdrop per 16x16 region'
+        elif option == 'mastersystem_mode':
+            help_text['tiles'] = '8x8 tiles selecting either of two 16-colour palettes; all slots usable'
+        elif option == 'gameboy_mode':
+            help_text['tiles'] = 'four luminance shades, retained 2-bit codes; green or grey preview'
+        elif option == 'cga_mode':
+            help_text['constrained'] = 'standard four-colour palettes at 320x200, monochrome at 640x200'
+        elif option == 'ega_mode':
+            help_text['constrained'] = 'sixteen RGBI colours in 200 lines, or sixteen selected RGB6 colours in 350 lines'
+        mode = ui.choice('Conversion mode', [(m, f'{m}: {help_text.get(m, m)}') for m in modes], default_mode)
         options[option] = mode
     else:
         ui.write('Conversion mode: bitmap (unrestricted palette conversion).')

@@ -12,8 +12,8 @@ from retroimg.palettes import get_palette
 
 
 def test_example_matrix_covers_all_modes_and_adjustments():
-    assert sum(len(variants_for(family)) for family in FAMILIES) == 128
-    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 204
+    assert sum(len(variants_for(family)) for family in FAMILIES) == 176
+    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 270
     for family in FAMILIES:
         variants = variants_for(family, adjusted=True)
         assert len({variant.slug for variant in variants}) == len(variants)
@@ -106,6 +106,8 @@ def test_bundled_directory_contains_only_catalogued_public_assets():
     'lush-landscape-spectrum', 'macaws-bbc', 'portrait-colour-amiga',
     'lush-landscape-atari2600', 'macaws-adjustments',
     'macaws-megadrive', 'lush-landscape-snes',
+    'macaws-nes', 'macaws-mastersystem', 'portrait-colour-gameboy',
+    'macaws-cga', 'portrait-colour-ega',
 ])
 def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
     from hashlib import sha256
@@ -120,14 +122,23 @@ def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
     assert source['public'] is True
     assert all(source[key] == value for key, value in original.items())
     assert source['sha256'] == original['reference_sha256']
-    sheet = directory / entry['sheet']
-    assert sha256(sheet.read_bytes()).hexdigest() == entry['sha256']
-    with Image.open(sheet) as image:
-        assert image.size == tuple(entry['panel_size'])
-        assert image.width == 800
-        assert image.height <= 2712
-        assert image.format == 'PNG'
-        image.verify()
+    assert entry['sheet'] == entry['sheets'][0]['filename']
+    assert entry['panel_size'] == entry['sheets'][0]['size']
+    assert entry['sha256'] == entry['sheets'][0]['sha256']
+    tile_count = 0
+    for part in entry['sheets']:
+        assert part['first_tile'] == tile_count
+        assert 1 <= part['tiles'] <= 6
+        tile_count += part['tiles']
+        sheet = directory / part['filename']
+        assert sha256(sheet.read_bytes()).hexdigest() == part['sha256']
+        with Image.open(sheet) as image:
+            assert image.size == tuple(part['size'])
+            assert image.width == 1328
+            assert image.height <= 1944
+            assert image.format == 'PNG'
+            image.verify()
+    assert tile_count == len(entry['variants']) + int(entry['show_source'])
     assert 1 <= len(entry['variants']) + int(entry['show_source']) <= 20
     for variant in entry['variants']:
         arguments = build_parser().parse_args(shlex.split(variant['command'])[1:])
@@ -136,18 +147,18 @@ def test_curated_sheets_retain_public_provenance_and_valid_commands(identifier):
 
 
 def test_curated_samples_are_bounded_and_cover_all_target_families():
-    from examples.generate_samples import panel_size, selections
+    from examples.generate_samples import panel_size, selections, sheet_names
 
     panels = selections()
-    assert len(panels) == 10
+    assert len(panels) == 15
     assert set(FAMILIES) <= {panel.family for panel in panels}
     for panel in panels:
-        assert panel_size(panel)[0] == 800
-        assert panel_size(panel)[1] <= 2712
+        assert panel_size(panel)[0] == 1328
+        assert panel_size(panel)[1] <= 6312
         assert len({variant.slug for variant in panel.variants}) == len(panel.variants)
     directory = CATALOG_PATH.parents[1] / 'samples' / 'comparisons'
     assert {p.name for p in directory.iterdir()} == {
-        'README.md', 'manifest.json', *(panel.filename for panel in panels)}
+        'README.md', 'manifest.json', *(name for panel in panels for name in sheet_names(panel))}
 
 
 def test_sample_modes_and_greener_c64_controls_are_represented():
@@ -206,8 +217,8 @@ def test_catalogue_gallery_totals():
     def output_count(sources):
         return sum(len(variants_for(family, source.get('adjusted', False)))
                    for source in sources for family in FAMILIES)
-    assert output_count(catalog) == 1304
-    assert output_count(PUBLIC_SOURCES) == 972
+    assert output_count(catalog) == 1772
+    assert output_count(PUBLIC_SOURCES) == 1326
 
 
 def test_dither_comparison_matrix_and_reproducible_options():
@@ -221,7 +232,7 @@ def test_dither_comparison_matrix_and_reproducible_options():
         assert {v.options['bayer_size'] for v in variants if v.options['dither'] == 'bayer'} == {2, 4, 8}
         assert all('bayer_size' not in v.options for v in variants if v.options['dither'] != 'bayer')
         total += len(variants)
-    assert total == 60
+    assert total == 120
 
 
 @pytest.mark.parametrize('source_ids', [('missing',), ('picard',)])
@@ -247,3 +258,37 @@ def test_selected_public_dither_gallery_runs_and_records_matrix_sizes(tmp_path):
     commands = (output / 'diagnostic-chart/teletext/commands.md').read_text()
     assert '--dither bayer --' in commands
     assert '--bayer-size 8' in commands
+
+
+@pytest.mark.parametrize('size', [(640, 480), (320, 200), (480, 450)])
+def test_sample_tiles_preserve_converted_pixels(size):
+    from examples.generate_samples import _tile
+
+    # A one-pixel pattern exposes both interpolation and accidental scaling.
+    image = Image.new('RGB', size)
+    image.putdata([(255, 0, 0) if (x + y) % 2 else (0, 255, 255)
+                   for y in range(size[1]) for x in range(size[0])])
+    sheet = Image.new('RGB', (1328, 696))
+    _tile(sheet, 0, 'Preview', image)
+    left = 16 + (640 - size[0]) // 2
+    top = 82 + (576 - size[1]) // 2
+    assert sheet.crop((left, top, left + size[0], top + size[1])).tobytes() == image.tobytes()
+
+
+def test_sample_sheet_split_preserves_every_tile(tmp_path):
+    from examples.generate_samples import Panel, _save_sheets, _tile, panel_size
+
+    panel = Panel('test', 'test', 'Split preview', (None,) * 7, False)
+    sheet = Image.new('RGB', panel_size(panel))
+    colours = [(i * 30, 255 - i * 30, i * 20) for i in range(7)]
+    for i, colour in enumerate(colours):
+        _tile(sheet, i, str(i), Image.new('RGB', (640, 576), colour))
+    parts = _save_sheets(sheet, panel, tmp_path)
+    assert [(part['first_tile'], part['tiles']) for part in parts] == [(0, 6), (6, 1)]
+    for part in parts:
+        with Image.open(tmp_path / part['filename']) as page:
+            for local in range(part['tiles']):
+                left = 16 + (local % 2) * 656
+                top = 82 + (local // 2) * 624
+                tile = page.crop((left, top, left + 640, top + 576))
+                assert tile.getextrema() == tuple((v, v) for v in colours[part['first_tile'] + local])

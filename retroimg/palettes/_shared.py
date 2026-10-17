@@ -16,3 +16,8 @@ RGB_PRIMARIES = tuple(Colour(label, rgb) for label, rgb in (
     ("cyan", (0, 255, 255)),
     ("white", (255, 255, 255)),
 ))
+
+# Standard PC RGBI order, including the monitor's dark-yellow-to-brown mapping.
+RGBI_COLOURS = tuple(Colour(f'rgbi-{i:x}', tuple(bytes.fromhex(value))) for i, value in enumerate(
+    '000000 0000aa 00aa00 00aaaa aa0000 aa00aa aa5500 aaaaaa '
+    '555555 5555ff 55ff55 55ffff ff5555 ff55ff ffff55 ffffff'.split()))

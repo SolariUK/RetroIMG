@@ -7,6 +7,7 @@ from PIL import Image
 
 from retroimg.colour_spaces import RGBGrid, colour_distance
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
+from retroimg.constraints.global_palette import select_palette_indices
 from retroimg.model import Colour, IndexedImage, Palette, RGB
 from retroimg.ordered import validate_dither
 from retroimg.quantize import quantize
@@ -14,7 +15,7 @@ from retroimg.quantize import quantize
 
 @dataclass(frozen=True)
 class BankedImage:
-    """Local pixel codes and tile bank selectors; slot zero is a shared backdrop."""
+    """Local codes and bank selectors, optionally sharing a slot-zero backdrop."""
 
     width: int
     height: int
@@ -22,6 +23,7 @@ class BankedImage:
     tile_palettes: tuple[tuple[int, ...], ...]
     pixels: tuple[tuple[int, ...], ...]
     tile_size: int = 8
+    shared_backdrop: bool = True
 
     def __post_init__(self):
         if type(self.tile_size) is not int or self.tile_size <= 0:
@@ -30,10 +32,12 @@ class BankedImage:
             raise ValueError('dimensions must be positive multiples of tile size')
         if not self.palettes or not self.palettes[0]:
             raise ValueError('palette banks must not be empty')
+        if type(self.shared_backdrop) is not bool:
+            raise ValueError('shared_backdrop must be boolean')
         slots = len(self.palettes[0])
         for bank in self.palettes:
-            if len(bank) != slots or bank[0] != self.palettes[0][0]:
-                raise ValueError('banks must have equal capacity and a shared backdrop in slot zero')
+            if len(bank) != slots or (self.shared_backdrop and bank[0] != self.palettes[0][0]):
+                raise ValueError('banks must have equal capacity and honour the shared-backdrop setting')
             if any(len(rgb) != 3 or any(type(v) is not int or not 0 <= v <= 255 for v in rgb) for rgb in bank):
                 raise ValueError('bank colours must be RGB values in 0..255')
         if len(self.tile_palettes) != self.height // self.tile_size or any(
@@ -56,21 +60,29 @@ def rasterize_banks(image: BankedImage, name: str) -> IndexedImage:
     return IndexedImage(image.width, image.height, palette, pixels)
 
 
-def fit_palette_banks(image: Image.Image, grid: RGBGrid, bank_count: int, *,
+def fit_palette_banks(image: Image.Image, grid: RGBGrid | None, bank_count: int, *,
                       slots: int = 16, tile_size: int = 8, dither: str = 'none',
-                      bayer_size: int = 4) -> BankedImage:
+                      bayer_size: int = 4, palette: Palette | None = None,
+                      shared_backdrop: bool = True) -> BankedImage:
     """Deterministic bounded alternating fit, not a globally optimal search.
 
     Farthest-error tile palettes seed banks, then full tile histograms select banks
     by weighted RGB error. Each bank is refitted from its assigned source
-    pixels. The most frequent grid-snapped source colour is the backdrop.
+    pixels. A grid or fixed palette supplies legal colours. Where required,
+    the most frequent nearest source colour is the shared backdrop; otherwise
+    all slots are independently fitted.
     Fitting is independent of dithering; diffusion resets at tile boundaries.
     """
     validate_dither(dither, bayer_size)
     if type(bank_count) is not int or bank_count <= 0:
         raise ValueError('bank count must be a positive integer')
-    if type(slots) is not int or not 2 <= slots <= len(grid.levels) ** 3:
-        raise ValueError('bank capacity must be at least two and within grid capacity')
+    if (grid is None) == (palette is None):
+        raise ValueError('supply either an RGB grid or a fixed palette')
+    if type(shared_backdrop) is not bool:
+        raise ValueError('shared_backdrop must be boolean')
+    capacity = len(grid.levels) ** 3 if grid is not None else len(palette.colours)
+    if type(slots) is not int or not 2 <= slots <= capacity:
+        raise ValueError('bank capacity must be at least two and within colour-space capacity')
     if type(tile_size) is not int or tile_size <= 0 or any(n <= 0 or n % tile_size for n in image.size):
         raise ValueError('dimensions must be positive multiples of tile size')
     source = image.convert('RGB')
@@ -80,19 +92,33 @@ def fit_palette_banks(image: Image.Image, grid: RGBGrid, bank_count: int, *,
                    for tile in tiles]
     histograms = [tile.getcolors(tile_size ** 2) for tile in tiles]
     counts = Counter()
+    if grid is not None:
+        snap = grid.snap
+    else:
+        candidate_values = palette.rgb_values()
+        @lru_cache(maxsize=None)
+        def snap(rgb):
+            return min(candidate_values, key=lambda value: colour_distance(rgb, value))
     for histogram in histograms:
         for count, rgb in histogram:
-            counts[grid.snap(rgb)] += count
+            counts[snap(rgb)] += count
     backdrop = min(counts, key=lambda rgb: (-counts[rgb], rgb))
     def fit_members(members):
         # The fixed backdrop already represents these samples; do not spend
-        # one of the fifteen independently selectable slots fitting it again.
-        samples = [rgb for t in members for rgb in tile_pixels[t] if grid.snap(rgb) != backdrop]
+        # an independently selectable slot fitting it again.
+        samples = [rgb for t in members for rgb in tile_pixels[t]
+                   if not shared_backdrop or snap(rgb) != backdrop]
         if samples:
             pool = Image.new('RGB', (len(samples), 1))
             pool.putdata(samples)
-            selected = fit_rgb_palette(pool, grid, slots - 1, max_samples=512, max_iterations=6)
-            colours = (backdrop, *(rgb for rgb in selected if rgb != backdrop))
+            limit = slots - int(shared_backdrop)
+            if grid is not None:
+                selected = fit_rgb_palette(pool, grid, limit, max_samples=512, max_iterations=6)
+            else:
+                indices = select_palette_indices(pool, palette, limit, max_samples=512, max_swaps=2)
+                selected = tuple(palette.colours[i].rgb for i in indices)
+            colours = ((backdrop, *(rgb for rgb in selected if rgb != backdrop))
+                       if shared_backdrop else selected)
         else:
             colours = (backdrop,)
         return colours + (backdrop,) * (slots - len(colours))
@@ -147,4 +173,5 @@ def fit_palette_banks(image: Image.Image, grid: RGBGrid, bank_count: int, *,
             pixels[y + dy][x:x + tile_size] = row
     columns = image.width // tile_size
     selectors = tuple(tuple(assignments[i:i + columns]) for i in range(0, len(assignments), columns))
-    return BankedImage(image.width, image.height, banks, selectors, tuple(tuple(row) for row in pixels), tile_size)
+    return BankedImage(image.width, image.height, banks, selectors, tuple(tuple(row) for row in pixels),
+                       tile_size, shared_backdrop)

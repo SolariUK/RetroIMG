@@ -26,6 +26,10 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
 
 
 @pytest.mark.parametrize('profile,option,mode', [
+    *[(f'cga-{width}', 'cga_mode', 'constrained') for width in (320,640)],
+    *[(profile, 'ega_mode', 'constrained') for profile in ('ega-320','ega-640-200','ega-640')],
+    ('nes', 'nes_mode', 'attributes'), ('gameboy', 'gameboy_mode', 'tiles'),
+    *[(f'mastersystem{suffix}', 'mastersystem_mode', 'tiles') for suffix in ('', '-224', '-240')],
     *[(f'megadrive-{width}{suffix}', 'megadrive_mode', 'tiles')
       for width in (320, 256) for suffix in ('', '-pal')],
     *[('snes', 'snes_mode', mode) for mode in ('tiles', 'indexed')],

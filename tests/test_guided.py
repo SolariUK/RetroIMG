@@ -73,7 +73,7 @@ def test_every_profile_and_supported_mode_builds_and_runs(paths, name, option, m
         'Choose machine': name.split('-', 1)[0], 'Choose profile': name,
         'Choose conversion mode': mode, 'Use a custom': 'yes',
         'Logical width': '160' if name.startswith('atari') and mode != 'bitmap' else '16',
-        'Logical height': '24', 'Choose dithering': 'bayer', 'Choose bayer matrix': '8',
+        'Logical height': '32' if name == 'nes' else '24', 'Choose dithering': 'bayer', 'Choose bayer matrix': '8',
         'Adjust source': 'yes', 'Brightness': '1.1', 'Contrast': '1.2',
         'Preview scale': '1',
     })
