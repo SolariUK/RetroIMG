@@ -34,8 +34,8 @@
         896,
         800
       ],
-      "sha256": "4e88e370cc41d344cefa0b2e8cae61994740eaa517bcd841ba8243f7346b1c24",
-      "crop_sha256": "cb9ef627634954796086c1225b067f8cb33ed3e614d150c0badeb7274c8b20b2",
+      "sha256": "3c3d98a59baf369b8b80d18c8da4972c73fa8abd0d5197f80b083316b9786080",
+      "crop_sha256": "eb8c41462fab957772f04d1a05005fa07cf4a7cbcac7d03180bcc927ee2916f2",
       "settings": {
         "profile_name": "megadrive-320",
         "megadrive_mode": "tiles",
@@ -59,8 +59,8 @@
         896,
         800
       ],
-      "sha256": "2721d30b00df8f31791b2157a5aad5634fd82d795823cd2acb2e2e71757a9d13",
-      "crop_sha256": "ba8b064ebf55f52679e3ff2d57205ee35e81c23e1727c4a431a982138ea0e87f",
+      "sha256": "99b32a03509d49a80f21a669d862fc4c3002bfe9c46ca077fb808f9d33870678",
+      "crop_sha256": "d4f29abd8505a4e28d21752a6d54fd9c9fd91a8eb2965520caea12cf9583e054",
       "settings": {
         "profile_name": "megadrive-320",
         "megadrive_mode": "tiles",
@@ -86,8 +86,8 @@
         896,
         800
       ],
-      "sha256": "3c540f0976ad34dc3a072498039e4ed99ef3c2da12fd9a49080e06eb2cf47e83",
-      "crop_sha256": "739d93a9b1d6b4bfb1705233483550400dfedfc820bdb6842518f6b71961043b",
+      "sha256": "72025c1ed5ae09b83031ce8000a43f4e7b8e65b161cb20ef4669f6214dd9ffaa",
+      "crop_sha256": "05f6e997c00d16041a8bd19adaf31cd3620b23a2699c07e3211c2b404d69b622",
       "settings": {
         "profile_name": "megadrive-320",
         "megadrive_mode": "tiles",

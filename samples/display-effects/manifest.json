@@ -39,12 +39,12 @@
       "settings": {
         "profile_name": "gameboy",
         "gameboy_mode": "tiles",
+        "scale": 8,
         "fit": "cover",
         "dither": "bayer",
-        "bayer_size": 4,
-        "scale": 8
+        "bayer_size": 4
       },
-      "command": "retroimg convert /path/to/image.jpg gameboy-plain.png --profile gameboy --gameboy-mode tiles --fit cover --dither bayer --bayer-size 4 --scale 8"
+      "command": "retroimg convert /path/to/image.jpg gameboy-plain.png --profile gameboy --gameboy-mode tiles --scale 8 --fit cover --dither bayer --bayer-size 4"
     },
     {
       "filename": "gameboy-lcd-subtle.png",
@@ -64,14 +64,14 @@
       "settings": {
         "profile_name": "gameboy",
         "gameboy_mode": "tiles",
+        "scale": 8,
         "fit": "cover",
         "dither": "bayer",
         "bayer_size": 4,
-        "scale": 8,
         "display_effect": "gameboy-lcd",
         "effect_strength": 0.35
       },
-      "command": "retroimg convert /path/to/image.jpg gameboy-lcd-subtle.png --profile gameboy --gameboy-mode tiles --fit cover --dither bayer --bayer-size 4 --scale 8 --display-effect gameboy-lcd --effect-strength 0.35"
+      "command": "retroimg convert /path/to/image.jpg gameboy-lcd-subtle.png --profile gameboy --gameboy-mode tiles --scale 8 --fit cover --dither bayer --bayer-size 4 --display-effect gameboy-lcd --effect-strength 0.35"
     },
     {
       "filename": "gameboy-lcd-strong.png",
@@ -91,14 +91,14 @@
       "settings": {
         "profile_name": "gameboy",
         "gameboy_mode": "tiles",
+        "scale": 8,
         "fit": "cover",
         "dither": "bayer",
         "bayer_size": 4,
-        "scale": 8,
         "display_effect": "gameboy-lcd",
         "effect_strength": 0.85
       },
-      "command": "retroimg convert /path/to/image.jpg gameboy-lcd-strong.png --profile gameboy --gameboy-mode tiles --fit cover --dither bayer --bayer-size 4 --scale 8 --display-effect gameboy-lcd --effect-strength 0.85"
+      "command": "retroimg convert /path/to/image.jpg gameboy-lcd-strong.png --profile gameboy --gameboy-mode tiles --scale 8 --fit cover --dither bayer --bayer-size 4 --display-effect gameboy-lcd --effect-strength 0.85"
     }
   ]
 }

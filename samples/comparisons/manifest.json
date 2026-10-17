@@ -30,7 +30,7 @@
         1944
       ],
       "show_source": true,
-      "sha256": "e64ea9ad4b68f0a5ca40d994a178105bb3acbb00caa56f4743dd2197166f642e",
+      "sha256": "bf30731311649680eb63cbdf32abd18ad19aab0a35e0bae83518db53f4ce73cf",
       "sheets": [
         {
           "filename": "macaws-teletext.png",
@@ -40,7 +40,7 @@
           ],
           "first_tile": 0,
           "tiles": 6,
-          "sha256": "e64ea9ad4b68f0a5ca40d994a178105bb3acbb00caa56f4743dd2197166f642e"
+          "sha256": "bf30731311649680eb63cbdf32abd18ad19aab0a35e0bae83518db53f4ce73cf"
         },
         {
           "filename": "macaws-teletext-2.png",
@@ -50,7 +50,7 @@
           ],
           "first_tile": 6,
           "tiles": 6,
-          "sha256": "68672915a0750dbc1ad179ac5ab5539ea17111c46581886a56bcc07c9fe5095d"
+          "sha256": "0b1559f3dfe9bc94fae13d18736de840798d1cda827136ca52bbd20b1abf65e0"
         },
         {
           "filename": "macaws-teletext-3.png",
@@ -173,7 +173,7 @@
           ],
           "colours_used": 8,
           "palette": "teletext",
-          "sha256": "356f1e9cbe563131ad9189217ef6f8b0f6ecd18c44a563a1cba0b49aeb73c0a1"
+          "sha256": "9dfd82327079b85a49cd9438985671f3130020f2e0ed16fbae85533dfb3387ef"
         },
         {
           "label": "Mosaic / Bayer 2x2",
@@ -219,7 +219,7 @@
           ],
           "colours_used": 8,
           "palette": "teletext",
-          "sha256": "2d81a84649d60983bc5fda2bc741ce9444e1e40ccd85aa5c47b3954bfc516116"
+          "sha256": "62f1e474ee6351df0b121c256b514717e51b369f77391244794a343a5165feb7"
         },
         {
           "label": "Mosaic / Bayer 4x4",
@@ -265,7 +265,7 @@
           ],
           "colours_used": 8,
           "palette": "teletext",
-          "sha256": "c74fa1cd6ef44dbe59f118f21cdf47baa665f110730d91030724496cefe5e2ed"
+          "sha256": "8a6b18b04eae1733ad4098b5e00297ed1dbf7c6cd9392603c399696a22b4890b"
         },
         {
           "label": "Mosaic / Bayer 8x8",
@@ -394,7 +394,7 @@
         1944
       ],
       "show_source": true,
-      "sha256": "cfd3a9233e529403ecb8ef3c2ca311ea0460a0e36bb2eb982297ae27559dc77f",
+      "sha256": "ae3714a66bafbe1b4c037aff4758e5b81a043d148c9b10776ab3d56ae7d6c2dc",
       "sheets": [
         {
           "filename": "lush-landscape-c64.png",
@@ -404,7 +404,7 @@
           ],
           "first_tile": 0,
           "tiles": 6,
-          "sha256": "cfd3a9233e529403ecb8ef3c2ca311ea0460a0e36bb2eb982297ae27559dc77f"
+          "sha256": "ae3714a66bafbe1b4c037aff4758e5b81a043d148c9b10776ab3d56ae7d6c2dc"
         },
         {
           "filename": "lush-landscape-c64-2.png",
@@ -414,7 +414,7 @@
           ],
           "first_tile": 6,
           "tiles": 6,
-          "sha256": "77bced894d6f451e3387ccd6f5fa198838726d05936fd56f25afe0dd35bc8aa4"
+          "sha256": "b6195bd22c4c8310397d3c79b54f2ea0946c9f59630f0e03c88acd37217acd73"
         },
         {
           "filename": "lush-landscape-c64-3.png",
@@ -424,7 +424,7 @@
           ],
           "first_tile": 12,
           "tiles": 3,
-          "sha256": "c19b0f33ece3033cf4e4ce1e9b11f9ba6b367b96205bacf77d4a68ec0068173f"
+          "sha256": "5f77136c12789674a5b0164f9b1464d92d5d49c94d313c622494cc2a2390b936"
         }
       ],
       "variants": [
@@ -491,9 +491,9 @@
             320,
             200
           ],
-          "colours_used": 16,
+          "colours_used": 13,
           "palette": "c64",
-          "sha256": "8cd830233f94579c92fe9d353b5a09cc1d4670fb4ce82a4b0f049feae40d8751"
+          "sha256": "1bda0101033973e20fd604f7368152f9ee06609f5376cb6b322441a74838a42e"
         },
         {
           "label": "Wide bitmap / No dither",
@@ -558,9 +558,9 @@
             160,
             200
           ],
-          "colours_used": 16,
+          "colours_used": 13,
           "palette": "c64",
-          "sha256": "a9e695ffe58ca1646e8db78d46c9d59cdc73f67c942af352169df3b57f8b90f0"
+          "sha256": "bd0af91685e5fbfb9ae8f4d409c69bed6afc3258e83f191506502f0da8efbdb8"
         },
         {
           "label": "Multicolour / No dither",
@@ -627,7 +627,7 @@
           ],
           "colours_used": 8,
           "palette": "c64",
-          "sha256": "6ca7ec2487780e43d2701a96db50a4c9435127225b84cc4215b7c9ca5019658c"
+          "sha256": "d71e74a3cb38d30bbecee8aba2cf68fdf568503c0a61274cb1449c870b9e4a40"
         },
         {
           "label": "Multicolour / FS / saturation 1.3",
@@ -748,7 +748,7 @@
           ],
           "colours_used": 13,
           "palette": "c64",
-          "sha256": "bfcb26411438dffd4a98de5a8b1c1e50e8dfd8ff4f07d6a95fc04ee695093091"
+          "sha256": "24f9b09a648238febb46db00b0ee810b3ff0a4666aac81731352f3064a2b25f0"
         }
       ]
     },
@@ -778,7 +778,7 @@
         1944
       ],
       "show_source": true,
-      "sha256": "5db8bf06933bc48e63e5a06a8158fb7954eefd23f6495b6e4a7cd968760d255f",
+      "sha256": "768c9b19181aafceb3b3d0088de2bcc6e55b7806c176d576d8570fc287a633a2",
       "sheets": [
         {
           "filename": "macaws-cpc.png",
@@ -788,7 +788,7 @@
           ],
           "first_tile": 0,
           "tiles": 6,
-          "sha256": "5db8bf06933bc48e63e5a06a8158fb7954eefd23f6495b6e4a7cd968760d255f"
+          "sha256": "768c9b19181aafceb3b3d0088de2bcc6e55b7806c176d576d8570fc287a633a2"
         },
         {
           "filename": "macaws-cpc-2.png",
@@ -798,7 +798,7 @@
           ],
           "first_tile": 6,
           "tiles": 6,
-          "sha256": "58dfdd58a419ba3cc06b9f10a9d9035886ff65caaad9086e7166e03aac64d71f"
+          "sha256": "12d291732147d37c91a42dfba348e9d9fe7f5599b5f4f859ab469360eb8fae3b"
         },
         {
           "filename": "macaws-cpc-3.png",
@@ -808,7 +808,7 @@
           ],
           "first_tile": 12,
           "tiles": 6,
-          "sha256": "20c4c96fbb015e0467cadcaa343a26bb4a2f85a7ce5b2f0e00fbb0372d08da99"
+          "sha256": "e7be89ea330e1c0de0ab7f945f1f7d01665f51e63644adabb906c1c450122850"
         },
         {
           "filename": "macaws-cpc-4.png",
@@ -929,9 +929,9 @@
             160,
             200
           ],
-          "colours_used": 27,
+          "colours_used": 21,
           "palette": "cpc",
-          "sha256": "9d15b18a8c6d3533f5319ddc4ec6c046ec7aa5b7671e12021c5c8236066209d5"
+          "sha256": "197ebf12afd274a277c946db9b2c313175ff3dc94b3ca3d6d89ae897915dadb0"
         },
         {
           "label": "Mode 0 / constrained / Bayer 4x4",
@@ -954,7 +954,7 @@
           ],
           "colours_used": 16,
           "palette": "cpc",
-          "sha256": "da971a6e594ae8db107d31c8098ec3435b7ea6495d5bc196f6b221fd0a0a7dc0"
+          "sha256": "619df48fb96aeddf4b5ac3c343251043d2b0db2a6816c8b165b3678efbf092c4"
         },
         {
           "label": "Mode 1 / bitmap / No dither",
@@ -1063,9 +1063,9 @@
             320,
             200
           ],
-          "colours_used": 27,
+          "colours_used": 22,
           "palette": "cpc",
-          "sha256": "cbaf3fad29c50b57ff18fba48ef98b817babd0a9b5db8ae22d84b22fbabfa481"
+          "sha256": "3453dba54aadc71c036005918fb1a056a7f5ff057e154bfef61ddac7d9a1f342"
         },
         {
           "label": "Mode 1 / constrained / Bayer 4x4",
@@ -1088,7 +1088,7 @@
           ],
           "colours_used": 4,
           "palette": "cpc",
-          "sha256": "0f33e3e23f46ed9aeaae3ebcaf5bfaa0904e7a00b031d74a24e4f4de852b8d7e"
+          "sha256": "34e59ed9b013ba3be2f9e3248e2588f9d9c14dbd6fdae4acbe6df7022875781a"
         },
         {
           "label": "Mode 2 / bitmap / No dither",
@@ -1197,9 +1197,9 @@
             640,
             200
           ],
-          "colours_used": 27,
+          "colours_used": 21,
           "palette": "cpc",
-          "sha256": "6a8bd353bbfe6b10cbb1eb801beffa8485ff70f10659d264af3f9dc0737c01f0"
+          "sha256": "12847c14da1f10c6547f531f5e86abf66522b9380cf3e164f5cb89052ed0edf8"
         },
         {
           "label": "Mode 2 / constrained / Bayer 4x4",
@@ -1258,7 +1258,7 @@
         1944
       ],
       "show_source": true,
-      "sha256": "e389b8cb021b22da6481f2d68bb2220bf4d0476c446ac0a6d9de3729f6b8c7d5",
+      "sha256": "bfd115c372da21f4bfb958cf44586b8ac7630a891aec23efb68fdd550db88e43",
       "sheets": [
         {
           "filename": "lush-landscape-spectrum.png",
@@ -1268,7 +1268,7 @@
           ],
           "first_tile": 0,
           "tiles": 6,
-          "sha256": "e389b8cb021b22da6481f2d68bb2220bf4d0476c446ac0a6d9de3729f6b8c7d5"
+          "sha256": "bfd115c372da21f4bfb958cf44586b8ac7630a891aec23efb68fdd550db88e43"
         },
         {
           "filename": "lush-landscape-spectrum-2.png",
@@ -1389,9 +1389,9 @@
             256,
             192
           ],
-          "colours_used": 15,
+          "colours_used": 11,
           "palette": "spectrum",
-          "sha256": "e392cea65e964aa0bcffbc615c0ad30e6bf6cb4cd8cd1b7cba174e7a4d55539b"
+          "sha256": "44da61c1fd9a227cc82d70e6aa20f914ab8d29e60e3b0e65b1bad391ad375e5e"
         },
         {
           "label": "Attributes / Bayer 4x4",
@@ -1510,7 +1510,7 @@
           ],
           "first_tile": 6,
           "tiles": 6,
-          "sha256": "32cb97f69fbc411b6ca93440ef0e17dbefc7ebbc2891c4a646882d51c47ccc75"
+          "sha256": "e851625ab268b6375dac9841361fed2707abf6a4899034f04d52b4e18d0eadd6"
         },
         {
           "filename": "macaws-bbc-3.png",
@@ -1520,7 +1520,7 @@
           ],
           "first_tile": 12,
           "tiles": 6,
-          "sha256": "779225a1248dfbf0ed49d6e065553a90000c82a5f607945f484a4e3385f8f9c9"
+          "sha256": "47841998f0bc613995bd4677857ad026abecc9149441f268e27c8bf92b5ea5c2"
         }
       ],
       "variants": [
@@ -1656,7 +1656,7 @@
           ],
           "colours_used": 4,
           "palette": "bbc",
-          "sha256": "12e37271606f158890f1680f379e25c48dcd36465cba7a7943834de6603420ac"
+          "sha256": "c9ef64df91984f111050a68faf793265a655a1232c9ceee9c5fd2e0d8750e3c0"
         },
         {
           "label": "Mode 2 / constrained / No dither",
@@ -1723,7 +1723,7 @@
           ],
           "colours_used": 8,
           "palette": "bbc",
-          "sha256": "c4eec3e5e59d46510ab850feaaafe010bac93b7c5769df39c2c6f7585bd5ba29"
+          "sha256": "1736b3c4690c72420dd3a37e0b624c29ab7a8e6445c14f27b1641ad485fe2490"
         },
         {
           "label": "Mode 4 / constrained / No dither",
@@ -1857,7 +1857,7 @@
           ],
           "colours_used": 4,
           "palette": "bbc",
-          "sha256": "489f04c5cea58a9a098f001494e19d76a60d9d46d0894e8292aae3ab06cefa63"
+          "sha256": "a693cc5936c8183b4fc4e7bcb04bc165f0b93e974d1d15f2dd49cef77833365a"
         },
         {
           "label": "Mode 0 / unrestricted / No dither",
@@ -1965,7 +1965,7 @@
           ],
           "first_tile": 12,
           "tiles": 6,
-          "sha256": "251b10638d928c33e13c255ac6d7c6f8b0d572c3b8b1af9740ad056f7c7ef3a7"
+          "sha256": "72ed36867f0fdb12ca327d118933b9057084537e4bad57627787c4cf9e1dd888"
         },
         {
           "filename": "portrait-colour-amiga-4.png",
@@ -1975,7 +1975,7 @@
           ],
           "first_tile": 18,
           "tiles": 2,
-          "sha256": "a1273c350a0cf448c97565b118910e8db349960d335d6c3a43889ceeceb7e868"
+          "sha256": "fc8c82482f996920c3a7fcf0a3db53a978d239a870cee97e1c9fe84f3c78cc50"
         }
       ],
       "variants": [
@@ -2314,9 +2314,9 @@
             320,
             256
           ],
-          "colours_used": 54,
+          "colours_used": 53,
           "palette": "amiga-ehb",
-          "sha256": "cabe269c4558b1cbebc76f7aeb6e1d72bb8d20bf37d730c20c3b8a87cd4ef4e0"
+          "sha256": "9d0ba5b2e535856756d3f52ed6b154f26943ab1120829e60d484163258e48205"
         },
         {
           "label": "HAM / No dither",
@@ -2381,9 +2381,9 @@
             320,
             256
           ],
-          "colours_used": 661,
+          "colours_used": 384,
           "palette": "amiga",
-          "sha256": "c688c6049d633a68e6b2eaab42813cf535e9738c6f688da063efb206b4193461"
+          "sha256": "8bb0cebcf7e4d8d84aab5d46654b9bbd19c4aa37404f05d3e49fedb6c4e14fc0"
         },
         {
           "label": "Hires / 16 colours / FS",
@@ -2442,7 +2442,7 @@
         1944
       ],
       "show_source": true,
-      "sha256": "4c2498919f32df1106d208fb75df30cc26fae60067a27662b960bbc7c19ba598",
+      "sha256": "5bef93f783574fb61db1e585296fd68c274f86fd2220926b133ff38b4ddce695",
       "sheets": [
         {
           "filename": "lush-landscape-atari2600.png",
@@ -2452,7 +2452,7 @@
           ],
           "first_tile": 0,
           "tiles": 6,
-          "sha256": "4c2498919f32df1106d208fb75df30cc26fae60067a27662b960bbc7c19ba598"
+          "sha256": "5bef93f783574fb61db1e585296fd68c274f86fd2220926b133ff38b4ddce695"
         },
         {
           "filename": "lush-landscape-atari2600-2.png",
@@ -2539,9 +2539,9 @@
             160,
             192
           ],
-          "colours_used": 128,
+          "colours_used": 84,
           "palette": "atari2600-ntsc",
-          "sha256": "a5473cc057cd87bf400ca7bf47a5ae1882295e23e59ecca532f26b90ab11ff72"
+          "sha256": "55a34bf0c7c205e329c7031dc8eb8ee5ffdc5df1799298367375044cb4aa9a39"
         },
         {
           "label": "NTSC / playfield / No dither",
@@ -2883,7 +2883,7 @@
         1320
       ],
       "show_source": false,
-      "sha256": "ade9c1ca9bc686859578bf9ecaf10d460ab3a342ad1ad7876a11f32b2ce6813d",
+      "sha256": "2f93628ee5208db7a653ac0c4ec17ae406b8a0056833ee776198315ff66105df",
       "sheets": [
         {
           "filename": "macaws-adjustments.png",
@@ -2893,7 +2893,7 @@
           ],
           "first_tile": 0,
           "tiles": 4,
-          "sha256": "ade9c1ca9bc686859578bf9ecaf10d460ab3a342ad1ad7876a11f32b2ce6813d"
+          "sha256": "2f93628ee5208db7a653ac0c4ec17ae406b8a0056833ee776198315ff66105df"
         }
       ],
       "variants": [
@@ -2919,7 +2919,7 @@
           ],
           "colours_used": 4,
           "palette": "cpc",
-          "sha256": "d5fcaa855a4bf027aa05c75c600cead1983a8ca87c8dfb6a9b0ea635fc5a6704"
+          "sha256": "c49b3be1f63bde5ac03ea185df4fe77de43fe49332d1013e65da21f57de73447"
         },
         {
           "label": "Blue gain 1.5",
@@ -2944,7 +2944,7 @@
           ],
           "colours_used": 4,
           "palette": "cpc",
-          "sha256": "b807178732737eb8eca61349679e981ff8c25ba0141ba2db104c7bd6ac53e8b1"
+          "sha256": "30999d3ca5fc9486d15e5d5ec971a752c67ed576b022fa45973b3b85c94cf8b8"
         },
         {
           "label": "Blue 1.5 + brightness 1.5",
@@ -2970,7 +2970,7 @@
           ],
           "colours_used": 4,
           "palette": "cpc",
-          "sha256": "114d2ef8e563574da0cf87be97813647aa6e0d9c453946eeb903b67143160dea"
+          "sha256": "2464751bca8ea9f291445398ed991c8d15887160000cc32c482a2133abb56f98"
         },
         {
           "label": "Blue 1.5 + brightness 1.5 + contrast 1.2",
@@ -2997,7 +2997,7 @@
           ],
           "colours_used": 4,
           "palette": "cpc",
-          "sha256": "c47fa60a6b7f97863a0de4945477936f0f1cb1665a087b320f5f7c16abd0f7aa"
+          "sha256": "55433a0950c59ce36252fa3a3084d55857224f844abc4e618b5aee3d009950ef"
         }
       ]
     },
@@ -3047,7 +3047,7 @@
           ],
           "first_tile": 6,
           "tiles": 1,
-          "sha256": "a355fc7ca6f125a8b5682ef3cb96224fe2922b0bd6765361d98d4025cd73de7f"
+          "sha256": "22c5a62918104d0612b78dfe3b1980aeb702585b39ae45f059b1206f76a79c97"
         }
       ],
       "variants": [
@@ -3183,7 +3183,7 @@
           ],
           "colours_used": 44,
           "palette": "megadrive",
-          "sha256": "67656d8449df1592da96906674ec4c0a7007a55036225c7c79612d5a73fb50f0"
+          "sha256": "8e61120395f100b1dffd7a69254d8d1531587e47d44fe4880a5077210e08c2c7"
         }
       ]
     },
@@ -3239,7 +3239,7 @@
           ],
           "first_tile": 6,
           "tiles": 4,
-          "sha256": "f33766448d63dc779d88df9775363f48ef32c2645b524b346b90e177c5ea470d"
+          "sha256": "a9b4fc2a6426494a88600ff8854ca3cd8c925dd1cb1f8b1cb5f458211b65d17d"
         }
       ],
       "variants": [
@@ -3419,7 +3419,7 @@
           ],
           "colours_used": 115,
           "palette": "snes",
-          "sha256": "edcc471ebe82db01e6ebc015374bda373f6e5db7113cee464c972691ebed86dd"
+          "sha256": "7344238be86888f26f05d55663ddb32a3df98cc9aced7e8432158232415ae55a"
         },
         {
           "label": "Indexed / Bayer 4x4",
@@ -3442,7 +3442,7 @@
           ],
           "colours_used": 254,
           "palette": "snes",
-          "sha256": "d4ae7107cf9d3cda45f63108e0bc3ea8e89cbc69695fc97ac14a944eaa7263ea"
+          "sha256": "5db0159126106155a484a8a46e36dbf80fde1e67cc66a260845ca0604fe3bc96"
         }
       ]
     },
@@ -3472,7 +3472,7 @@
         1944
       ],
       "show_source": true,
-      "sha256": "f9dc33c46ac826d0772b395a232a158cb37b8fc111402c529fddbff8eb6088b8",
+      "sha256": "fa3a262b6c5160dedcdf76832b4b41d4d7c2133def7ace9729060f11d9c7d512",
       "sheets": [
         {
           "filename": "macaws-nes.png",
@@ -3482,7 +3482,7 @@
           ],
           "first_tile": 0,
           "tiles": 6,
-          "sha256": "f9dc33c46ac826d0772b395a232a158cb37b8fc111402c529fddbff8eb6088b8"
+          "sha256": "fa3a262b6c5160dedcdf76832b4b41d4d7c2133def7ace9729060f11d9c7d512"
         },
         {
           "filename": "macaws-nes-2.png",
@@ -3492,7 +3492,7 @@
           ],
           "first_tile": 6,
           "tiles": 1,
-          "sha256": "c41c9b9f555b37f2063aa24233533d2d6f06bfdbccab86bcedeaea767d03e607"
+          "sha256": "d6c2a322ddeae2a8e84179da745b2185159c92e3d6668c222ed0e1ce8f234402"
         }
       ],
       "variants": [
@@ -3603,9 +3603,9 @@
             256,
             240
           ],
-          "colours_used": 54,
+          "colours_used": 47,
           "palette": "nes",
-          "sha256": "625efe8e03e33e54fd4925ea20d10b3d1b78454358780b34109dffb6076a2f7f"
+          "sha256": "3a299883884252b44a187d2c2ad80f50dbeed4b6f4865f6a2f10922a969b369f"
         },
         {
           "label": "Attributes / Bayer 4x4",
@@ -3628,7 +3628,7 @@
           ],
           "colours_used": 9,
           "palette": "nes",
-          "sha256": "e66903fb27e1780721ff25a5b9938ae6e622cce3cf533539debaa6c8fbdbf299"
+          "sha256": "97de333d37cce3927d1224b252b78668dac6e6a6f09ee1b5284d8113871b8eb9"
         }
       ]
     },
@@ -3678,7 +3678,7 @@
           ],
           "first_tile": 6,
           "tiles": 1,
-          "sha256": "1440de77c1ccf965fa474b31d3308717b47fe06c50be26f1f7aa6753b11c5225"
+          "sha256": "4da99f56f64548e1d510194a1b480595201efd8399dcc478da235aa35102c06e"
         }
       ],
       "variants": [
@@ -3814,7 +3814,7 @@
           ],
           "colours_used": 22,
           "palette": "mastersystem",
-          "sha256": "6fa445959cbb1ab1a4384798fc2cfac78e5d8d93f95ab8c2b0690f9f783bc06b"
+          "sha256": "b356ebbd5dbaa583968d8a5a1f74bb9b02482c381e781a3c8a0168490bba15fc"
         }
       ]
     },
@@ -4067,7 +4067,7 @@
           ],
           "first_tile": 12,
           "tiles": 6,
-          "sha256": "d8486eb331bce5976490f49e9cc637b9a9b848af2eff219416c9cf3b422b0f3d"
+          "sha256": "1d9281fd596443802930a61bd529a84ac4789942cf92b9b7804a73846f4f4efb"
         },
         {
           "filename": "macaws-cga-4.png",
@@ -4377,7 +4377,7 @@
           ],
           "colours_used": 16,
           "palette": "cga",
-          "sha256": "3a8fa724aa0575e134c03166b37814e6fe229efbc5dde11886aa82b1deb20566"
+          "sha256": "0ced5c40ec9394022fdb6f357a5b75f3a3ee9738bf079eea50c354cf4df36a5a"
         },
         {
           "label": "320 / palette 0 low / Bayer 4x4",
@@ -4401,7 +4401,7 @@
           ],
           "colours_used": 4,
           "palette": "cga-pal0-low",
-          "sha256": "93db20e1bebff1ebed5ec21ee143d44d40ad3a2c636ded81f0109121242069a4"
+          "sha256": "f78ee6898e04ccbaa206daedb30d4c883a5f0b1f4319697d047f13cca9bade19"
         },
         {
           "label": "320 / palette 0 high / Bayer 4x4",
@@ -4425,7 +4425,7 @@
           ],
           "colours_used": 4,
           "palette": "cga-pal0-high",
-          "sha256": "26821fb91f49f3694dd209c32b8726c25a3fd54ce86c9c733f4cf8a23be3454d"
+          "sha256": "c96551c38f54632097cf073baeb3c311ffe328ef1997a3bc56b91129da14a0a6"
         },
         {
           "label": "320 / palette 1 low / Bayer 4x4",
@@ -4449,7 +4449,7 @@
           ],
           "colours_used": 4,
           "palette": "cga-pal1-low",
-          "sha256": "9f07774df8536b94442862790e80a998294c16ce018e0dea49a3941c6ab673c7"
+          "sha256": "6a318f7da9109ddbdc1a89623d68a5a8beb9226cc783c4355404ee9ea5b71c1a"
         },
         {
           "label": "320 / palette 1 high / Bayer 4x4",
@@ -4473,7 +4473,7 @@
           ],
           "colours_used": 4,
           "palette": "cga-pal1-high",
-          "sha256": "139f9d049a4c210dec2eddd143fdb814dd09b72f45b0addb0fba2f5743aeec85"
+          "sha256": "1807d3df327c8aab620a46541819996cbf408305f8a5d6d7e27dd97ea0c35c94"
         },
         {
           "label": "640 / monochrome / Bayer 4x4",
@@ -4550,7 +4550,7 @@
           ],
           "first_tile": 6,
           "tiles": 6,
-          "sha256": "33c40b87f32ff27dee746bfe908935e90d259b888dba08684184517821e8964b"
+          "sha256": "e5c45a6b468892e09efffe9757261b33dac0af82945e4371a954b709288fbf1c"
         },
         {
           "filename": "portrait-colour-ega-3.png",
@@ -4560,7 +4560,7 @@
           ],
           "first_tile": 12,
           "tiles": 4,
-          "sha256": "004cd9ea76a51af4551e93a8f818604c628463980b3f7b2803569663e8b5a531"
+          "sha256": "18c00348ce938691e03eec70dba763c17a019ec977973d4888035bc976c94b56"
         }
       ],
       "variants": [
@@ -4807,9 +4807,9 @@
             320,
             200
           ],
-          "colours_used": 14,
+          "colours_used": 10,
           "palette": "ega",
-          "sha256": "17b3302e9d6b6fc31d81fd92ed57ff1b0af3583b7fc689a10f45aed6d27e6e2c"
+          "sha256": "401b670188181dd94fddfba5b93a9d8e0c0e7947b518f98394da09c09eff47a5"
         },
         {
           "label": "ega-640-200 / constrained / Bayer 4x4",
@@ -4830,9 +4830,9 @@
             640,
             200
           ],
-          "colours_used": 16,
+          "colours_used": 10,
           "palette": "ega",
-          "sha256": "233a6217415b4b8205efe5829999ee32db6325241634f98b629dcf22b2eca362"
+          "sha256": "16ab83992fd254d02bf78af0e095a2a65a756d713040314505f14a8d136c27e5"
         },
         {
           "label": "ega-640 / constrained / Bayer 4x4",
@@ -4855,7 +4855,7 @@
           ],
           "colours_used": 10,
           "palette": "ega",
-          "sha256": "53624f6dfa120dadd25a59d3e65ab9a23918bee0ceb5df4cfb4186cc0a6c8320"
+          "sha256": "2cf7c0aca434634d48bc869ddc41960e0ebec01200862f0af3d2ee2a347ae741"
         },
         {
           "label": "640x350 / fixed RGBI / Bayer 4x4",
@@ -4877,9 +4877,9 @@
             640,
             350
           ],
-          "colours_used": 15,
+          "colours_used": 9,
           "palette": "ega",
-          "sha256": "21595e54133df1c61ab88d415f26ed8e0f938a52e8850fbb8e02494171586b55"
+          "sha256": "a8f9b26fb464e68ce88a09bf678cdf32a24928946c97bc4ddebca969ad18ebd1"
         },
         {
           "label": "ega-640 / bitmap / Bayer 4x4",

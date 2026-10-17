@@ -72,7 +72,7 @@ def quantize_bayer(image: Image.Image, palette: Palette, *, bayer_size: int = 4,
     """Ordered rounding; custom lookups own their position-aware Bayer choice."""
     validate_dither("bayer", bayer_size)
     source = image.convert("RGB")
-    lookup = ordered_lookup(palette)
+    lookup = ordered_lookup(palette, bayer_size=bayer_size)
     ox, oy = bayer_origin
     pixels = tuple(tuple(
         pixel_lookup(x, y, source.getpixel((x, y))) if pixel_lookup is not None

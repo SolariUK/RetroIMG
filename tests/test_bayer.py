@@ -52,6 +52,40 @@ def test_palette_pair_uses_weighted_projection_and_preserves_exact_colours():
 
 
 @pytest.mark.parametrize('size', [2, 4, 8])
+@pytest.mark.parametrize('source,values,forbidden', [
+    # Pale background: a near-black partner used to leave isolated dark dots.
+    ((201, 210, 224), ((0, 0, 36), (182, 182, 182), (219, 219, 219)), (0, 0, 36)),
+    # Blue feathers: a distant white partner used to leave bright pinpricks.
+    ((46, 83, 116), ((36, 73, 109), (73, 109, 146), (255, 255, 255)), (255, 255, 255)),
+])
+def test_nearby_colours_avoid_isolated_extreme_partners(size, source, values, forbidden):
+    palette = Palette('regression', tuple(Colour(str(i), value) for i, value in enumerate(values)))
+    result = quantize(Image.new('RGB', (size, size), source), palette, 'bayer', bayer_size=size)
+    assert forbidden not in {palette.colours[index].rgb for row in result.pixels for index in row}
+
+
+@pytest.mark.parametrize('size', [2, 4, 8])
+def test_adjacent_shade_ramps_keep_coverage_at_each_matrix_size(size):
+    values = ((0, 0, 0), (85, 85, 85), (170, 170, 170), (255, 255, 255))
+    palette = Palette('shades', tuple(Colour(str(i), value) for i, value in enumerate(values)))
+    for level in range(256):
+        result = quantize(Image.new('RGB', (size, size), (level,) * 3), palette, 'bayer', bayer_size=size)
+        samples = [values[index][0] for row in result.pixels for index in row]
+        assert max(samples) - min(samples) <= 85
+        assert abs(sum(samples) / len(samples) - level) <= 85 / (2 * size * size) + 1e-9
+
+
+def test_duplicate_colours_do_not_change_mixing_contrast_or_phase():
+    values = ((0, 0, 36), (182, 182, 182), (219, 219, 219))
+    base = Palette('base', tuple(Colour(str(i), rgb) for i, rgb in enumerate(values)))
+    repeated = Palette('repeated', base.colours + base.colours)
+    source = Image.new('RGB', (8, 8), (201, 210, 224))
+    first = quantize(source, base, 'bayer')
+    second = quantize(source, repeated, 'bayer')
+    assert first.pixels == second.pixels
+
+
+@pytest.mark.parametrize('size', [2, 4, 8])
 def test_full_rgb_grid_rounding_is_ordered_per_channel(size):
     palette = get_palette('amiga')
     source = Image.new('RGB', (size, size), (127, 60, 33))

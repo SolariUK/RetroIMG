@@ -97,10 +97,14 @@ retroimg convert /path/to/image.jpg amiga-ham-bayer.png \
 
 For an arbitrary palette, ordered conversion finds the nearest colour, then
 chooses its best mixing partner by projecting the source RGB onto the segments
-joining it to other available colours. The matrix chooses between that pair
-according to the mixing proportion. This uses retroimg's weighted RGB error;
-it is a nearest-anchor heuristic, not an exhaustive search of every colour pair.
-Equally accurate mixtures prefer closer colours. Complete regular RGB grids,
+joining it to other available colours. Mixing proportions are rounded to coverage
+the selected 2×2, 4×4 or 8×8 matrix can actually represent. Scoring balances the
+average weighted RGB error against visible contrast between mixing colours:
+distant partners need a worthwhile improvement, reducing isolated dark or bright
+dots. The penalty is relative to the anchor's nearest available colour spacing,
+so adjacent shade ramps and two-colour palettes retain normal ordered coverage.
+It remains a nearest-anchor heuristic, not an exhaustive search of every pair
+or a neighbourhood-aware filter. Equal scores prefer closer colours. Complete regular RGB grids,
 such as unrestricted Amiga RGB12, instead use ordered rounding between adjacent
 levels independently for each channel.
 

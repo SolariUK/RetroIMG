@@ -248,12 +248,24 @@ only forwards it. No timing kernel, native file or executable exporter is planne
 
 `ordered.py` owns Bayer ranks, centered thresholds, and palette-aware ordered
 selection. A nearest-colour anchor is paired with the available colour whose
-weighted-RGB segment projection best reconstructs the source. Equal errors
+weighted-RGB segment projection best reconstructs the source. Candidate coverage
+is rounded to multiples of `1 / bayer_size**2` before scoring its mean-colour
+error. A contrast term adds `0.25 * t * (1-t) * max(0, L-S)`, where `L` is the
+weighted squared distance between the mixing colours, and `S` is the anchor's
+nearest distinct palette-colour distance. This penalises high-contrast speckles
+while leaving mixtures between nearest neighbours, binary palettes and exact
+palette matches unpenalised. Duplicate entries do not reduce `S` to zero.
+Equal scores
 prefer smaller colour separation, then palette order. Index ordering fixes
 threshold orientation when the nearest anchor changes. Complete RGB grids use
 per-channel rounding between adjacent legal levels. Both quantisation paths
 share the weighted metric constants from `colour_spaces.py`; the existing
 `quantize.colour_distance` and `quantize.RGB_WEIGHTS` imports remain valid.
+
+The distinction between mean-colour accuracy and distracting mixing contrast
+follows the motivation discussed in [Yliluoma's ordered dithering article](https://bisqwit.iki.fi/story/howto/dither/jy/).
+The spacing-relative variance score is an original implementation; it is still
+a per-pixel heuristic and does not introduce neighbourhood analysis or diffusion.
 
 `quantize_bayer` takes `bayer_size` and a logical `bayer_origin`. Cell adapters
 supply crop origins, preserving matrix phase across boundaries without changing
@@ -266,7 +278,7 @@ The registry binds this optional quantiser keyword without knowing the algorithm
 A custom `pixel_lookup` overrides generic ordered selection and receives the
 original RGB and local position; it owns its Bayer choice. HAM supplies such a
 lookup, enumerating all 64 legal codes from the current held colour and applying
-the shared ordered selector to their decoded RGBs. It retains the chosen code
+the shared ordered selector, including the selected matrix size, to their decoded RGBs. It retains the chosen code
 and updates held state, resetting at each scanline. Plain/FS HAM keeps its
 previous nearest-channel fast path and output. Bayer uses no error buffer.
 

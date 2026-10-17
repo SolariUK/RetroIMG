@@ -2,6 +2,10 @@
 
 ## 0.2.0 — Unreleased
 
+- Improved arbitrary-palette Bayer mixing with a local-spacing contrast penalty
+  and realizable matrix coverage, reducing isolated dark/bright speckles while
+  preserving adjacent shade ramps, two-colour coverage and palette constraints.
+  No-dither and Floyd–Steinberg output are unchanged; comparison assets refreshed.
 - Added optional smooth scanlines aligned to logical rows, with linear-light
   dimming, adjustable strength, CLI/guided/preset support and separate Mega Drive
   macaws examples. Conversion codes and output dimensions remain unchanged.

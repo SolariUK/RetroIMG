@@ -72,7 +72,7 @@ def optimise_ham(image: Image.Image, palette: Palette = AMIGA, dither: str = 'no
             # All 64 legal operations are available to the ordered mixer.
             words = tuple(decode_ham_code(previous, registers, code) for code in range(64))
             candidates = tuple(AMIGA.colours[word].rgb for word in words)
-            code = ordered_index(rgb, candidates, bayer_threshold(x, y, bayer_size))
+            code = ordered_index(rgb, candidates, bayer_threshold(x, y, bayer_size), bayer_size=bayer_size)
             codes[y][x] = code
             previous = words[code]
             return previous
