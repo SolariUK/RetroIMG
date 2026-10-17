@@ -110,18 +110,21 @@ def test_preset_roundtrip_disable_and_cross_platform_experiment(tmp_path, effect
         merge_settings(loaded.settings, dict(display_effect='none', effect_strength=.5), defaults)
 
 
-def test_existing_gameboy_conversion_checksum_is_unchanged(tmp_path):
-    from hashlib import sha256
+def test_plain_gameboy_conversion_pixels_match_reference_example(tmp_path):
     import json
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[1]
-    manifest = json.loads((root / 'samples/comparisons/manifest.json').read_text())
-    entry = next(item for item in manifest['comparisons'] if item['family'] == 'gameboy')
-    variant = entry['variants'][0]
+    directory = root / 'samples/display-effects'
+    manifest = json.loads((directory / 'manifest.json').read_text())
+    example = manifest['examples'][0]
     output = tmp_path / 'plain.png'
-    convert_file(root / 'samples/sources' / entry['source']['file'], output, **variant['settings'])
-    assert sha256(output.read_bytes()).hexdigest() == variant['sha256']
+    convert_file(root / 'samples/sources' / manifest['source']['file'], output, **example['settings'])
+    # Compare the conversion, not PNG compression bytes, which can differ
+    # between Pillow/zlib builds on supported platforms.
+    with Image.open(output) as actual, Image.open(directory / example['filename']) as expected:
+        assert actual.size == expected.size
+        assert actual.convert('RGB').tobytes() == expected.convert('RGB').tobytes()
 
 
 def test_scanlines_repeat_per_logical_row_without_changing_columns_or_black():

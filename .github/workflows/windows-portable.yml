@@ -10,6 +10,7 @@ on:
       - 'scripts/check_portable.py'
       - 'scripts/retroimg_entry.py'
       - 'retroimg/**'
+      - 'tests/**'
       - 'pyproject.toml'
       - 'docs/portable.md'
 
