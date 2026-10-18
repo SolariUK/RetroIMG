@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = (('plain', None), ('lcd-subtle', .35), ('lcd-strong', .85))
 EFFECT_DIRECTORIES = {'gameboy-lcd': 'display-effects', 'scanlines': 'scanlines',
                       'crt-aperture': 'crt-aperture', 'bloom': 'bloom',
-                      'chromatic-aberration': 'chromatic-aberration'}
+                      'chromatic-aberration': 'chromatic-aberration', 'rf': 'rf'}
 CROP = (384, 288, 896, 800)  # Logical pixels (48, 36) to (112, 100), at scale 8.
 
 
@@ -28,7 +28,7 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
     lcd = effect == 'gameboy-lcd'
     optical = effect in ('bloom', 'chromatic-aberration')
     crop = (768, 32, 1280, 544) if optical else CROP
-    prefix = 'gameboy' if lcd else 'megadrive'
+    prefix = 'gameboy' if lcd else 'nes' if effect == 'rf' else 'megadrive'
     if lcd:
         examples = EXAMPLES
     elif effect == 'scanlines':
@@ -39,10 +39,14 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
     elif effect == 'chromatic-aberration':
         examples = (('plain', None), ('chromatic-subtle', .25), ('chromatic-strong', .85),
                     ('crt-bloom', None), ('crt-bloom-chromatic-subtle', .25), ('crt-bloom-chromatic-strong', .85))
+    elif effect == 'rf':
+        examples = (('plain', None), ('rf-subtle', .35), ('rf-strong', .85),
+                    ('crt-optics', None), ('crt-optics-rf-subtle', .35), ('crt-optics-rf-strong', .85))
     else:
         examples = (('plain', None), ('scanlines-only', .35), ('crt-aperture-subtle', .35),
                     ('crt-aperture-strong', .85), ('crt-aperture-strong-brighter', .85))
     base_options = (dict(profile_name='gameboy', gameboy_mode='tiles', scale=8) if lcd else
+                    dict(profile_name='nes', nes_mode='attributes', scale=4) if effect == 'rf' else
                     dict(profile_name='megadrive-320', megadrive_mode='tiles', scale=4))
     profile = get_profile(base_options['profile_name'])
     aspect = profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1
@@ -74,6 +78,17 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                   'at the same subtle strength isolates what the grille adds.',
                   'The final example adds display brightness 2.0 after the strong effect,',
                   'preserving the same palette conversion and dithering.']
+    if effect == 'rf':
+        lines = ['# RF-style colour bleed and combined CRT effects', '',
+                 'The same 256×240 NES attribute-constrained macaws conversion, rendered',
+                 'at scale 4 with aspect correction (1280×960).',
+                 'Compare plain, subtle/strong RF alone, then the optical CRT stack',
+                 'without and with the same RF strengths. Colour boundaries smear',
+                 'horizontally with a slight rightward trail; brightness detail stays sharper.',
+                 'Combined versions keep chromatic strength 0.25, CRT strength 0.35,',
+                 'bloom strength 0.25/radius 1, and display brightness 1 fixed.',
+                 'RF is a static aesthetic signal treatment, not a full RF or NES NTSC decoder.',
+                 'Order: RF, chromatic aberration, CRT grille/scanlines, bloom, final brightness.']
     if effect == 'bloom':
         lines += ['The night photograph has bright window lights against dark brickwork,',
                   'with a detail crop around an isolated lit window to make the halo easier to judge.',
@@ -98,7 +113,7 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
              f'Credit: {source["credit"]}. {source["rights"]}',
              'See [source records](../README.md) and [effect documentation](../../docs/display-effects.md).', '',
              ('The LCD treatment simulates inset cells and small shadows.' if lcd else
-              'The original indexed conversion stays unchanged by all effects.' if optical else
+              'The original indexed conversion stays unchanged by all effects.' if optical or effect == 'rf' else
               'The CRT treatment combines scanlines and an RGB grille in linear light; there is no bloom.'
               if effect == 'crt-aperture' else
               'Scanlines dim row boundaries in linear light; there is no phosphor mask or bloom.'),
@@ -125,6 +140,13 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                                    bloom_strength=.25, bloom_radius=1.0)
                 if strength is not None:
                     options['chromatic_strength'] = strength
+            elif effect == 'rf':
+                selected_effect = 'crt-aperture' if name.startswith('crt-') else 'none'
+                if selected_effect != 'none':
+                    options.update(display_effect=selected_effect, effect_strength=.35,
+                                   chromatic_strength=.25, bloom_strength=.25, bloom_radius=1.0)
+                if strength is not None:
+                    options['rf_strength'] = strength
             elif strength is not None:
                 options.update(display_effect=selected_effect, effect_strength=strength)
             if name == 'crt-aperture-strong-brighter':
@@ -138,6 +160,7 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                                bloom_strength=options.get('bloom_strength', 0),
                                bloom_radius=options.get('bloom_radius', 1),
                                chromatic_strength=options.get('chromatic_strength', 0),
+                               rf_strength=options.get('rf_strength', 0),
                                display_brightness=options.get('display_brightness', 1.0)).save(stage / filename)
             crop_name = f'{prefix}-{name}-crop.png'
             with Image.open(stage / filename) as image:
@@ -164,6 +187,10 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                     + f' / chromatic strength {strength}')
             if 'display_brightness' in options:
                 label += f' / display brightness {options["display_brightness"]} after effects'
+            if effect == 'rf' and name != 'plain':
+                label = 'CRT + chromatic aberration + bloom, without RF' if name == 'crt-optics' else (
+                    ('CRT + chromatic aberration + bloom + RF' if selected_effect != 'none' else 'RF alone')
+                    + f' / RF strength {strength}')
             lines.extend([f'## {label}', '', f'[Open full-size example]({filename}) · [Open detail crop]({crop_name})',
                           '', f'![{label}, unscaled detail]({crop_name})', '', '```bash', command, '```', ''])
         lines.extend(['Refresh from the project root:', '', '```bash',

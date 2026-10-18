@@ -50,6 +50,62 @@ def validate_chromatic_strength(strength: float) -> None:
         raise ValueError('chromatic strength must be finite and between 0 and 1')
 
 
+def validate_rf_strength(strength: float) -> None:
+    if type(strength) not in (int, float) or not 0 <= strength <= 1:
+        raise ValueError('RF strength must be finite and between 0 and 1')
+
+
+def _filter_signal_row(values: array, start: int, end: int, alpha: float, *, reverse: bool = False) -> None:
+    """One-pole low-pass with repeated-edge initialisation, isolated to one row."""
+    positions = range(end - 2, start - 1, -1) if reverse else range(start + 1, end)
+    state = values[end - 1] if reverse else values[start]
+    for pos in positions:
+        state += alpha * (values[pos] - state)
+        values[pos] = state
+
+
+def rf_smear(preview: Image.Image, logical_width: int, strength: float) -> Image.Image:
+    """RF-style horizontal luma/chroma filtering, before optical display effects.
+
+    Work on gamma-encoded RGB signal values, separating luma and two colour
+    differences. Colour receives broader smoothing and a short rightward trail;
+    luma receives mild smoothing. No carrier, noise, dot crawl or palette refit.
+    """
+    if strength == 0 or preview.width == 1:
+        return preview
+    source = preview.tobytes()
+    count = preview.width * preview.height
+    luma = array('f', [0]) * count
+    blue_difference = array('f', [0]) * count
+    red_difference = array('f', [0]) * count
+    for pos in range(count):
+        r, g, b = source[pos * 3:pos * 3 + 3]
+        y = .299 * r + .587 * g + .114 * b
+        luma[pos] = y
+        blue_difference[pos] = b - y
+        red_difference[pos] = r - y
+    pitch = preview.width / logical_width
+    luma_alpha = -math.expm1(-1 / (.18 * pitch))
+    chroma_alpha = -math.expm1(-1 / (.9 * pitch))
+    trail_alpha = -math.expm1(-1 / (.45 * pitch))
+    for start in range(0, count, preview.width):
+        end = start + preview.width
+        for values, alpha in ((luma, luma_alpha), (blue_difference, chroma_alpha), (red_difference, chroma_alpha)):
+            _filter_signal_row(values, start, end, alpha)
+            _filter_signal_row(values, start, end, alpha, reverse=True)
+        for values in (blue_difference, red_difference):
+            _filter_signal_row(values, start, end, trail_alpha)
+    result = bytearray(len(source))
+    for pos in range(count):
+        y = luma[pos]
+        r, b = y + red_difference[pos], y + blue_difference[pos]
+        g = (y - .299 * r - .114 * b) / .587
+        for offset, filtered in enumerate((r, g, b)):
+            index = pos * 3 + offset
+            result[index] = round(max(0, min(255, source[index] + strength * (filtered - source[index]))))
+    return Image.frombytes('RGB', preview.size, bytes(result))
+
+
 def _extend_edges(channel: Image.Image, pad_x: int, pad_y: int) -> Image.Image:
     """Repeat the nearest edge sample without wrapping or introducing black borders."""
     width, height = channel.size
@@ -129,12 +185,13 @@ def bloom(preview: Image.Image, logical_width: int, strength: float, radius: flo
 def apply_display_effects(preview: Image.Image, logical_size: tuple[int, int],
                           background: tuple[int, int, int], *, effect: str, strength: float,
                           bloom_strength: float, bloom_radius: float, brightness: float,
-                          chromatic_strength: float = 0.0) -> Image.Image:
-    """Fixed chain: RGB separation, display surface, highlight bloom, final gain.
+                          chromatic_strength: float = 0.0, rf_strength: float = 0.0) -> Image.Image:
+    """Fixed chain: signal smear, RGB separation, surface, bloom, final gain.
 
     The public rendering/conversion boundaries validate settings before reaching here.
     Independent stages allow further optical treatments without changing conversion.
     """
+    preview = rf_smear(preview, logical_size[0], rf_strength)
     preview = chromatic_aberration(preview, logical_size[0], chromatic_strength)
     if effect == 'gameboy-lcd':
         preview = gameboy_lcd(preview, logical_size, background, strength)

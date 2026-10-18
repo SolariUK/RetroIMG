@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "source": {
+    "id": "macaws",
+    "file": "macaws.jpg",
+    "title": "Blue-and-yellow macaws",
+    "fit": "cover",
+    "public": true,
+    "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+    "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+    "reference_size": [
+      750,
+      536
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  "logical_size": [
+    256,
+    240
+  ],
+  "examples": [
+    {
+      "filename": "nes-plain.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "nes-plain-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "fd6228ea36a80bcbdb95ced3e64c755cae2e8b8a1d89c40c30e0499bac8ac9f4",
+      "crop_sha256": "95c66782ff5c839fce65c1662b7f3e703991e98610e591a51404d45e7034c798",
+      "settings": {
+        "profile_name": "nes",
+        "nes_mode": "attributes",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4
+      },
+      "command": "retroimg convert /path/to/image.jpg nes-plain.png --profile nes --nes-mode attributes --scale 4 --fit cover --dither bayer --bayer-size 4"
+    },
+    {
+      "filename": "nes-rf-subtle.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "nes-rf-subtle-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "046f9cb5ce8e86473477c979923762993c53d3dae1d1083e0488740e1eee9470",
+      "crop_sha256": "4b36313004fe246150c1551949feb9e315b3e9e26411fb7c03d3b5fc22eaddc5",
+      "settings": {
+        "profile_name": "nes",
+        "nes_mode": "attributes",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "rf_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg nes-rf-subtle.png --profile nes --nes-mode attributes --scale 4 --fit cover --dither bayer --bayer-size 4 --rf-strength 0.35"
+    },
+    {
+      "filename": "nes-rf-strong.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "nes-rf-strong-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "093c23cd8ee373cd946559ad5fa7d056831caad7d905fab725b7008c48c90931",
+      "crop_sha256": "7dfe3be4fb0351db0ed6bbe5ad9f29682f6f48ace00dad74145e0c5b6edd48ca",
+      "settings": {
+        "profile_name": "nes",
+        "nes_mode": "attributes",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "rf_strength": 0.85
+      },
+      "command": "retroimg convert /path/to/image.jpg nes-rf-strong.png --profile nes --nes-mode attributes --scale 4 --fit cover --dither bayer --bayer-size 4 --rf-strength 0.85"
+    },
+    {
+      "filename": "nes-crt-optics.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "nes-crt-optics-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "1de48a236f0916d3c40e70000fe950a289bf95deb768966f687cff7dcb157f97",
+      "crop_sha256": "16e210b111328822203aded51de45151bff9a5c09a41ac0e5f5d43d83a252da0",
+      "settings": {
+        "profile_name": "nes",
+        "nes_mode": "attributes",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35,
+        "chromatic_strength": 0.25,
+        "bloom_strength": 0.25,
+        "bloom_radius": 1.0
+      },
+      "command": "retroimg convert /path/to/image.jpg nes-crt-optics.png --profile nes --nes-mode attributes --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35 --chromatic-strength 0.25 --bloom-strength 0.25 --bloom-radius 1.0"
+    },
+    {
+      "filename": "nes-crt-optics-rf-subtle.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "nes-crt-optics-rf-subtle-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "78ad2d0e333dd93622cf79f9c7fac2a8d134ed06fb1a555110fd4f5ca013c6dd",
+      "crop_sha256": "a18e40ed0ce4a509623d33b41a970e51f88f4a86efb8ac9f2ef9030952d2c87e",
+      "settings": {
+        "profile_name": "nes",
+        "nes_mode": "attributes",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35,
+        "chromatic_strength": 0.25,
+        "bloom_strength": 0.25,
+        "bloom_radius": 1.0,
+        "rf_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg nes-crt-optics-rf-subtle.png --profile nes --nes-mode attributes --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35 --chromatic-strength 0.25 --bloom-strength 0.25 --bloom-radius 1.0 --rf-strength 0.35"
+    },
+    {
+      "filename": "nes-crt-optics-rf-strong.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "nes-crt-optics-rf-strong-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "08654bbb3c59dcbd19a866de71b24824add38da25e74d5f47a1aada7c5b31fd1",
+      "crop_sha256": "38baa7b62ee2eecfc8d8a72aa94cfbf10e8b187c71bf1e625e5c7e23cbc976e4",
+      "settings": {
+        "profile_name": "nes",
+        "nes_mode": "attributes",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35,
+        "chromatic_strength": 0.25,
+        "bloom_strength": 0.25,
+        "bloom_radius": 1.0,
+        "rf_strength": 0.85
+      },
+      "command": "retroimg convert /path/to/image.jpg nes-crt-optics-rf-strong.png --profile nes --nes-mode attributes --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35 --chromatic-strength 0.25 --bloom-strength 0.25 --bloom-radius 1.0 --rf-strength 0.85"
+    }
+  ]
+}

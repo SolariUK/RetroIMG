@@ -120,3 +120,8 @@ See [effect order and controls](display-effects.md).
 separation before the surface treatment. `--chromatic-strength 0` resets saved
 separation while retaining bloom, the selected treatment and display brightness.
 Older presets keep their existing output.
+
+`rf_strength` (0 to 1, default 0/off) independently controls horizontal signal
+colour bleed and smearing before the optical effects. `--rf-strength 0` resets
+saved RF treatment without disabling chromatic aberration, the surface treatment,
+bloom or display brightness. Omitted RF settings preserve previous output.

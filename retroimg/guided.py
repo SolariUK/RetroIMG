@@ -291,6 +291,10 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
     options['scale'] = ui.number('Preview scale (integer enlargement)', scale_default,
                                  integer=True, valid=lambda n: n >= minimum_scale,
                                  hint=f'Enter a whole number of at least {minimum_scale}.')
+    if ui.yes_no('Add RF-style colour bleed before optical effects?', preferred.get('rf_strength', 0) > 0):
+        options['rf_strength'] = ui.number(
+            'RF strength (0 to 1; 0=off)', preferred.get('rf_strength') or .35,
+            valid=lambda n: 0 <= n <= 1, hint='Enter a number between 0 and 1.')
     if ui.yes_no('Add chromatic aberration before the display treatment?', preferred.get('chromatic_strength', 0) > 0):
         options['chromatic_strength'] = ui.number(
             'Chromatic strength (0 to 1; 0=off)', preferred.get('chromatic_strength') or .25,
@@ -396,6 +400,7 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
              f'hue shift: {options.get("hue_shift", defaults["hue_shift"])} degrees')
     ui.write('  RGB gains: ' + ', '.join(str(options.get(c + '_gain', defaults[c + '_gain'])) for c in ('red', 'green', 'blue')))
     ui.write(f'  Preview: {preview[0]}x{preview[1]} (scale {scale})')
+    ui.write(f'  RF colour bleed: {options.get("rf_strength", 0)} (before optical effects)')
     ui.write(f'  Chromatic aberration: {options.get("chromatic_strength", 0)} (before display treatment)')
     effect = options.get('display_effect', 'none')
     ui.write(f'  Display effect: {effect}' + (

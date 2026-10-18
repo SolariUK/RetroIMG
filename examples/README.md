@@ -228,6 +228,11 @@ These use the night-window scene alone and combined with CRT and bloom, keeping
 the other settings fixed. Full-frame renders are cropped afterwards so the
 centre and displacement remain consistent.
 
+Use `python examples/generate_display_effects.py --effect rf --replace` for
+[NES RF-style examples](../samples/rf/README.md). Plain and subtle/strong signal
+smearing use the same NES attribute conversion; combined versions hold the
+chromatic, CRT and bloom settings fixed while changing RF strength only.
+
 `generate_samples.py` reuses the converter, mode variants and constraint checks
 to maintain fifteen comparison groups across 40 PNG sheets, each 1328 pixels
 wide with two columns and at most three rows. The fourteen family groups show several modes and dithers: Teletext

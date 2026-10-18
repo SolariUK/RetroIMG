@@ -104,6 +104,17 @@ def test_guide_combines_chromatic_aberration_with_crt_and_bloom(paths):
     assert build_parser().parse_args(guide(paths, replies)).chromatic_strength == 0
 
 
+def test_guide_rf_combines_with_other_effects_and_can_be_disabled_on_edit(paths):
+    replies = Replies({'Choose display effect': 'crt-aperture', 'Add RF-style': 'yes',
+                       'RF strength': ['.7', ''], 'Add chromatic aberration': 'yes',
+                       'Add highlight bloom': 'yes', 'Choose next action': ['edit', 'convert']})
+    args = build_parser().parse_args(guide(paths, replies))
+    assert (args.rf_strength, args.chromatic_strength, args.bloom_strength) == (.7, .25, .25)
+    assert any('RF colour bleed: 0.7 (before optical effects)' in line for line in replies.messages)
+    replies = Replies({'Add RF-style': ['yes', 'no'], 'Choose next action': ['edit', 'convert']})
+    assert build_parser().parse_args(guide(paths, replies)).rf_strength == 0
+
+
 def test_guide_pixelation_print_only_and_block_size_revision(paths):
     replies = Replies({'Choose starting point': 'pixelate', 'Pixel block size': '16'})
     assert guide(paths, replies, print_only=True) is None

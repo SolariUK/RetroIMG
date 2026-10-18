@@ -2,6 +2,9 @@
 
 ## 0.2.0 — Unreleased
 
+- Added independent RF-style horizontal colour bleed and trailing smear before
+  optical display effects, with separate luma/chroma filtering, CLI/guided/preset
+  controls and NES examples combining RF with chromatic aberration, CRT and bloom.
 - Added independent radial chromatic aberration before display surface effects,
   with linear-light fractional sampling, CLI/guided/preset controls, and night
   examples combining colour separation with CRT aperture grille and bloom.

@@ -11,6 +11,7 @@ from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
 from retroimg.display_effects import (
     DEFAULT_BLOOM_RADIUS, validate_bloom, validate_chromatic_strength,
     validate_display_brightness, validate_display_effect,
+    validate_rf_strength,
 )
 
 REQUIRED_PALETTES = {
@@ -34,7 +35,8 @@ CELL_DIMENSIONS = {
 }
 INTEGER_OPTIONS = {'width', 'height', 'scale', 'bayer_size', 'colours', 'atari_row_height'}
 FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain',
-                 'effect_strength', 'display_brightness', 'bloom_strength', 'bloom_radius', 'chromatic_strength'}
+                 'effect_strength', 'display_brightness', 'bloom_strength', 'bloom_radius', 'chromatic_strength',
+                 'rf_strength'}
 OPTIONAL_OPTIONS = {'palette', 'width', 'height', 'bayer_size', 'colours', 'atari_row_height', 'effect_strength'}
 NON_SETTINGS = {'command', 'input', 'output', 'preset', 'presets_dir', 'print_only'}
 
@@ -71,6 +73,7 @@ def normalize_settings(raw: dict, defaults: dict) -> dict:
     validate_display_brightness(values['display_brightness'])
     validate_bloom(values['bloom_strength'], values['bloom_radius'])
     validate_chromatic_strength(values['chromatic_strength'])
+    validate_rf_strength(values['rf_strength'])
     if values['profile'] not in PROFILES:
         raise ValueError('unknown preset profile: ' + values['profile'])
     profile = PROFILES[values['profile']]
@@ -131,6 +134,7 @@ def compact_settings(values: dict) -> dict:
             and not (key == 'display_brightness' and value == 1)
             and not (key == 'bloom_strength' and value == 0)
             and not (key == 'chromatic_strength' and value == 0)
+            and not (key == 'rf_strength' and value == 0)
             and not (key == 'bloom_radius' and value == DEFAULT_BLOOM_RADIUS)
             and (key not in MODE_OPTIONS or key in active)}
 

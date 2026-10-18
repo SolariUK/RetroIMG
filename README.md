@@ -192,6 +192,11 @@ before the LCD/CRT surface treatment; default `0` leaves it off. It combines wit
 the grille and bloom without shifting their surface geometry. See
 [chromatic aberration examples](samples/chromatic-aberration/README.md).
 
+Independent `--rf-strength 0.35` adds horizontal colour bleed and smearing before
+the optical effects; default `0` leaves it off. It combines with chromatic
+aberration, CRT masking and bloom and is available with every profile. See
+[NES RF-style examples](samples/rf/README.md).
+
 `--display-brightness` adjusts the finished preview **after display effects**,
 preserving palette fitting and dithering. It defaults to `1.0`; try `2` to
 brighten a strong CRT treatment. The existing `--brightness` adjusts the source

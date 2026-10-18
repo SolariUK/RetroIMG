@@ -135,6 +135,11 @@ enlargement and before the selected display treatment. Try `0.25` for subtle
 fringing, alone or combined with the CRT grille and bloom. It does not change the
 palette conversion, output dimensions, or final position of display brightness.
 
+`--rf-strength` (0 to 1; default 0/off) adds horizontal colour bleed and smearing
+after enlargement and before chromatic aberration and the display treatment.
+Try `0.35` for subtle degradation or `0.85` for stronger colour trails. It works
+with every profile and combines with all the other display controls.
+
 Optional adjustments apply after resizing and before palette/cell optimisation
 for every profile. Processing order is **brightness → contrast → saturation →
 hue shift → RGB gains**. Each stage works on 8-bit RGB values and clips results

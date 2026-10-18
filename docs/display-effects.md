@@ -11,12 +11,13 @@ or display brightness adjustment. Defaults preserve existing output exactly.
 The pipeline order is:
 
 **Resize and source adjustments → palette conversion and dithering → preview
-enlargement/aspect correction → chromatic aberration → display treatment →
+enlargement/aspect correction → RF colour bleed → chromatic aberration → display treatment →
 highlight bloom → display brightness → save PNG.**
 
 Effects combine in this fixed order. `--display-effect` selects a surface treatment
 (LCD, scanlines or CRT grille); independent chromatic aberration runs before it,
-and the bloom controls add glow after it.
+and the bloom controls add glow after it. Independent RF-style filtering comes
+before chromatic aberration and all surface/optical treatments.
 Bloom can also run by itself with `--display-effect none`. Display brightness is
 always last. Each stage has its own controls; argument order does not change the
 rendering order. Defaults leave all effects off and brightness neutral.
@@ -166,6 +167,61 @@ window can create colour shifts or moiré. Crops retain the full image's mask ph
 python examples/generate_display_effects.py --effect crt-aperture --replace
 ```
 
+## RF-style colour bleed and smearing
+
+```bash
+# NES conversion with RF-style signal degradation alone.
+retroimg convert photo.jpg nes-rf.png --profile nes --nes-mode attributes \
+    --scale 4 --rf-strength 0.35
+
+# RF followed by chromatic aberration, CRT grille/scanlines and bloom.
+retroimg convert photo.jpg nes-rf-crt.png --profile nes --nes-mode attributes \
+    --dither bayer --bayer-size 4 --scale 4 --rf-strength 0.35 \
+    --chromatic-strength 0.25 --display-effect crt-aperture --effect-strength 0.35 \
+    --bloom-strength 0.25 --bloom-radius 1 --display-brightness 1
+```
+
+`--rf-strength` ranges from 0 to 1 and defaults to **0/off**. Try subtle `0.35`
+or stronger `0.85`. It blends the plain signal towards a horizontally filtered
+version: colour boundaries spread more than brightness detail, with a slight
+rightward colour trail. It works with every profile, including NES, and alone at
+native scale. It has its own control, independent of `--effect-strength`,
+chromatic aberration, bloom and display brightness.
+
+This is a static RF-style appearance, not a full RF/NTSC/PAL signal decoder.
+It deliberately models limited colour detail and horizontal smearing, without
+carrier modulation, NES palette-code decoding, dot crawl, rainbow artefacts,
+interference, ghost echoes or animated noise. It is not a uniform RGB blur:
+encoded RGB values are split into luma and two colour-difference signals, colour
+is filtered more broadly, then RGB is reconstructed. Greys stay neutral. Each
+row is processed independently, and edges repeat their nearest value without
+wrapping or adding black borders. Uniform colours stay unchanged.
+
+Filter lengths follow enlarged logical pixel width, including aspect correction.
+The fixed filter uses short luma smoothing (0.18 logical-pixel time constant),
+broader colour smoothing (0.9), and an additional causal colour filter (0.45)
+for the rightward trail. Strength changes the blend, rather than the filter widths.
+Unlike optical bloom and brightness, this stage operates on gamma-encoded
+signal values. Processing retains floating-point signal samples until the final
+RGB blend and clamp. It adds no dependencies and keeps output dimensions.
+
+RF filtering runs **after palette conversion and enlargement, before chromatic
+aberration, LCD/scanlines/CRT masking, bloom and final display brightness**.
+It can create colours outside the machine palette. The indexed raster and
+hardware constraints remain unchanged, and there is no later palette refit.
+The guide and version-1 presets support `rf_strength`; Python callers pass it to
+`convert_file` or `render_indexed`. Old presets keep RF off. `--rf-strength 0`
+disables inherited RF without disabling other effects; `--display-effect none`
+leaves RF independently enabled.
+
+[NES RF examples and unscaled crops](../samples/rf/README.md) compare plain,
+subtle/strong RF alone, then an unchanged CRT/chromatic/bloom stack without
+and with RF. All use one attribute-constrained NES macaws conversion.
+
+```bash
+python examples/generate_display_effects.py --effect rf --replace
+```
+
 ## Chromatic aberration
 
 ```bash
@@ -256,7 +312,7 @@ The guide offers bloom independently after selecting a display treatment, and
 both controls are saved in version-1 presets. Older presets keep bloom off.
 `--bloom-strength 0` disables inherited bloom while retaining the surface effect;
 `--display-effect none` disables the surface effect while retaining bloom.
-For plain output, disable the surface treatment, bloom and chromatic aberration,
+For plain output, disable RF, the surface treatment, bloom and chromatic aberration,
 and reset display brightness to 1. A saved radius
 is retained when bloom is disabled, allowing it to be re-enabled later.
 Python callers pass `bloom_strength` and `bloom_radius` to `convert_file` or
@@ -304,12 +360,13 @@ More elaborate shader adaptations should retain their upstream licence and
 attribution. Bloom uses an original highlight extraction and Pillow Gaussian
 blur, without adapting upstream shader code. Other mask patterns remain future work.
 
-## Planned additions
+Libretro's [koko-aio CVBS documentation](https://github.com/libretro/slang-shaders/blob/master/bezel/koko-aio/docs-ng.md)
+describes bandwidth-limited chroma and horizontal bleed as separate from dot
+crawl. That distinction guides the RF-style scope here; our original luma/colour-
+difference filter does not copy shader code or simulate carrier decoding.
 
-The next planned addition is RF-style colour bleed and smearing, inspired by the
-appearance of NES output on an RF-connected television. This is a visual
-treatment rather than a promise of an accurate signal-level RF simulation.
-It belongs in the display pipeline, leaving the
-underlying palette conversion and indexed image unchanged. It will extend the
-ordered presentation chain; its exact position and controls will be decided
-during implementation.
+## Further ideas
+
+The agreed set of display treatments now includes LCD, scanlines, a CRT aperture
+grille, bloom, chromatic aberration and RF-style colour smearing. Alternative
+mask patterns, curvature and bezels remain optional future ideas.

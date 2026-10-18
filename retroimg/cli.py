@@ -56,6 +56,8 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
                          help='bloom spread (Gaussian sigma) in logical pixel widths, 0.25 to 8 (default: 1)')
     convert.add_argument('--chromatic-strength', type=float, default=0.0,
                          help='radial red/blue separation from 0 to 1, before the display treatment (default: 0/off; try 0.25)')
+    convert.add_argument('--rf-strength', type=float, default=0.0,
+                         help='RF-style horizontal colour bleed/smear from 0 to 1, before optical effects (default: 0/off; try 0.35)')
     convert.add_argument(
         "--teletext-mode",
         choices=("bitmap", "mosaic"),
@@ -224,6 +226,7 @@ def main(argv: list[str] | None = None) -> None:
             bloom_strength=args.bloom_strength,
             bloom_radius=args.bloom_radius,
             chromatic_strength=args.chromatic_strength,
+            rf_strength=args.rf_strength,
             teletext_mode=args.teletext_mode,
             spectrum_mode=args.spectrum_mode,
             c64_mode=args.c64_mode,
@@ -253,6 +256,7 @@ def main(argv: list[str] | None = None) -> None:
             f"palette-size={len(indexed.palette.colours)}, display-effect={args.display_effect}, "
             f"bloom-strength={args.bloom_strength}, bloom-radius={args.bloom_radius}, "
             f"chromatic-strength={args.chromatic_strength}, "
+            f"rf-strength={args.rf_strength}, "
             f"display-brightness={args.display_brightness}"
         )
     elif args.command == "palettes":

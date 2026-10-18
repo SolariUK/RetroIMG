@@ -55,7 +55,7 @@ def check(archive: Path) -> None:
         reference, actual = directory / 'effects-reference.png', directory / 'combined effects.png'
         effect_options = dict(profile_name='cpc-mode1', width=16, height=24, scale=3,
                               display_effect='crt-aperture', bloom_strength=.25,
-                              bloom_radius=1.5, chromatic_strength=.5, display_brightness=1.2)
+                              bloom_radius=1.5, chromatic_strength=.5, rf_strength=.5, display_brightness=1.2)
         convert_file(source, reference, **effect_options)
         effect_arguments = [f'--{"profile" if key == "profile_name" else key.replace("_", "-")}={value}'
                             for key, value in effect_options.items()]

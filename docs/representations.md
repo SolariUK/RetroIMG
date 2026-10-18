@@ -127,6 +127,8 @@ independent of the full RGB grid's internal palette order.
 scaling. Optional Game Boy LCD cells and shadows, row-aligned scanlines, or a CRT
 aperture grille with scanlines modify
 the RGB preview without changing cells, palettes or the raw indexed raster.
-Independent chromatic aberration runs before the surface treatment; highlight
-bloom runs after it and before final display brightness. Future RF-style smearing and bezels
+Independent RF-style signal filtering runs before chromatic aberration and the
+surface treatment; highlight bloom runs after them and before final display
+brightness. All stages can add RGB colours outside the machine palette without
+changing the indexed raster. Future alternative masks and bezels
 belong to the same separate presentation layer.
