@@ -222,6 +222,12 @@ alone, CRT alone, and CRT with subtle or stronger bloom on a night photograph
 with bright window lights against dark brickwork. The original indexed
 conversion, CRT strength and final display brightness stay fixed.
 
+Use `python examples/generate_display_effects.py --effect chromatic-aberration --replace`
+for [radial colour-separation examples](../samples/chromatic-aberration/README.md).
+These use the night-window scene alone and combined with CRT and bloom, keeping
+the other settings fixed. Full-frame renders are cropped afterwards so the
+centre and displacement remain consistent.
+
 `generate_samples.py` reuses the converter, mode variants and constraint checks
 to maintain fifteen comparison groups across 40 PNG sheets, each 1328 pixels
 wide with two columns and at most three rows. The fourteen family groups show several modes and dithers: Teletext

@@ -2,6 +2,9 @@
 
 ## 0.2.0 — Unreleased
 
+- Added independent radial chromatic aberration before display surface effects,
+  with linear-light fractional sampling, CLI/guided/preset controls, and night
+  examples combining colour separation with CRT aperture grille and bloom.
 - Added independent highlight bloom, combining with LCD, scanlines or CRT grille
   in an ordered display pipeline before final display brightness. Includes
   strength/radius controls, guided/preset support and full-size comparison crops.

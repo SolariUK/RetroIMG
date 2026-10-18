@@ -305,8 +305,14 @@ RGB stripe mask. The two attenuations are combined in a shared linear-light
 lookup table before encoding to sRGB once. The existing strength setting controls
 both. Grille phase is fixed to the full image's left edge and does not follow
 source-pixel boundaries; detail crops preserve the rendered pattern.
-`apply_display_effects` owns the ordered presentation chain: surface treatment,
-independent highlight bloom, then final display brightness. Bloom extracts RGB
+`apply_display_effects` owns the ordered presentation chain: chromatic aberration,
+surface treatment, independent highlight bloom, then final display brightness.
+Chromatic aberration radially expands red and contracts blue around the output
+centre with a zoom ratio tied to logical image width, leaving green unchanged.
+Floating-point linear-light bilinear sampling and repeated edge padding avoid
+gamma-space interpolation, wrapping and artificial black borders. It runs before
+the surface treatment so phosphor and cell geometry stay aligned; zero strength
+bypasses it exactly. Bloom extracts RGB
 energy above half the peak channel in linear light, preserving RGB ratios, then
 adds a Gaussian-blurred highlight layer to the sharp preview. An 8-bit linear RGB
 buffer keeps the blur in Pillow without new dependencies. Radius is Gaussian

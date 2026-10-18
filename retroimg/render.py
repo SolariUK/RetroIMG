@@ -7,7 +7,7 @@ from PIL import Image
 from retroimg.model import IndexedImage
 from retroimg.display_effects import (
     DEFAULT_BLOOM_RADIUS, apply_display_effects,
-    validate_bloom, validate_display_brightness, validate_display_effect,
+    validate_bloom, validate_chromatic_strength, validate_display_brightness, validate_display_effect,
 )
 
 
@@ -16,6 +16,7 @@ def render_indexed(
     display_effect: str = 'none', effect_strength: float | None = None,
     display_brightness: float = 1.0,
     bloom_strength: float = 0.0, bloom_radius: float = DEFAULT_BLOOM_RADIUS,
+    chromatic_strength: float = 0.0,
 ) -> Image.Image:
     """Render with optional aspect correction by enlarging the longer axis.
 
@@ -31,6 +32,7 @@ def render_indexed(
     strength = validate_display_effect(display_effect, effect_strength, scale)
     validate_display_brightness(display_brightness)
     validate_bloom(bloom_strength, bloom_radius)
+    validate_chromatic_strength(chromatic_strength)
 
     palette = image.palette.rgb_values()
     out = Image.new("RGB", (image.width, image.height))
@@ -48,4 +50,5 @@ def render_indexed(
     return apply_display_effects(out, (image.width, image.height), background,
                                  effect=display_effect, strength=strength,
                                  bloom_strength=bloom_strength, bloom_radius=bloom_radius,
+                                 chromatic_strength=chromatic_strength,
                                  brightness=display_brightness)

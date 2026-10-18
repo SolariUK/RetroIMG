@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+from array import array
 
 from PIL import Image, ImageFilter
 
@@ -44,6 +45,57 @@ def validate_bloom(strength: float, radius: float) -> None:
         raise ValueError('bloom radius must be finite and between 0.25 and 8 logical pixel widths')
 
 
+def validate_chromatic_strength(strength: float) -> None:
+    if type(strength) not in (int, float) or not 0 <= strength <= 1:
+        raise ValueError('chromatic strength must be finite and between 0 and 1')
+
+
+def _extend_edges(channel: Image.Image, pad_x: int, pad_y: int) -> Image.Image:
+    """Repeat the nearest edge sample without wrapping or introducing black borders."""
+    width, height = channel.size
+    padded = Image.new(channel.mode, (width + 2 * pad_x, height + 2 * pad_y))
+    padded.paste(channel, (pad_x, pad_y))
+    nearest = Image.Resampling.NEAREST
+    padded.paste(channel.crop((0, 0, 1, height)).resize((pad_x, height), nearest), (0, pad_y))
+    padded.paste(channel.crop((width - 1, 0, width, height)).resize((pad_x, height), nearest),
+                 (pad_x + width, pad_y))
+    padded.paste(padded.crop((0, pad_y, padded.width, pad_y + 1)).resize((padded.width, pad_y), nearest), (0, 0))
+    padded.paste(padded.crop((0, pad_y + height - 1, padded.width, pad_y + height)).resize(
+        (padded.width, pad_y), nearest), (0, pad_y + height))
+    return padded
+
+
+def chromatic_aberration(preview: Image.Image, logical_width: int, strength: float) -> Image.Image:
+    """Radial RGB separation, before the display surface mask.
+
+    Red expands by 1 + 2*strength/logical_width; blue contracts by its reciprocal.
+    Green is unchanged. Floating-point linear-light bilinear sampling gives smooth
+    fractional offsets and edge extension avoids spurious dark borders or wrapping.
+    """
+    if strength == 0 or preview.size == (1, 1):
+        return preview
+    zoom = 1 + 2 * strength / logical_width
+    channels = list(preview.split())
+    width, height = preview.size
+    # This covers the largest inverse-map excursion, plus a bilinear sample.
+    pad_x = math.ceil((zoom - 1) * width / 2) + 1
+    pad_y = math.ceil((zoom - 1) * height / 2) + 1
+    for index, factor in ((0, 1 / zoom), (2, zoom)):
+        linear = channels[index].point(list(_LINEAR_SRGB), 'F')
+        extended = _extend_edges(linear, pad_x, pad_y)
+        shifted = extended.transform(preview.size, Image.Transform.AFFINE,
+                                     (factor, 0, (1 - factor) * width / 2 + pad_x,
+                                      0, factor, (1 - factor) * height / 2 + pad_y),
+                                     Image.Resampling.BILINEAR)
+        values = array('f')
+        values.frombytes(shifted.tobytes())
+        encoded = bytes(round(255 * (12.92 * value if value <= .0031308 else
+                                    1.055 * value ** (1 / 2.4) - .055))
+                        for value in (max(0.0, min(1.0, sample)) for sample in values))
+        channels[index] = Image.frombytes('L', preview.size, encoded)
+    return Image.merge('RGB', channels)
+
+
 def bloom(preview: Image.Image, logical_width: int, strength: float, radius: float) -> Image.Image:
     """Add a blurred, hue-preserving highlight layer in linear light.
 
@@ -76,12 +128,14 @@ def bloom(preview: Image.Image, logical_width: int, strength: float, radius: flo
 
 def apply_display_effects(preview: Image.Image, logical_size: tuple[int, int],
                           background: tuple[int, int, int], *, effect: str, strength: float,
-                          bloom_strength: float, bloom_radius: float, brightness: float) -> Image.Image:
-    """Fixed presentation chain: display surface, highlight bloom, final gain.
+                          bloom_strength: float, bloom_radius: float, brightness: float,
+                          chromatic_strength: float = 0.0) -> Image.Image:
+    """Fixed chain: RGB separation, display surface, highlight bloom, final gain.
 
     The public rendering/conversion boundaries validate settings before reaching here.
     Independent stages allow further optical treatments without changing conversion.
     """
+    preview = chromatic_aberration(preview, logical_size[0], chromatic_strength)
     if effect == 'gameboy-lcd':
         preview = gameboy_lcd(preview, logical_size, background, strength)
     elif effect == 'scanlines':

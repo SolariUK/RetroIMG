@@ -115,3 +115,8 @@ logical pixel widths, default 1) combine with any `display_effect`. Older preset
 retain their output with bloom off. `--bloom-strength 0` disables saved bloom
 without disabling the surface treatment; a saved non-default radius is retained.
 See [effect order and controls](display-effects.md).
+
+`chromatic_strength` (0 to 1, default 0/off) independently adds radial colour
+separation before the surface treatment. `--chromatic-strength 0` resets saved
+separation while retaining bloom, the selected treatment and display brightness.
+Older presets keep their existing output.

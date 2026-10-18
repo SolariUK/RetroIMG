@@ -14,6 +14,9 @@ The two earlier user-supplied sources remain outside the repository and are excl
 subtle or stronger bloom on bright window lights against dark brickwork,
 retaining the same palette conversion throughout.
 
+[chromatic-aberration/](chromatic-aberration/README.md) demonstrates radial colour
+separation alone and combined with CRT + bloom, using the same night scene.
+
 ## Generate examples
 
 [pixelation/](pixelation/README.md) compares original-colour pixelation at three
@@ -28,6 +31,7 @@ python examples/generate_display_effects.py --replace
 python examples/generate_display_effects.py --effect scanlines --replace
 python examples/generate_display_effects.py --effect crt-aperture --replace
 python examples/generate_display_effects.py --effect bloom --replace
+python examples/generate_display_effects.py --effect chromatic-aberration --replace
 ```
 
 This refreshes only the known documentation artifacts in `samples/comparisons` and refuses directories with unrelated files. Use `--output-dir /path/to/new-samples` to generate elsewhere. Source images stay in `samples/sources`; source-photo thumbnails are smoothly fitted, while converted previews keep their generated pixels. View sheets at 100% when evaluating exact dither patterns.

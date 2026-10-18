@@ -187,6 +187,11 @@ combines with any treatment: try `--display-effect crt-aperture --bloom-strength
 Its spread is controlled by `--bloom-radius` in logical pixel widths (default 1).
 See [bloom and combined CRT examples](samples/bloom/README.md). Native hardware export is deferred.
 
+Independent `--chromatic-strength 0.25` adds radial red/blue colour separation
+before the LCD/CRT surface treatment; default `0` leaves it off. It combines with
+the grille and bloom without shifting their surface geometry. See
+[chromatic aberration examples](samples/chromatic-aberration/README.md).
+
 `--display-brightness` adjusts the finished preview **after display effects**,
 preserving palette fitting and dithering. It defaults to `1.0`; try `2` to
 brighten a strong CRT treatment. The existing `--brightness` adjusts the source

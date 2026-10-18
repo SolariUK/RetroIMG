@@ -130,6 +130,11 @@ in logical pixel widths (0.25 to 8; default 1). Display brightness remains last.
 For example, combine `--display-effect crt-aperture --effect-strength 0.35` with
 `--bloom-strength 0.25 --bloom-radius 1 --scale 4`.
 
+`--chromatic-strength` (0 to 1; default 0/off) adds radial colour separation after
+enlargement and before the selected display treatment. Try `0.25` for subtle
+fringing, alone or combined with the CRT grille and bloom. It does not change the
+palette conversion, output dimensions, or final position of display brightness.
+
 Optional adjustments apply after resizing and before palette/cell optimisation
 for every profile. Processing order is **brightness → contrast → saturation →
 hue shift → RGB gains**. Each stage works on 8-bit RGB values and clips results

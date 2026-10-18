@@ -17,7 +17,8 @@ from retroimg.render import render_indexed
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = (('plain', None), ('lcd-subtle', .35), ('lcd-strong', .85))
 EFFECT_DIRECTORIES = {'gameboy-lcd': 'display-effects', 'scanlines': 'scanlines',
-                      'crt-aperture': 'crt-aperture', 'bloom': 'bloom'}
+                      'crt-aperture': 'crt-aperture', 'bloom': 'bloom',
+                      'chromatic-aberration': 'chromatic-aberration'}
 CROP = (384, 288, 896, 800)  # Logical pixels (48, 36) to (112, 100), at scale 8.
 
 
@@ -25,7 +26,8 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
     if effect not in EFFECT_DIRECTORIES:
         raise ValueError('unknown example effect: ' + effect)
     lcd = effect == 'gameboy-lcd'
-    crop = (768, 32, 1280, 544) if effect == 'bloom' else CROP
+    optical = effect in ('bloom', 'chromatic-aberration')
+    crop = (768, 32, 1280, 544) if optical else CROP
     prefix = 'gameboy' if lcd else 'megadrive'
     if lcd:
         examples = EXAMPLES
@@ -34,6 +36,9 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
     elif effect == 'bloom':
         examples = (('plain', None), ('bloom-only', .25), ('crt-only', .35),
                     ('crt-bloom-subtle', .25), ('crt-bloom-strong', .85), ('crt-bloom-wide', .85))
+    elif effect == 'chromatic-aberration':
+        examples = (('plain', None), ('chromatic-subtle', .25), ('chromatic-strong', .85),
+                    ('crt-bloom', None), ('crt-bloom-chromatic-subtle', .25), ('crt-bloom-chromatic-strong', .85))
     else:
         examples = (('plain', None), ('scanlines-only', .35), ('crt-aperture-subtle', .35),
                     ('crt-aperture-strong', .85), ('crt-aperture-strong-brighter', .85))
@@ -48,7 +53,7 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
             raise ValueError('output directory exists; use --replace to refresh known examples')
         if not output.is_dir() or any(p.name not in names or not p.is_file() or p.is_symlink() for p in output.iterdir()):
             raise ValueError('output directory contains unmanaged files')
-    source_id = 'city-night' if effect == 'bloom' else 'macaws'
+    source_id = 'city-night' if optical else 'macaws'
     source = next(s for s in json.loads((ROOT / 'examples/sources.json').read_text()) if s['id'] == source_id)
     path = ROOT / 'samples/sources' / source['file']
     if not source['public'] or sha256(path.read_bytes()).hexdigest() != source['reference_sha256']:
@@ -57,7 +62,8 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
               'The same 160×144 four-shade conversion, rendered at 8× (1280×1152).',
               'Each native Game Boy pixel occupies an 8×8 output area so the LCD cell borders',
               'and shadows can be drawn. The conversion still contains only 160×144 logical pixels.'] if lcd else
-             ['# Bloom and combined CRT examples' if effect == 'bloom' else
+             ['# Chromatic aberration and combined effects' if effect == 'chromatic-aberration' else
+              '# Bloom and combined CRT examples' if effect == 'bloom' else
               '# CRT aperture-grille examples' if effect == 'crt-aperture' else '# Scanline display examples', '',
               'The same 320×224 Mega Drive tile conversion, rendered at scale 4 with',
               '4:3 aspect correction (1280×960). One scanline beam per logical row:',
@@ -78,13 +84,21 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                   'The final wider-glow example keeps strong bloom 0.85 and uses radius 3',
                   '(12 output pixels), explicitly demonstrating the spread control.',
                   'Display brightness stays neutral at 1 throughout.']
+    if effect == 'chromatic-aberration':
+        lines += ['Bright windows near the frame edge show radial red/blue colour separation.',
+                  'Red expands outwards, blue contracts inwards, and green stays fixed.',
+                  'The crop retains the full frame centre and displacement; it is not reprocessed.',
+                  'Compare plain, subtle/strong chromatic aberration alone, then CRT + bloom',
+                  'without and with the same chromatic settings. CRT strength remains 0.35,',
+                  'bloom strength 0.25, bloom radius 1, and display brightness 1 throughout.',
+                  'Order: chromatic aberration, display treatment, bloom, final display brightness.']
     lines += ['Each detail crop is an unscaled 512×512 section of its full-size PNG.',
              'Open the PNGs at 100% to judge the display pattern; browser fitting can introduce moiré.', '',
              f'Source: [{source["file"]}](../sources/{source["file"]}).',
              f'Credit: {source["credit"]}. {source["rights"]}',
              'See [source records](../README.md) and [effect documentation](../../docs/display-effects.md).', '',
              ('The LCD treatment simulates inset cells and small shadows.' if lcd else
-              'Order: display treatment, highlight bloom, final display brightness.' if effect == 'bloom' else
+              'The original indexed conversion stays unchanged by all effects.' if optical else
               'The CRT treatment combines scanlines and an RGB grille in linear light; there is no bloom.'
               if effect == 'crt-aperture' else
               'Scanlines dim row boundaries in linear light; there is no phosphor mask or bloom.'),
@@ -104,6 +118,13 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                     options.update(display_effect=selected_effect, effect_strength=.35)
                 if 'bloom' in name:
                     options.update(bloom_strength=strength, bloom_radius=3.0 if name == 'crt-bloom-wide' else 1.0)
+            elif effect == 'chromatic-aberration':
+                selected_effect = 'crt-aperture' if name.startswith('crt-') else 'none'
+                if selected_effect != 'none':
+                    options.update(display_effect=selected_effect, effect_strength=.35,
+                                   bloom_strength=.25, bloom_radius=1.0)
+                if strength is not None:
+                    options['chromatic_strength'] = strength
             elif strength is not None:
                 options.update(display_effect=selected_effect, effect_strength=strength)
             if name == 'crt-aperture-strong-brighter':
@@ -116,6 +137,7 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                                effect_strength=options.get('effect_strength'),
                                bloom_strength=options.get('bloom_strength', 0),
                                bloom_radius=options.get('bloom_radius', 1),
+                               chromatic_strength=options.get('chromatic_strength', 0),
                                display_brightness=options.get('display_brightness', 1.0)).save(stage / filename)
             crop_name = f'{prefix}-{name}-crop.png'
             with Image.open(stage / filename) as image:
@@ -136,6 +158,10 @@ def generate(output: Path, *, replace: bool = False, effect: str = 'gameboy-lcd'
                          f'{"CRT + bloom" if selected_effect != "none" else "Bloom alone"} / bloom strength {strength}')
                 if 'bloom' in name:
                     label += f' / radius {options["bloom_radius"]}'
+            if effect == 'chromatic-aberration' and name != 'plain':
+                label = 'CRT + bloom, without chromatic aberration' if name == 'crt-bloom' else (
+                    ('CRT + bloom + chromatic aberration' if selected_effect != 'none' else 'Chromatic aberration alone')
+                    + f' / chromatic strength {strength}')
             if 'display_brightness' in options:
                 label += f' / display brightness {options["display_brightness"]} after effects'
             lines.extend([f'## {label}', '', f'[Open full-size example]({filename}) · [Open detail crop]({crop_name})',

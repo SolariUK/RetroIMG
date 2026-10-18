@@ -93,6 +93,17 @@ def test_guide_combines_bloom_with_crt_and_retains_settings_when_editing(paths):
     assert build_parser().parse_args(guide(paths, replies)).bloom_strength == 0
 
 
+def test_guide_combines_chromatic_aberration_with_crt_and_bloom(paths):
+    replies = Replies({'Choose display effect': 'crt-aperture', 'Add chromatic aberration': 'yes',
+                       'Chromatic strength': ['.6', ''], 'Add highlight bloom': 'yes',
+                       'Choose next action': ['edit', 'convert']})
+    args = build_parser().parse_args(guide(paths, replies))
+    assert (args.display_effect, args.chromatic_strength, args.bloom_strength) == ('crt-aperture', .6, .25)
+    assert any('Chromatic aberration: 0.6 (before display treatment)' in line for line in replies.messages)
+    replies = Replies({'Add chromatic aberration': ['yes', 'no'], 'Choose next action': ['edit', 'convert']})
+    assert build_parser().parse_args(guide(paths, replies)).chromatic_strength == 0
+
+
 def test_guide_pixelation_print_only_and_block_size_revision(paths):
     replies = Replies({'Choose starting point': 'pixelate', 'Pixel block size': '16'})
     assert guide(paths, replies, print_only=True) is None

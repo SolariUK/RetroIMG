@@ -11,11 +11,12 @@ or display brightness adjustment. Defaults preserve existing output exactly.
 The pipeline order is:
 
 **Resize and source adjustments → palette conversion and dithering → preview
-enlargement/aspect correction → display treatment → highlight bloom → display
-brightness → save PNG.**
+enlargement/aspect correction → chromatic aberration → display treatment →
+highlight bloom → display brightness → save PNG.**
 
 Effects combine in this fixed order. `--display-effect` selects a surface treatment
-(LCD, scanlines or CRT grille); the independent bloom controls add glow after it.
+(LCD, scanlines or CRT grille); independent chromatic aberration runs before it,
+and the bloom controls add glow after it.
 Bloom can also run by itself with `--display-effect none`. Display brightness is
 always last. Each stage has its own controls; argument order does not change the
 rendering order. Defaults leave all effects off and brightness neutral.
@@ -165,6 +166,57 @@ window can create colour shifts or moiré. Crops retain the full image's mask ph
 python examples/generate_display_effects.py --effect crt-aperture --replace
 ```
 
+## Chromatic aberration
+
+```bash
+# Radial colour fringing alone.
+retroimg convert photo.jpg chromatic.png --profile megadrive-320 --megadrive-mode tiles \
+    --scale 4 --chromatic-strength 0.25
+
+# Chromatic aberration + CRT grille/scanlines + bloom, with brightness last.
+retroimg convert photo.jpg combined.png --profile megadrive-320 --megadrive-mode tiles \
+    --dither bayer --bayer-size 4 --scale 4 --chromatic-strength 0.25 \
+    --display-effect crt-aperture --effect-strength 0.35 \
+    --bloom-strength 0.25 --bloom-radius 1 --display-brightness 1
+```
+
+`--chromatic-strength` ranges from 0 to 1 and defaults to **0/off**. Try `0.25`
+for subtle separation or `0.85` for a stronger demonstration. Green stays fixed,
+red expands outwards from the frame centre, and blue contracts inwards. Separation
+increases towards the edges, leaving the centre aligned. This creates coloured
+fringes around contrasting edges, particularly white lights against dark areas.
+It is a static aesthetic approximation, not a calibrated lens or CRT model.
+
+Strength scales with enlargement rather than specifying fixed output pixels:
+near the left/right frame edges, strength 1 corresponds to approximately one
+logical pixel width per displaced channel, giving roughly twice that red-to-blue
+separation. Vertical offsets follow the same radial scale in the aspect-corrected
+output. Red uses zoom `1 + 2 * strength / logical_width`; blue uses its reciprocal.
+Sampling is bilinear in floating-point linear light for smooth fractional offsets.
+Out-of-frame samples repeat the nearest edge instead of wrapping or adding black
+borders. The output keeps its dimensions; edge detail can be clipped by the
+channel zoom. A uniform-colour image stays uniform.
+
+The stage runs **before** LCD cells, scanlines and the CRT grille so their surface
+geometry stays aligned. Bloom then receives the treated, colour-separated image,
+and display brightness remains last. The existing `--effect-strength` controls
+only the selected surface treatment; it does not alter chromatic aberration or
+bloom. Chromatic aberration works with every profile or alone at native scale.
+
+The guide offers it independently, and version-1 presets store `chromatic_strength`.
+Older presets leave it off. `--chromatic-strength 0` disables saved separation
+without disabling other effects. `--display-effect none` leaves chromatic
+aberration and bloom independent. Python callers pass `chromatic_strength` to
+`convert_file` or `render_indexed`; the indexed raster and palettes remain unchanged.
+
+[Night-window examples and unscaled crops](../samples/chromatic-aberration/README.md)
+compare plain, subtle/strong separation alone, then CRT + bloom without and with
+separation. Other controls stay fixed, and crops preserve the full image's centre.
+
+```bash
+python examples/generate_display_effects.py --effect chromatic-aberration --replace
+```
+
 ## Highlight bloom and combined effects
 
 ```bash
@@ -204,7 +256,8 @@ The guide offers bloom independently after selecting a display treatment, and
 both controls are saved in version-1 presets. Older presets keep bloom off.
 `--bloom-strength 0` disables inherited bloom while retaining the surface effect;
 `--display-effect none` disables the surface effect while retaining bloom.
-For plain output, disable both and reset display brightness to 1. A saved radius
+For plain output, disable the surface treatment, bloom and chromatic aberration,
+and reset display brightness to 1. A saved radius
 is retained when bloom is disabled, allowing it to be re-enabled later.
 Python callers pass `bloom_strength` and `bloom_radius` to `convert_file` or
 `render_indexed` with the same defaults and units.
@@ -253,10 +306,10 @@ blur, without adapting upstream shader code. Other mask patterns remain future w
 
 ## Planned additions
 
-After bloom, planned additions are chromatic aberration and RF-style colour
-bleed and smearing, inspired by the appearance of NES output on an RF-connected
-television. These are visual treatments rather than a promise of an accurate
-signal-level RF simulation. Each belongs in the display pipeline, leaving the
-underlying palette conversion and indexed image unchanged. These will extend the
-ordered presentation chain; their exact positions and controls will be decided
+The next planned addition is RF-style colour bleed and smearing, inspired by the
+appearance of NES output on an RF-connected television. This is a visual
+treatment rather than a promise of an accurate signal-level RF simulation.
+It belongs in the display pipeline, leaving the
+underlying palette conversion and indexed image unchanged. It will extend the
+ordered presentation chain; its exact position and controls will be decided
 during implementation.

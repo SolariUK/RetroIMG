@@ -49,7 +49,8 @@ with Image.open(output) as image:
 combined = Path('combined effects.png')
 run('convert', str(source), str(combined), '--profile', 'cpc-mode1',
     '--width', '16', '--height', '24', '--scale', '3', '--display-effect', 'crt-aperture',
-    '--bloom-strength', '0.25', '--bloom-radius', '1.5', '--display-brightness', '1.2')
+    '--bloom-strength', '0.25', '--bloom-radius', '1.5', '--chromatic-strength', '0.5',
+    '--display-brightness', '1.2')
 with Image.open(combined) as image:
     assert image.size == (48, 72)
     image.verify()
