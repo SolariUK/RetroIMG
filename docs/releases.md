@@ -36,7 +36,10 @@ and test the applications on the intended desktops. The workflow leaves
 **Publish release** when ready. Draft creation does not publish the release.
 
 For an existing tag, the workflow can also be started from **Actions → Prepare
-draft release → Run workflow**, entering the tag. Re-running updates assets
+draft release → Run workflow**, choosing branch **main** and entering the tag.
+Use this after repairing release automation: **Re-run jobs** on an old run uses
+that run's original workflow definition, including the old settings. Application
+builds still check out the requested version tag. Re-running updates assets
 only while the release is still a draft; it refuses to overwrite an already
 published release. It retains existing draft notes so edits made on GitHub
 are not lost. Use a new version and tag for a subsequent published release.
@@ -52,3 +55,6 @@ a local release-style bundle, add `--release` to `scripts/build_portable.py`.
 Local builds do not create tags or upload/publish a GitHub release. The first
 preview uses tag `v0.2.0` with GitHub's pre-release flag; that flag is separate
 from the application version recorded in the package.
+
+The assembly job downloads application ZIPs with `skip-decompress: true` so
+GitHub preserves the original release archives instead of extracting them.

@@ -103,6 +103,7 @@ jobs:
           pattern: retroimg-*.zip
           path: release-assets
           merge-multiple: true
+          skip-decompress: true
       - name: Verify complete release and calculate checksums
         shell: bash
         run: python scripts/prepare_release.py --tag "$RELEASE_TAG" --commit "$(git rev-parse HEAD)"

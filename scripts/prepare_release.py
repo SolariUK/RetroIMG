@@ -30,7 +30,9 @@ def prepare_assets(directory: Path, *, tag: str, commit: str) -> Path:
                 (frontend, system) for frontend, system in targets}
     archives = {path.name: path for path in directory.glob('*.zip')}
     if archives.keys() != expected.keys():
-        raise ValueError(f'Expected exactly these release ZIPs: {", ".join(sorted(expected))}')
+        found = ', '.join(sorted(path.name for path in directory.iterdir())) if directory.is_dir() else '(directory missing)'
+        raise ValueError(f'Expected exactly these release ZIPs: {", ".join(sorted(expected))}. '
+                         f'Found in {directory}: {found or "(empty)"}')
     checksums = []
     for name, (frontend, system) in sorted(expected.items()):
         application = 'retroimg-gui' if frontend == 'gui' else 'retroimg'

@@ -58,8 +58,17 @@ def test_release_rejects_wrong_build_metadata(bundles, changes):
 def test_release_rejects_incomplete_download_set(bundles):
     directory, _ = bundles
     next(directory.glob('*linux*.zip')).rename(directory / 'renamed.zip')
-    with pytest.raises(ValueError, match='exactly'):
+    with pytest.raises(ValueError, match='exactly') as failure:
         release['prepare_assets'](directory, tag=TAG, commit=COMMIT)
+    assert 'renamed.zip' in str(failure.value)
+    assert str(directory) in str(failure.value)
+
+
+def test_release_explains_when_downloads_were_unpacked(tmp_path):
+    (tmp_path / 'retroimg-gui').mkdir()
+    with pytest.raises(ValueError, match='Found in') as failure:
+        release['prepare_assets'](tmp_path, tag=TAG, commit=COMMIT)
+    assert 'retroimg-gui' in str(failure.value).split('Found in', 1)[1]
 
 
 def test_release_rejects_missing_executable(bundles):
