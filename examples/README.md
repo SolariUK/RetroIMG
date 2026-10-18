@@ -216,6 +216,12 @@ Use `python examples/generate_display_effects.py --effect crt-aperture --replace
 for [CRT aperture-grille examples](../samples/crt-aperture/README.md), including
 plain, scanlines-only, subtle CRT and stronger CRT versions of the same conversion.
 
+Use `python examples/generate_display_effects.py --effect bloom --replace` for
+[bloom and combined CRT examples](../samples/bloom/README.md), comparing bloom
+alone, CRT alone, and CRT with subtle or stronger bloom on a night photograph
+with bright window lights against dark brickwork. The original indexed
+conversion, CRT strength and final display brightness stay fixed.
+
 `generate_samples.py` reuses the converter, mode variants and constraint checks
 to maintain fifteen comparison groups across 40 PNG sheets, each 1328 pixels
 wide with two columns and at most three rows. The fourteen family groups show several modes and dithers: Teletext

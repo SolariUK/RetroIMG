@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import math
 
-from PIL import Image
+from PIL import Image, ImageFilter
 
 DISPLAY_EFFECTS = ('none', 'gameboy-lcd', 'scanlines', 'crt-aperture')
 DEFAULT_EFFECT_STRENGTH = 0.35
+DEFAULT_BLOOM_RADIUS = 1.0
 MINIMUM_EFFECT_SCALES = {'none': 1, 'gameboy-lcd': 3, 'scanlines': 3, 'crt-aperture': 3}
 _LINEAR_SRGB = tuple(v / 255 / 12.92 if v / 255 <= .04045 else ((v / 255 + .055) / 1.055) ** 2.4
                      for v in range(256))
@@ -34,6 +35,61 @@ def apply_display_brightness(preview: Image.Image, brightness: float) -> Image.I
     if brightness == 1:
         return preview
     return preview.point(list(_light_table(brightness)) * 3)
+
+
+def validate_bloom(strength: float, radius: float) -> None:
+    if type(strength) not in (int, float) or not 0 <= strength <= 1:
+        raise ValueError('bloom strength must be finite and between 0 and 1')
+    if type(radius) not in (int, float) or not .25 <= radius <= 8:
+        raise ValueError('bloom radius must be finite and between 0.25 and 8 logical pixel widths')
+
+
+def bloom(preview: Image.Image, logical_width: int, strength: float, radius: float) -> Image.Image:
+    """Add a blurred, hue-preserving highlight layer in linear light.
+
+    Radius is Gaussian sigma in logical pixel widths, converted to output space.
+    Extract energy above half the linear-light peak channel, preserving RGB ratios.
+    Pillow blurs an 8-bit linear RGB highlight buffer; the original stays sharp.
+    """
+    if strength == 0:
+        return preview
+    source = preview.tobytes()
+    highlights = bytearray(len(source))
+    for pos in range(0, len(source), 3):
+        rgb = tuple(_LINEAR_SRGB[value] for value in source[pos:pos + 3])
+        peak = max(rgb)
+        if peak > .5:
+            fraction = (peak - .5) / peak
+            highlights[pos:pos + 3] = bytes(round(255 * value * fraction) for value in rgb)
+    if not any(highlights):
+        return preview
+    glow = Image.frombytes('RGB', preview.size, bytes(highlights)).filter(
+        ImageFilter.GaussianBlur(radius * preview.width / logical_width))
+    # A lookup avoids per-channel transfer-function arithmetic over the full image.
+    encode = bytes(round(255 * (12.92 * value if value <= .0031308 else
+                                1.055 * value ** (1 / 2.4) - .055))
+                   for value in (i / 65535 for i in range(65536)))
+    result = bytes(encode[round(min(1.0, _LINEAR_SRGB[value] + strength * halo / 255) * 65535)]
+                   for value, halo in zip(source, glow.tobytes()))
+    return Image.frombytes('RGB', preview.size, result)
+
+
+def apply_display_effects(preview: Image.Image, logical_size: tuple[int, int],
+                          background: tuple[int, int, int], *, effect: str, strength: float,
+                          bloom_strength: float, bloom_radius: float, brightness: float) -> Image.Image:
+    """Fixed presentation chain: display surface, highlight bloom, final gain.
+
+    The public rendering/conversion boundaries validate settings before reaching here.
+    Independent stages allow further optical treatments without changing conversion.
+    """
+    if effect == 'gameboy-lcd':
+        preview = gameboy_lcd(preview, logical_size, background, strength)
+    elif effect == 'scanlines':
+        preview = scanlines(preview, logical_size[1], strength)
+    elif effect == 'crt-aperture':
+        preview = crt_aperture(preview, logical_size[1], strength)
+    preview = bloom(preview, logical_size[0], bloom_strength, bloom_radius)
+    return apply_display_brightness(preview, brightness)
 
 
 def validate_display_effect(effect: str, strength: float | None, scale: int) -> float:

@@ -46,6 +46,13 @@ run('convert', str(source), str(output), '--preset', 'builtin:cpc-macaws-bayer2'
 with Image.open(output) as image:
     assert image.size == (16, 24)
     image.verify()
+combined = Path('combined effects.png')
+run('convert', str(source), str(combined), '--profile', 'cpc-mode1',
+    '--width', '16', '--height', '24', '--scale', '3', '--display-effect', 'crt-aperture',
+    '--bloom-strength', '0.25', '--bloom-radius', '1.5', '--display-brightness', '1.2')
+with Image.open(combined) as image:
+    assert image.size == (48, 72)
+    image.verify()
 text = run('guided', '--print-only', '--preset', 'builtin:cpc-macaws-bayer2',
            '--presets-dir', 'presets', input=str(source.resolve()) + '\\n' + str(output.resolve()) + '\\n')
 assert 'Equivalent command' in text

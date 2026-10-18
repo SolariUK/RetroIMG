@@ -182,7 +182,10 @@ enlarged previews, with any profile. See the
 [full-size examples and detail crops](samples/display-effects/README.md).
 Separate [scanline examples](samples/scanlines/README.md) show plain, subtle and
 stronger treatments; [CRT aperture-grille examples](samples/crt-aperture/README.md)
-include scanlines alone for comparison. Bloom and native hardware export are deferred.
+include scanlines alone for comparison. Independent optional highlight bloom
+combines with any treatment: try `--display-effect crt-aperture --bloom-strength 0.25`.
+Its spread is controlled by `--bloom-radius` in logical pixel widths (default 1).
+See [bloom and combined CRT examples](samples/bloom/README.md). Native hardware export is deferred.
 
 `--display-brightness` adjusts the finished preview **after display effects**,
 preserving palette fitting and dithering. It defaults to `1.0`; try `2` to

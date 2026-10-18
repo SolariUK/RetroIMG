@@ -305,6 +305,14 @@ RGB stripe mask. The two attenuations are combined in a shared linear-light
 lookup table before encoding to sRGB once. The existing strength setting controls
 both. Grille phase is fixed to the full image's left edge and does not follow
 source-pixel boundaries; detail crops preserve the rendered pattern.
+`apply_display_effects` owns the ordered presentation chain: surface treatment,
+independent highlight bloom, then final display brightness. Bloom extracts RGB
+energy above half the peak channel in linear light, preserving RGB ratios, then
+adds a Gaussian-blurred highlight layer to the sharp preview. An 8-bit linear RGB
+buffer keeps the blur in Pillow without new dependencies. Radius is Gaussian
+sigma in logical pixel widths, converted to output coordinates after aspect
+correction. A zero strength bypasses the stage exactly. Future optical effects
+can extend this chain independently of surface selection and conversion.
 `render_indexed` applies `display_brightness` as its final RGB step after the
 display effect, immediately before `convert_file` saves the image. Its linear-
 light lookup clamps to the display range and bypasses processing at gain 1,

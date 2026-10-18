@@ -6,8 +6,8 @@ from PIL import Image
 
 from retroimg.model import IndexedImage
 from retroimg.display_effects import (
-    apply_display_brightness, crt_aperture, gameboy_lcd, scanlines,
-    validate_display_brightness, validate_display_effect,
+    DEFAULT_BLOOM_RADIUS, apply_display_effects,
+    validate_bloom, validate_display_brightness, validate_display_effect,
 )
 
 
@@ -15,6 +15,7 @@ def render_indexed(
     image: IndexedImage, scale: int = 1, *, nearest: bool = True, pixel_aspect: float = 1.0,
     display_effect: str = 'none', effect_strength: float | None = None,
     display_brightness: float = 1.0,
+    bloom_strength: float = 0.0, bloom_radius: float = DEFAULT_BLOOM_RADIUS,
 ) -> Image.Image:
     """Render with optional aspect correction by enlarging the longer axis.
 
@@ -29,6 +30,7 @@ def render_indexed(
         raise ValueError("pixel aspect must be finite and positive")
     strength = validate_display_effect(display_effect, effect_strength, scale)
     validate_display_brightness(display_brightness)
+    validate_bloom(bloom_strength, bloom_radius)
 
     palette = image.palette.rgb_values()
     out = Image.new("RGB", (image.width, image.height))
@@ -42,11 +44,8 @@ def render_indexed(
         preview_width = max(1, round(out.width * scale * max(1.0, pixel_aspect)))
         preview_height = max(1, round(out.height * scale * max(1.0, 1.0 / pixel_aspect)))
         out = out.resize((preview_width, preview_height), resample)
-    if display_effect == 'gameboy-lcd':
-        background = max(palette, key=lambda rgb: 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2])
-        out = gameboy_lcd(out, (image.width, image.height), background, strength)
-    elif display_effect == 'scanlines':
-        out = scanlines(out, image.height, strength)
-    elif display_effect == 'crt-aperture':
-        out = crt_aperture(out, image.height, strength)
-    return apply_display_brightness(out, display_brightness)
+    background = max(palette, key=lambda rgb: 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2])
+    return apply_display_effects(out, (image.width, image.height), background,
+                                 effect=display_effect, strength=strength,
+                                 bloom_strength=bloom_strength, bloom_radius=bloom_radius,
+                                 brightness=display_brightness)

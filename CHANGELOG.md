@@ -2,6 +2,9 @@
 
 ## 0.2.0 — Unreleased
 
+- Added independent highlight bloom, combining with LCD, scanlines or CRT grille
+  in an ordered display pipeline before final display brightness. Includes
+  strength/radius controls, guided/preset support and full-size comparison crops.
 - Added generic original-colour pixelation with a pixel block-size control,
   standalone CLI command, guided workflow and full-size examples. Fixed blocks
   preserve image dimensions and clip partial edge blocks without stretching.

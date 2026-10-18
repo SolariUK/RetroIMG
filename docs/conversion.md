@@ -124,6 +124,12 @@ Source adjustments below run before palette conversion. The separate
 `--display-brightness` control runs after enlargement and display effects;
 it adjusts only the finished RGB preview. See [pipeline order](display-effects.md#source-brightness-and-display-brightness).
 
+Independent `--bloom-strength` (0 to 1; default 0/off) adds highlight glow after
+any display treatment or by itself. `--bloom-radius` controls its Gaussian spread
+in logical pixel widths (0.25 to 8; default 1). Display brightness remains last.
+For example, combine `--display-effect crt-aperture --effect-strength 0.35` with
+`--bloom-strength 0.25 --bloom-radius 1 --scale 4`.
+
 Optional adjustments apply after resizing and before palette/cell optimisation
 for every profile. Processing order is **brightness → contrast → saturation →
 hue shift → RGB gains**. Each stage works on 8-bit RGB values and clips results

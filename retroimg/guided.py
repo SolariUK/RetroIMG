@@ -20,7 +20,7 @@ from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
 from retroimg.settings import CELL_DIMENSIONS, REQUIRED_PALETTES, CONSTRAINT_PALETTES
-from retroimg.display_effects import DEFAULT_EFFECT_STRENGTH, MINIMUM_EFFECT_SCALES
+from retroimg.display_effects import DEFAULT_BLOOM_RADIUS, DEFAULT_EFFECT_STRENGTH, MINIMUM_EFFECT_SCALES
 from retroimg.presets import list_presets, load_preset, preset_directory, preset_slug, save_preset
 
 # Presentation and input hints only. Target adapters remain the authority on
@@ -291,6 +291,15 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
     options['scale'] = ui.number('Preview scale (integer enlargement)', scale_default,
                                  integer=True, valid=lambda n: n >= minimum_scale,
                                  hint=f'Enter a whole number of at least {minimum_scale}.')
+    if preferred.get('bloom_radius', DEFAULT_BLOOM_RADIUS) != DEFAULT_BLOOM_RADIUS:
+        options['bloom_radius'] = preferred['bloom_radius']
+    if ui.yes_no('Add highlight bloom after the display effect?', preferred.get('bloom_strength', 0) > 0):
+        options['bloom_strength'] = ui.number(
+            'Bloom strength (0 to 1; 0=off)', preferred.get('bloom_strength') or .25,
+            valid=lambda n: 0 <= n <= 1, hint='Enter a number between 0 and 1.')
+        options['bloom_radius'] = ui.number(
+            'Bloom radius (logical pixel widths, 0.25 to 8)', preferred.get('bloom_radius', DEFAULT_BLOOM_RADIUS),
+            valid=lambda n: .25 <= n <= 8, hint='Enter a number between 0.25 and 8.')
     display_brightness = ui.number('Display brightness (after effects, linear-light gain; 1=neutral)',
                                    preferred['display_brightness'], valid=lambda n: n >= 0,
                                    hint='Enter a finite non-negative number.')
@@ -387,6 +396,9 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     ui.write(f'  Display effect: {effect}' + (
         f'; strength: {options.get("effect_strength", DEFAULT_EFFECT_STRENGTH)}' if effect != 'none' else ''))
     ui.write(f'  Display brightness: {options.get("display_brightness", 1.0)} (after display effects)')
+    ui.write(f'  Bloom: {options.get("bloom_strength", 0)}; radius: '
+             f'{options.get("bloom_radius", DEFAULT_BLOOM_RADIUS)} logical pixel widths '
+             '(after display treatment, before display brightness)')
 
 
 def _save_new_preset(ui: Prompts, directory: Path, options: dict, parser, loaded):

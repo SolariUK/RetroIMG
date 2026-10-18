@@ -13,7 +13,7 @@ from retroimg.model import Geometry, IndexedImage
 from retroimg.palettes import get_palette
 from retroimg.profiles import get_profile
 from retroimg.render import render_indexed
-from retroimg.display_effects import validate_display_brightness, validate_display_effect
+from retroimg.display_effects import DEFAULT_BLOOM_RADIUS, validate_bloom, validate_display_brightness, validate_display_effect
 
 
 def convert_file(
@@ -38,6 +38,8 @@ def convert_file(
     display_effect: str = 'none',
     effect_strength: float | None = None,
     display_brightness: float = 1.0,
+    bloom_strength: float = 0.0,
+    bloom_radius: float = DEFAULT_BLOOM_RADIUS,
     teletext_mode: str = "bitmap",
     spectrum_mode: str = "bitmap",
     c64_mode: str = "bitmap",
@@ -57,6 +59,7 @@ def convert_file(
 ) -> IndexedImage:
     validate_display_effect(display_effect, effect_strength, scale)
     validate_display_brightness(display_brightness)
+    validate_bloom(bloom_strength, bloom_radius)
     validate_dither(dither, 4 if bayer_size is None else bayer_size)
     if bayer_size is not None and dither != "bayer":
         raise ValueError("--bayer-size requires --dither bayer")
@@ -93,5 +96,6 @@ def convert_file(
     preview_aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1.0
     render_indexed(indexed, scale=scale, pixel_aspect=preview_aspect,
                    display_effect=display_effect, effect_strength=effect_strength,
-                   display_brightness=display_brightness).save(output_path)
+                   display_brightness=display_brightness,
+                   bloom_strength=bloom_strength, bloom_radius=bloom_radius).save(output_path)
     return indexed

@@ -81,6 +81,18 @@ def test_guide_pixelates_original_colours_without_machine_questions(paths):
     assert any('original RGB colours' in message for message in replies.messages)
 
 
+def test_guide_combines_bloom_with_crt_and_retains_settings_when_editing(paths):
+    replies = Replies({'Choose display effect': 'crt-aperture', 'Add highlight bloom': 'yes',
+                       'Bloom strength': ['.4', ''], 'Bloom radius': ['1.5', ''],
+                       'Choose next action': ['edit', 'convert']})
+    arguments = guide(paths, replies)
+    args = build_parser().parse_args(arguments)
+    assert (args.display_effect, args.bloom_strength, args.bloom_radius) == ('crt-aperture', .4, 1.5)
+    assert any('before display brightness' in message for message in replies.messages)
+    replies = Replies({'Add highlight bloom': ['yes', 'no'], 'Choose next action': ['edit', 'convert']})
+    assert build_parser().parse_args(guide(paths, replies)).bloom_strength == 0
+
+
 def test_guide_pixelation_print_only_and_block_size_revision(paths):
     replies = Replies({'Choose starting point': 'pixelate', 'Pixel block size': '16'})
     assert guide(paths, replies, print_only=True) is None

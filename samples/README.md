@@ -10,6 +10,10 @@ The two earlier user-supplied sources remain outside the repository and are excl
 
 [crt-aperture/](crt-aperture/README.md) adds a CRT RGB aperture grille combined with scanlines, including plain and scanlines-only comparisons, full-size PNGs and unscaled crops.
 
+[bloom/](bloom/README.md) compares plain, bloom alone, CRT alone, and CRT with
+subtle or stronger bloom on bright window lights against dark brickwork,
+retaining the same palette conversion throughout.
+
 ## Generate examples
 
 [pixelation/](pixelation/README.md) compares original-colour pixelation at three
@@ -23,6 +27,7 @@ python examples/generate_samples.py --replace
 python examples/generate_display_effects.py --replace
 python examples/generate_display_effects.py --effect scanlines --replace
 python examples/generate_display_effects.py --effect crt-aperture --replace
+python examples/generate_display_effects.py --effect bloom --replace
 ```
 
 This refreshes only the known documentation artifacts in `samples/comparisons` and refuses directories with unrelated files. Use `--output-dir /path/to/new-samples` to generate elsewhere. Source images stay in `samples/sources`; source-photo thumbnails are smoothly fitted, while converted previews keep their generated pixels. View sheets at 100% when evaluating exact dither patterns.

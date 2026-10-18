@@ -109,3 +109,9 @@ Brightness and contrast must be non-negative; both default to `1.0` when omitted
 so existing version-1 presets retain their previous output. Explicit CLI values
 of `1.0` reset either saved adjustment to neutral.
 The format stores data only; it cannot execute commands or reference other presets.
+
+Independent `bloom_strength` (0 to 1, default 0/off) and `bloom_radius` (0.25 to 8
+logical pixel widths, default 1) combine with any `display_effect`. Older presets
+retain their output with bloom off. `--bloom-strength 0` disables saved bloom
+without disabling the surface treatment; a saved non-default radius is retained.
+See [effect order and controls](display-effects.md).

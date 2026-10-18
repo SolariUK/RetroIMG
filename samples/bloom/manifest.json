@@ -1,0 +1,191 @@
+{
+  "version": 1,
+  "source": {
+    "id": "city-night",
+    "file": "city-night.jpg",
+    "title": "Stockholm at night",
+    "fit": "cover",
+    "public": true,
+    "credit": "Martin Eklund (Teadrinker), 27 October 2012",
+    "rights": "CC0 1.0 Universal Public Domain Dedication.",
+    "source": "https://commons.wikimedia.org/wiki/File:City_silhouette_at_night.jpg",
+    "reference_sha256": "7cce3e17e8180acd3a2a3bf8185ef2fcf7c91a344e33069f7ecb3c5cc7af4092",
+    "reference_size": [
+      4879,
+      3253
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  "logical_size": [
+    320,
+    224
+  ],
+  "examples": [
+    {
+      "filename": "megadrive-plain.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-plain-crop.png",
+      "crop_box": [
+        768,
+        32,
+        1280,
+        544
+      ],
+      "sha256": "932d4cd3218c9158a1a3d32f7a8dd342bdb18cc091ac88f32c0773f03116e531",
+      "crop_sha256": "c3ef6225e4685199ce35cdb0c1409c0f068a0ccb33a7e40d9eb1b6592f32c502",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-plain.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4"
+    },
+    {
+      "filename": "megadrive-bloom-only.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-bloom-only-crop.png",
+      "crop_box": [
+        768,
+        32,
+        1280,
+        544
+      ],
+      "sha256": "b90b291fd9e0f67e4d4712cf8c3efba0887d4f0f10bddc45d5fbe2bf9718ebc5",
+      "crop_sha256": "4cd19e01c7a87bd1863fe875cab2c1c32f3e4a1b30fdb4fcb8d2ac48c5229259",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "bloom_strength": 0.25,
+        "bloom_radius": 1.0
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-bloom-only.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --bloom-strength 0.25 --bloom-radius 1.0"
+    },
+    {
+      "filename": "megadrive-crt-only.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-only-crop.png",
+      "crop_box": [
+        768,
+        32,
+        1280,
+        544
+      ],
+      "sha256": "58ce5d442d8206eee493660b29cc74d8afdf1e317b15f093095fd16ca903c311",
+      "crop_sha256": "30deae57fa8028be2b4bb586ee8560c8cfa32a6ef783cc5f43fc11393a84bb64",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-only.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35"
+    },
+    {
+      "filename": "megadrive-crt-bloom-subtle.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-bloom-subtle-crop.png",
+      "crop_box": [
+        768,
+        32,
+        1280,
+        544
+      ],
+      "sha256": "df4aa7c46666a5c0f6715169e90a726606a5a06859ef5e995ce46f2d8d43fb1e",
+      "crop_sha256": "b74be4151cbcf672a20f73a7bb2ddb90204ef16e02ebfb3e3bf83b31b07e3f67",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35,
+        "bloom_strength": 0.25,
+        "bloom_radius": 1.0
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-bloom-subtle.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35 --bloom-strength 0.25 --bloom-radius 1.0"
+    },
+    {
+      "filename": "megadrive-crt-bloom-strong.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-bloom-strong-crop.png",
+      "crop_box": [
+        768,
+        32,
+        1280,
+        544
+      ],
+      "sha256": "39c046f18c41227cdd907d095b615f8ca0df9f1f44e93293dbbb019d4d181dcc",
+      "crop_sha256": "4926744213384bc73484d40f501731724eb17206d5db2b6d5afc742a2a9a8567",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35,
+        "bloom_strength": 0.85,
+        "bloom_radius": 1.0
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-bloom-strong.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35 --bloom-strength 0.85 --bloom-radius 1.0"
+    },
+    {
+      "filename": "megadrive-crt-bloom-wide.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-bloom-wide-crop.png",
+      "crop_box": [
+        768,
+        32,
+        1280,
+        544
+      ],
+      "sha256": "269bee6aa053dbef859527bbfd0e18f87feca10454e15d82fafbcf5eadaf27c5",
+      "crop_sha256": "5d3e036b654ea7ef57798f5287674bf3c81827cbbd74ffe8eee74561d4530238",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35,
+        "bloom_strength": 0.85,
+        "bloom_radius": 3.0
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-bloom-wide.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35 --bloom-strength 0.85 --bloom-radius 3.0"
+    }
+  ]
+}

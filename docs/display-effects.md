@@ -11,7 +11,14 @@ or display brightness adjustment. Defaults preserve existing output exactly.
 The pipeline order is:
 
 **Resize and source adjustments → palette conversion and dithering → preview
-enlargement/aspect correction → display effect → display brightness → save PNG.**
+enlargement/aspect correction → display treatment → highlight bloom → display
+brightness → save PNG.**
+
+Effects combine in this fixed order. `--display-effect` selects a surface treatment
+(LCD, scanlines or CRT grille); the independent bloom controls add glow after it.
+Bloom can also run by itself with `--display-effect none`. Display brightness is
+always last. Each stage has its own controls; argument order does not change the
+rendering order. Defaults leave all effects off and brightness neutral.
 
 | Option | Position in the pipeline | Result |
 | --- | --- | --- |
@@ -143,7 +150,8 @@ darken the image further; there is no automatic brightness compensation.
 
 The effect is available with every profile through CLI, guided mode and
 presets, and requires scale 3 or greater. It remains an aesthetic flat-screen
-approximation, without bloom, curvature, reflections or a measured tube model.
+approximation, without curvature, reflections or a measured tube model.
+Bloom is a separate optional stage rather than part of the grille strength.
 `--display-effect scanlines` remains available for scanlines without a mask.
 
 [CRT examples and unscaled crops](../samples/crt-aperture/README.md) show the
@@ -155,6 +163,63 @@ window can create colour shifts or moiré. Crops retain the full image's mask ph
 
 ```bash
 python examples/generate_display_effects.py --effect crt-aperture --replace
+```
+
+## Highlight bloom and combined effects
+
+```bash
+# Bloom alone; the default display treatment is none.
+retroimg convert photo.jpg bloom.png --profile megadrive-320 --megadrive-mode tiles \
+    --scale 4 --bloom-strength 0.25
+
+# CRT grille + scanlines, then bloom, then display brightness.
+retroimg convert photo.jpg crt-bloom.png --profile megadrive-320 --megadrive-mode tiles \
+    --dither bayer --bayer-size 4 --scale 4 --display-effect crt-aperture \
+    --effect-strength 0.35 --bloom-strength 0.25 --bloom-radius 1 \
+    --display-brightness 1
+```
+
+| Control | Default | Meaning |
+| --- | --- | --- |
+| `--bloom-strength` | `0` (off) | Added highlight glow, from 0 to 1; try subtle `0.25` |
+| `--bloom-radius` | `1` | Gaussian spread (sigma), from 0.25 to 8 logical pixel widths |
+
+Bloom extracts highlights whose brightest channel exceeds half the linear-light
+range, preserving their RGB proportions. It blurs that highlight layer and adds
+it to the sharp preview in linear light, clipping channels at the display range.
+Dark areas can receive glow from nearby highlights; an entirely dark image has
+no bloom. It never dims the image or blurs the original pixels. Strong settings
+can soften contrast near highlights and clip bright colours.
+
+Radius follows the enlarged logical pixel width: radius 1 at scale 4 is a
+four-output-pixel Gaussian sigma for square or narrow source pixels. The halo is
+circular in output space even when aspect correction makes logical cells taller.
+If aspect correction widens logical pixels, the radius grows with their width.
+Output dimensions and indexed conversion data do not change. Bloom alone has no
+minimum enlargement requirement; combined treatments retain their existing
+minimum scale. Its 8-bit linear RGB blur buffer is a small CPU approximation,
+not an HDR or measured CRT optical model. It adds no dependencies beyond Pillow.
+
+The guide offers bloom independently after selecting a display treatment, and
+both controls are saved in version-1 presets. Older presets keep bloom off.
+`--bloom-strength 0` disables inherited bloom while retaining the surface effect;
+`--display-effect none` disables the surface effect while retaining bloom.
+For plain output, disable both and reset display brightness to 1. A saved radius
+is retained when bloom is disabled, allowing it to be re-enabled later.
+Python callers pass `bloom_strength` and `bloom_radius` to `convert_file` or
+`render_indexed` with the same defaults and units.
+
+[Full-size bloom examples and unscaled crops](../samples/bloom/README.md) compare
+plain, bloom alone, CRT alone, CRT with subtle bloom, and CRT with stronger bloom.
+All use the same Mega Drive night-scene conversion and neutral display brightness.
+Bright window lights against dark brickwork make the surrounding glow easier to
+judge than the macaws image. The detail crop isolates a lit window; strength and
+radius are unchanged from the initial examples in the regular comparisons.
+An additional wider-glow example explicitly increases radius to 3 at strength
+0.85 to demonstrate the spread control.
+
+```bash
+python examples/generate_display_effects.py --effect bloom --replace
 ```
 
 ## LCD examples and implementation references
@@ -183,14 +248,15 @@ small implementation uses an original, analytically averaged cosine profile
 and a basic repeating RGB attenuation mask with sRGB transfer functions. It does
 not port that shader's code, brightness-dependent beam or interpolation.
 More elaborate shader adaptations should retain their upstream licence and
-attribution. Other mask patterns and bloom remain future work.
+attribution. Bloom uses an original highlight extraction and Pillow Gaussian
+blur, without adapting upstream shader code. Other mask patterns remain future work.
 
 ## Planned additions
 
-The next display effect is optional, subtle bloom around bright highlights.
 After bloom, planned additions are chromatic aberration and RF-style colour
 bleed and smearing, inspired by the appearance of NES output on an RF-connected
 television. These are visual treatments rather than a promise of an accurate
 signal-level RF simulation. Each belongs in the display pipeline, leaving the
-underlying palette conversion and indexed image unchanged. How these effects
-combine with existing treatments will be decided during implementation.
+underlying palette conversion and indexed image unchanged. These will extend the
+ordered presentation chain; their exact positions and controls will be decided
+during implementation.

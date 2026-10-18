@@ -9,7 +9,7 @@ from retroimg.convert import convert_file
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
-from retroimg.display_effects import DEFAULT_EFFECT_STRENGTH, DISPLAY_EFFECTS
+from retroimg.display_effects import DEFAULT_BLOOM_RADIUS, DEFAULT_EFFECT_STRENGTH, DISPLAY_EFFECTS
 
 
 def build_parser(*, conversion_defaults: dict | None = None) -> argparse.ArgumentParser:
@@ -50,6 +50,10 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
                          help=f'display effect strength from 0 to 1 (default: {DEFAULT_EFFECT_STRENGTH}; requires a display effect)')
     convert.add_argument('--display-brightness', type=float, default=1.0,
                          help='finite non-negative linear-light gain after scaling and display effects, before saving (default: 1)')
+    convert.add_argument('--bloom-strength', type=float, default=0.0,
+                         help='highlight glow from 0 to 1, alone or with any display effect (default: 0/off; try 0.25)')
+    convert.add_argument('--bloom-radius', type=float, default=DEFAULT_BLOOM_RADIUS,
+                         help='bloom spread (Gaussian sigma) in logical pixel widths, 0.25 to 8 (default: 1)')
     convert.add_argument(
         "--teletext-mode",
         choices=("bitmap", "mosaic"),
@@ -215,6 +219,8 @@ def main(argv: list[str] | None = None) -> None:
             display_effect=args.display_effect,
             effect_strength=args.effect_strength,
             display_brightness=args.display_brightness,
+            bloom_strength=args.bloom_strength,
+            bloom_radius=args.bloom_radius,
             teletext_mode=args.teletext_mode,
             spectrum_mode=args.spectrum_mode,
             c64_mode=args.c64_mode,
@@ -242,6 +248,7 @@ def main(argv: list[str] | None = None) -> None:
             f"nes-mode={args.nes_mode}, mastersystem-mode={args.mastersystem_mode}, "
             f"gameboy-mode={args.gameboy_mode}, cga-mode={args.cga_mode}, ega-mode={args.ega_mode}, "
             f"palette-size={len(indexed.palette.colours)}, display-effect={args.display_effect}, "
+            f"bloom-strength={args.bloom_strength}, bloom-radius={args.bloom_radius}, "
             f"display-brightness={args.display_brightness}"
         )
     elif args.command == "palettes":
