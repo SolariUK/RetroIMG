@@ -179,7 +179,7 @@ def _adjustment_options(ui: Prompts, defaults: dict, preferred: dict) -> dict:
     adjusted = any(preferred[key] != defaults[key] for key in adjustments)
     if ui.yes_no('Adjust source colours?', adjusted):
         for key in ('brightness', 'contrast'):
-            result[key] = ui.number(f'{key.title()} (1=neutral)', preferred[key], valid=lambda n: n >= 0,
+            result[key] = ui.number(f'{key.title()} (source, before palette conversion; 1=neutral)', preferred[key], valid=lambda n: n >= 0,
                                     hint='Enter a finite non-negative number.')
         result['saturation'] = ui.number('Saturation (1=neutral)', preferred['saturation'], valid=lambda n: n > 0,
                                            hint='Enter a finite number greater than zero.')
@@ -271,6 +271,7 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
         ('none', 'none: plain converted pixels'),
         ('gameboy-lcd', 'gameboy-lcd: pixel cells and shadows; recommended for Game Boy, available for any machine'),
         ('scanlines', 'scanlines: smooth horizontal beams aligned to the original image rows'),
+        ('crt-aperture', 'crt-aperture: RGB aperture grille combined with scanlines'),
     ], preferred.get('display_effect', 'none'))
     minimum_scale = 1
     if effect != 'none':
@@ -290,6 +291,11 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
     options['scale'] = ui.number('Preview scale (integer enlargement)', scale_default,
                                  integer=True, valid=lambda n: n >= minimum_scale,
                                  hint=f'Enter a whole number of at least {minimum_scale}.')
+    display_brightness = ui.number('Display brightness (after effects, linear-light gain; 1=neutral)',
+                                   preferred['display_brightness'], valid=lambda n: n >= 0,
+                                   hint='Enter a finite non-negative number.')
+    if display_brightness != 1:
+        options['display_brightness'] = display_brightness
     return options
 
 
@@ -371,7 +377,7 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     ui.write(f'  Logical image: {width}x{height}; fitting: {options["fit"]}')
     ui.write(f'  Dithering: {options["dither"]}' + (f'; matrix: {options["bayer_size"]}x{options["bayer_size"]}'
                                                        if 'bayer_size' in options else ''))
-    ui.write(f'  Brightness: {options.get("brightness", defaults["brightness"])}; '
+    ui.write(f'  Source brightness: {options.get("brightness", defaults["brightness"])}; '
              f'contrast: {options.get("contrast", defaults["contrast"])}')
     ui.write(f'  Saturation: {options.get("saturation", defaults["saturation"])}; '
              f'hue shift: {options.get("hue_shift", defaults["hue_shift"])} degrees')
@@ -380,6 +386,7 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     effect = options.get('display_effect', 'none')
     ui.write(f'  Display effect: {effect}' + (
         f'; strength: {options.get("effect_strength", DEFAULT_EFFECT_STRENGTH)}' if effect != 'none' else ''))
+    ui.write(f'  Display brightness: {options.get("display_brightness", 1.0)} (after display effects)')
 
 
 def _save_new_preset(ui: Prompts, directory: Path, options: dict, parser, loaded):
@@ -402,11 +409,36 @@ def _save_new_preset(ui: Prompts, directory: Path, options: dict, parser, loaded
             return None
 
 
+def _guided_pixelation(ui: Prompts, source: Path, output: Path, *, print_only: bool) -> list[str] | None:
+    block_size = 8
+    while True:
+        block_size = ui.number('Pixel block size (source pixels, 1=neutral)', block_size,
+                               integer=True, valid=lambda n: n > 0, hint='Enter a positive whole number.')
+        arguments = ['pixelate', str(source), str(output), f'--block-size={block_size}']
+        ui.write(f'\nPixelation: original RGB colours; {block_size}x{block_size} blocks; image dimensions preserved.')
+        ui.write('Each block uses its average source colour; no system palette or dithering is applied.')
+        ui.write('\nEquivalent command:\n' + format_command(arguments))
+        if print_only:
+            ui.write('Command only; no image written.')
+            return None
+        action = ui.choice('Next action', [('convert', 'Pixelate now'), ('edit', 'Revise block size'),
+                                          ('command', 'Keep the command only'), ('cancel', 'Cancel')], 'convert')
+        if action == 'edit':
+            continue
+        if action == 'convert':
+            if output.exists() and not ui.yes_no('Output already exists. Replace it?'):
+                ui.write('No image written.')
+                return None
+            return arguments
+        ui.write('Command only; no image written.' if action == 'command' else 'Cancelled; no image written.')
+        return None
+
+
 def run_guided(input_path: Path | None, output_path: Path | None, *,
                parser: argparse.ArgumentParser, print_only: bool = False,
                ui: Prompts | None = None, preset_reference: str | None = None,
                presets_dir: Path | None = None) -> list[str] | None:
-    """Return confirmed convert arguments, or None after printing/cancellation."""
+    """Return confirmed CLI arguments, or None after printing/cancellation."""
     ui = Prompts() if ui is None else ui
     ui.write('retroimg guided command builder\nPress Enter for defaults. Enter q at any prompt to cancel.')
     try:
@@ -417,13 +449,18 @@ def run_guided(input_path: Path | None, output_path: Path | None, *,
         loaded = None
         if preset_reference:
             loaded = load_preset(preset_reference, parser, directory)
-        elif ui.choice('Starting point', [('fresh', 'Start fresh'), ('load', 'Load a preset')], 'fresh') == 'load':
-            entries, errors = list_presets(parser, directory)
-            for error in errors:
-                ui.write('Skipping unavailable preset: ' + error)
-            selected = ui.choice('Preset', [(entry.identifier, f'{entry.name} [{entry.identifier}] - {entry.description}')
-                                            for entry in entries], entries[0].identifier)
-            loaded = next(entry for entry in entries if entry.identifier == selected)
+        else:
+            start = ui.choice('Starting point', [('fresh', 'Start a retro conversion'), ('load', 'Load a preset'),
+                                                 ('pixelate', 'Pixelate original image colours')], 'fresh')
+            if start == 'pixelate':
+                return _guided_pixelation(ui, source, output, print_only=print_only)
+            if start == 'load':
+                entries, errors = list_presets(parser, directory)
+                for error in errors:
+                    ui.write('Skipping unavailable preset: ' + error)
+                selected = ui.choice('Preset', [(entry.identifier, f'{entry.name} [{entry.identifier}] - {entry.description}')
+                                                for entry in entries], entries[0].identifier)
+                loaded = next(entry for entry in entries if entry.identifier == selected)
         options = dict(loaded.settings) if loaded else collect_options(ui, defaults)
         if loaded:
             ui.write(f'Loaded preset: {loaded.name}. {loaded.description}')

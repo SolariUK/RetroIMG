@@ -177,12 +177,24 @@ and the guide includes them under **Adjust source colours**.
 Resolution, fitting, palettes and preview scaling are configurable. See
 [conversion options and comparison commands](docs/conversion.md) for details.
 Optional [display effects](docs/display-effects.md) add Game Boy LCD cells and
-shadows or smooth scanlines to enlarged previews, with any profile. See the
+shadows, smooth scanlines, or a CRT aperture grille combined with scanlines to
+enlarged previews, with any profile. See the
 [full-size examples and detail crops](samples/display-effects/README.md).
 Separate [scanline examples](samples/scanlines/README.md) show plain, subtle and
-stronger treatments. CRT masks, bloom and native hardware export are deferred.
+stronger treatments; [CRT aperture-grille examples](samples/crt-aperture/README.md)
+include scanlines alone for comparison. Bloom and native hardware export are deferred.
+
+`--display-brightness` adjusts the finished preview **after display effects**,
+preserving palette fitting and dithering. It defaults to `1.0`; try `2` to
+brighten a strong CRT treatment. The existing `--brightness` adjusts the source
+**before palette conversion**. See [pipeline order](docs/display-effects.md#source-brightness-and-display-brightness).
 
 ## Example results
+
+For [generic pixelation](docs/pixelation.md) in the original image's colours,
+use `retroimg pixelate photo.jpg output.png --block-size 8`, or select
+**Pixelate original image colours** in the guide. Block size controls chunkiness
+while retaining image dimensions. See [4×4, 8×8 and 16×16 examples](samples/pixelation/README.md).
 
 The [sample comparisons](samples/comparisons/README.md) show selected conversions
 of the bundled public-domain/CC0 reference photographs. Fifteen comparison groups are split into 40 short PNG sheets,

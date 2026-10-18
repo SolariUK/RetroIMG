@@ -5,12 +5,16 @@ import math
 from PIL import Image
 
 from retroimg.model import IndexedImage
-from retroimg.display_effects import gameboy_lcd, scanlines, validate_display_effect
+from retroimg.display_effects import (
+    apply_display_brightness, crt_aperture, gameboy_lcd, scanlines,
+    validate_display_brightness, validate_display_effect,
+)
 
 
 def render_indexed(
     image: IndexedImage, scale: int = 1, *, nearest: bool = True, pixel_aspect: float = 1.0,
     display_effect: str = 'none', effect_strength: float | None = None,
+    display_brightness: float = 1.0,
 ) -> Image.Image:
     """Render with optional aspect correction by enlarging the longer axis.
 
@@ -24,6 +28,7 @@ def render_indexed(
     if not math.isfinite(pixel_aspect) or pixel_aspect <= 0:
         raise ValueError("pixel aspect must be finite and positive")
     strength = validate_display_effect(display_effect, effect_strength, scale)
+    validate_display_brightness(display_brightness)
 
     palette = image.palette.rgb_values()
     out = Image.new("RGB", (image.width, image.height))
@@ -42,4 +47,6 @@ def render_indexed(
         out = gameboy_lcd(out, (image.width, image.height), background, strength)
     elif display_effect == 'scanlines':
         out = scanlines(out, image.height, strength)
-    return out
+    elif display_effect == 'crt-aperture':
+        out = crt_aperture(out, image.height, strength)
+    return apply_display_brightness(out, display_brightness)

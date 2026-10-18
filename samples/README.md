@@ -8,7 +8,13 @@ The two earlier user-supplied sources remain outside the repository and are excl
 
 [scanlines/](scanlines/README.md) shows plain, subtle and stronger scanline treatments of a Mega Drive macaws conversion, also with full-size examples and unscaled crops.
 
+[crt-aperture/](crt-aperture/README.md) adds a CRT RGB aperture grille combined with scanlines, including plain and scanlines-only comparisons, full-size PNGs and unscaled crops.
+
 ## Generate examples
+
+[pixelation/](pixelation/README.md) compares original-colour pixelation at three
+block sizes, with full-size PNGs and unscaled crops. Refresh it with
+`python examples/generate_pixelation.py --replace`.
 
 Run from the project root with retroimg installed:
 
@@ -16,6 +22,7 @@ Run from the project root with retroimg installed:
 python examples/generate_samples.py --replace
 python examples/generate_display_effects.py --replace
 python examples/generate_display_effects.py --effect scanlines --replace
+python examples/generate_display_effects.py --effect crt-aperture --replace
 ```
 
 This refreshes only the known documentation artifacts in `samples/comparisons` and refuses directories with unrelated files. Use `--output-dir /path/to/new-samples` to generate elsewhere. Source images stay in `samples/sources`; source-photo thumbnails are smoothly fitted, while converted previews keep their generated pixels. View sheets at 100% when evaluating exact dither patterns.

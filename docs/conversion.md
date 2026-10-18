@@ -120,6 +120,10 @@ remain unchanged.
 
 ## Source colour adjustments
 
+Source adjustments below run before palette conversion. The separate
+`--display-brightness` control runs after enlargement and display effects;
+it adjusts only the finished RGB preview. See [pipeline order](display-effects.md#source-brightness-and-display-brightness).
+
 Optional adjustments apply after resizing and before palette/cell optimisation
 for every profile. Processing order is **brightness → contrast → saturation →
 hue shift → RGB gains**. Each stage works on 8-bit RGB values and clips results

@@ -198,6 +198,10 @@ recorded in each gallery manifest.
 
 ## Curated repository samples
 
+`python examples/generate_pixelation.py --replace` maintains the separate
+[original-colour pixelation examples](../samples/pixelation/README.md), comparing
+4×4, 8×8 and 16×16 blocks without a hardware palette or resolution change.
+
 For the separate small set of Game Boy LCD display examples, run
 `python examples/generate_display_effects.py --replace`. These retain full-size
 PNGs and unscaled detail crops in [samples/display-effects](../samples/display-effects/README.md),
@@ -207,6 +211,10 @@ the mode-comparison sheets below.
 Use `python examples/generate_display_effects.py --effect scanlines --replace`
 for [scanline examples](../samples/scanlines/README.md): a Mega Drive macaws
 conversion shown plain and at two strengths, with full-size PNGs and unscaled crops.
+
+Use `python examples/generate_display_effects.py --effect crt-aperture --replace`
+for [CRT aperture-grille examples](../samples/crt-aperture/README.md), including
+plain, scanlines-only, subtle CRT and stronger CRT versions of the same conversion.
 
 `generate_samples.py` reuses the converter, mode variants and constraint checks
 to maintain fifteen comparison groups across 40 PNG sheets, each 1328 pixels

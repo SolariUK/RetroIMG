@@ -17,6 +17,12 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
     p.add_argument("--version", action="version", version=f"retroimg {__version__}")
     sub = p.add_subparsers(dest="command", required=True)
 
+    pixelate = sub.add_parser('pixelate', help='pixelate original image colours without a system palette')
+    pixelate.add_argument('input', type=Path)
+    pixelate.add_argument('output', type=Path)
+    pixelate.add_argument('--block-size', type=int, default=8,
+                          help='positive whole-number block width and height in source pixels (default: 8; 1 is neutral)')
+
     convert = sub.add_parser("convert", help="convert an image")
     convert.add_argument("input", type=Path)
     convert.add_argument("output", type=Path)
@@ -30,7 +36,7 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
                          help="Bayer matrix size (default: 4; requires --dither bayer)")
     for name in ("brightness", "contrast"):
         convert.add_argument(f"--{name}", type=float, default=1.0,
-                             help=f"finite non-negative {name} multiplier (default: 1)")
+                             help=f"finite non-negative source {name} multiplier before palette conversion (default: 1)")
     convert.add_argument("--saturation", type=float, default=1.0)
     convert.add_argument("--hue-shift", type=float, default=0.0,
                          help="hue rotation in degrees; +120 maps red to green (default: 0)")
@@ -39,9 +45,11 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
                              help=f"non-negative {channel} multiplier (default: 1)")
     convert.add_argument("--scale", type=int, default=8, help="integer preview enlargement")
     convert.add_argument('--display-effect', choices=DISPLAY_EFFECTS, default='none',
-                         help='optional LCD cells or scanlines; available with any profile (scale >= 3)')
+                         help='optional LCD cells, scanlines or CRT aperture grille with scanlines; any profile (scale >= 3)')
     convert.add_argument('--effect-strength', type=float,
                          help=f'display effect strength from 0 to 1 (default: {DEFAULT_EFFECT_STRENGTH}; requires a display effect)')
+    convert.add_argument('--display-brightness', type=float, default=1.0,
+                         help='finite non-negative linear-light gain after scaling and display effects, before saving (default: 1)')
     convert.add_argument(
         "--teletext-mode",
         choices=("bitmap", "mosaic"),
@@ -142,6 +150,14 @@ def main(argv: list[str] | None = None) -> None:
     argv = sys.argv[1:] if argv is None else argv
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == 'pixelate':
+        from retroimg.pixelate import pixelate_file
+        try:
+            image = pixelate_file(args.input, args.output, block_size=args.block_size)
+        except (OSError, ValueError) as exc:
+            parser.error(str(exc))
+        print(f'Wrote {args.output}: {image.width}x{image.height}, original RGB colours, block-size={args.block_size}')
+        return
     if args.command == "presets":
         from retroimg.presets import list_presets
         entries, errors = list_presets(parser, args.presets_dir)
@@ -198,6 +214,7 @@ def main(argv: list[str] | None = None) -> None:
             scale=args.scale,
             display_effect=args.display_effect,
             effect_strength=args.effect_strength,
+            display_brightness=args.display_brightness,
             teletext_mode=args.teletext_mode,
             spectrum_mode=args.spectrum_mode,
             c64_mode=args.c64_mode,
@@ -224,7 +241,8 @@ def main(argv: list[str] | None = None) -> None:
             f"megadrive-mode={args.megadrive_mode}, snes-mode={args.snes_mode}, "
             f"nes-mode={args.nes_mode}, mastersystem-mode={args.mastersystem_mode}, "
             f"gameboy-mode={args.gameboy_mode}, cga-mode={args.cga_mode}, ega-mode={args.ega_mode}, "
-            f"palette-size={len(indexed.palette.colours)}, display-effect={args.display_effect}"
+            f"palette-size={len(indexed.palette.colours)}, display-effect={args.display_effect}, "
+            f"display-brightness={args.display_brightness}"
         )
     elif args.command == "palettes":
         for name, palette in sorted(PALETTES.items()):

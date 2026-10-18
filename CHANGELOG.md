@@ -2,6 +2,15 @@
 
 ## 0.2.0 — Unreleased
 
+- Added generic original-colour pixelation with a pixel block-size control,
+  standalone CLI command, guided workflow and full-size examples. Fixed blocks
+  preserve image dimensions and clip partial edge blocks without stretching.
+- Added separate display brightness after rendering effects, with a neutral
+  default, CLI/guided/preset controls and a compensated CRT example. Source
+  brightness remains a pre-conversion adjustment; indexed data is unaffected.
+- Added optional CRT aperture-grille rendering combined with scanlines, using
+  the existing strength control and subtle default. Includes CLI/guided/preset
+  support, full-size Mega Drive examples, scanlines-only comparison and crops.
 - Improved arbitrary-palette Bayer mixing with a local-spacing contrast penalty
   and realizable matrix coverage, reducing isolated dark/bright speckles while
   preserving adjacent shade ramps, two-colour coverage and palette constraints.

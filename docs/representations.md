@@ -124,7 +124,8 @@ interpret these values for preview rendering. EGA's register-bit order is
 independent of the full RGB grid's internal palette order.
 
 [Display effects](display-effects.md) run after logical rasterisation and preview
-scaling. Optional Game Boy LCD cells and shadows or row-aligned scanlines modify
+scaling. Optional Game Boy LCD cells and shadows, row-aligned scanlines, or a CRT
+aperture grille with scanlines modify
 the RGB preview without changing cells, palettes or the raw indexed raster.
 Future bloom, phosphor scaling and bezels belong to the same separate
 presentation layer.

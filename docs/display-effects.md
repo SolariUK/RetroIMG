@@ -3,8 +3,42 @@
 Display effects are optional treatments of the enlarged RGB preview. They run
 after conversion and aspect correction. Indexed pixels, hardware constraints,
 palette entries and the `IndexedImage` returned by `convert_file` stay unchanged.
-The resulting PNG can contain additional colours from the display simulation.
-Without an effect, existing output is unchanged.
+The resulting PNG can contain additional colours from the display simulation
+or display brightness adjustment. Defaults preserve existing output exactly.
+
+## Source brightness and display brightness
+
+The pipeline order is:
+
+**Resize and source adjustments → palette conversion and dithering → preview
+enlargement/aspect correction → display effect → display brightness → save PNG.**
+
+| Option | Position in the pipeline | Result |
+| --- | --- | --- |
+| `--brightness` | Source adjustment, before palette conversion | Can change fitted colours, pixel indices and dithering |
+| `--display-brightness` | Final RGB adjustment, after display effects | Changes the finished preview without refitting colours or dithering |
+
+Display brightness defaults to `1.0` (neutral). Values above 1 brighten the
+display, values between 0 and 1 dim it, and 0 produces black. It is a finite,
+non-negative **linear-light multiplier**: 2 doubles the light level, rather than
+doubling the encoded RGB values. Channels exceeding the display range are clipped.
+Black remains black. It works with every profile, including when no display
+effect is selected, and does not change output dimensions.
+
+For example, brighten a strong CRT treatment without changing its conversion:
+
+```bash
+retroimg convert photo.jpg crt-brighter.png --profile megadrive-320 --megadrive-mode tiles \
+    --dither bayer --bayer-size 4 --scale 4 --display-effect crt-aperture \
+    --effect-strength 0.85 --display-brightness 2
+```
+
+The guide asks for **Display brightness (after effects)** separately from the
+source colour controls, and labels both stages in its summary. Both settings
+can be saved in ordinary presets. `--display-brightness 1` resets an inherited
+display gain while retaining source adjustments. Disabling an effect leaves
+display brightness independent: also reset it to 1 for an unmodified preview.
+Python callers can pass `display_brightness=2` to `convert_file` or `render_indexed`.
 
 ## Game Boy LCD
 
@@ -39,7 +73,7 @@ retroimg convert photo.jpg cga-lcd.png --profile cga-320 --cga-mode constrained 
 ```
 
 No profile enables display effects automatically. `--display-effect none`
-keeps plain output and also overrides an effect inherited from a preset.
+disables the effect, including one inherited from a preset.
 Changing a preset's platform retains its explicitly chosen display effect,
 allowing experimentation; the minimum scale still applies.
 
@@ -83,6 +117,46 @@ them at 100% to avoid browser scaling of the pattern. Regenerate with:
 python examples/generate_display_effects.py --effect scanlines --replace
 ```
 
+## CRT aperture grille
+
+```bash
+retroimg convert photo.jpg crt.png --profile megadrive-320 --megadrive-mode tiles \
+    --dither bayer --bayer-size 4 --scale 4 \
+    --display-effect crt-aperture --effect-strength 0.35
+```
+
+`crt-aperture` combines the existing row-aligned scanlines with vertical RGB
+phosphor stripes. Each three-column output repeat contains a red, green and
+blue stripe, starting at the image's left edge. Each stripe preserves its named
+channel's scanline brightness and dims the other two channels. The mask stays
+at one output pixel per stripe, independent of logical pixels and aspect ratio;
+scanline spacing still follows the logical image rows. The pattern is applied
+after enlargement and never changes the native conversion resolution.
+
+The existing `--effect-strength` control adjusts both scanline and mask strength
+together. It defaults to subtle `0.35`; `0` gives plain output and `1` gives the
+strongest treatment. The mask retains `1-strength` of the other channels' light.
+Both weights are applied in linear light before a single conversion back to
+sRGB, avoiding intermediate rounding. Black stays black, colour channels absent
+in the source stay absent, and highlights are never boosted. Stronger settings
+darken the image further; there is no automatic brightness compensation.
+
+The effect is available with every profile through CLI, guided mode and
+presets, and requires scale 3 or greater. It remains an aesthetic flat-screen
+approximation, without bloom, curvature, reflections or a measured tube model.
+`--display-effect scanlines` remains available for scanlines without a mask.
+
+[CRT examples and unscaled crops](../samples/crt-aperture/README.md) show the
+same Mega Drive macaws conversion plain, with scanlines alone, with subtle CRT,
+with stronger CRT, and with stronger CRT plus display brightness 2.0.
+Output remains 1280×960 from the 320×224 logical image.
+Inspect the original PNGs at 100%; fitting a fine phosphor mask to a browser
+window can create colour shifts or moiré. Crops retain the full image's mask phase.
+
+```bash
+python examples/generate_display_effects.py --effect crt-aperture --replace
+```
+
 ## LCD examples and implementation references
 
 [Full-size examples and unscaled crops](../samples/display-effects/README.md)
@@ -103,9 +177,20 @@ static appearance and temporal response. This first treatment uses original
 code for a small rectangular-cell model; it does not include or port that
 shader.
 
-For scanlines, [CRT EasyMode](https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-easymode.glsl)
-is a useful reference for periodic beam profiles and brightness handling. Our
+For scanlines and aperture grilles, [CRT EasyMode](https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-easymode.glsl)
+is a useful reference for periodic beams, RGB stripe masks and brightness handling. Our
 small implementation uses an original, analytically averaged cosine profile
-and sRGB transfer functions; it does not port that shader's brightness-dependent
-beam, interpolation or masks. More elaborate shader adaptations should retain
-their upstream licence and attribution. Phosphor masks and bloom remain future work.
+and a basic repeating RGB attenuation mask with sRGB transfer functions. It does
+not port that shader's code, brightness-dependent beam or interpolation.
+More elaborate shader adaptations should retain their upstream licence and
+attribution. Other mask patterns and bloom remain future work.
+
+## Planned additions
+
+The next display effect is optional, subtle bloom around bright highlights.
+After bloom, planned additions are chromatic aberration and RF-style colour
+bleed and smearing, inspired by the appearance of NES output on an RF-connected
+television. These are visual treatments rather than a promise of an accurate
+signal-level RF simulation. Each belongs in the display pipeline, leaving the
+underlying palette conversion and indexed image unchanged. How these effects
+combine with existing treatments will be decided during implementation.

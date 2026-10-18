@@ -24,6 +24,66 @@ def test_plain_render_and_zero_strength_preserve_pixels_and_indexes():
     assert indexed.pixels == original
 
 
+@pytest.mark.parametrize('effect', ['none', 'gameboy-lcd', 'scanlines', 'crt-aperture'])
+def test_display_brightness_is_a_final_preview_adjustment_with_neutral_default(effect):
+    from retroimg.display_effects import apply_display_brightness
+
+    indexed = cells()
+    original = indexed.pixels
+    plain = render_indexed(indexed, scale=6, display_effect=effect)
+    neutral = render_indexed(indexed, scale=6, display_effect=effect, display_brightness=1)
+    bright = render_indexed(indexed, scale=6, display_effect=effect, display_brightness=2)
+    black = render_indexed(indexed, scale=6, display_effect=effect, display_brightness=0)
+    assert neutral.tobytes() == plain.tobytes()
+    assert bright.tobytes() == apply_display_brightness(plain, 2).tobytes()
+    assert bright.size == plain.size and bright.tobytes() != plain.tobytes()
+    assert black.getextrema() == ((0, 0),) * 3
+    assert indexed.pixels == original
+
+
+def test_display_brightness_uses_linear_light_and_clamps_highlights():
+    from retroimg.model import Colour, Palette
+
+    palette = Palette('example', (Colour('sample', (64, 128, 192)), Colour('black', (0, 0, 0))))
+    indexed = IndexedImage(2, 1, palette, ((0, 1),))
+    result = render_indexed(indexed, display_brightness=2)
+    assert result.getpixel((0, 0)) == (90, 176, 255)
+    assert result.getpixel((1, 0)) == (0, 0, 0)
+
+
+@pytest.mark.parametrize('value', [-1, float('nan'), float('inf'), True, None, '2', 10**1000])
+def test_invalid_display_brightness_rejected_before_io_and_in_presets(tmp_path, value):
+    output = tmp_path / 'output.png'
+    output.write_bytes(b'keep')
+    with pytest.raises(ValueError, match='display.brightness'):
+        convert_file(tmp_path / 'missing.png', output, display_brightness=value)
+    with pytest.raises(ValueError):
+        normalize_settings(dict(display_brightness=value), default_settings(build_parser()))
+    assert output.read_bytes() == b'keep'
+
+
+def test_display_brightness_cli_presets_and_explicit_reset_preserve_conversion(tmp_path):
+    source = tmp_path / 'source.png'
+    Image.new('RGB', (8, 8), (100, 140, 180)).save(source)
+    settings = dict(profile='gameboy', gameboy_mode='tiles', width=8, height=8, scale=4,
+                    brightness=1.1, display_effect='crt-aperture', effect_strength=.85, display_brightness=2)
+    parser = build_parser()
+    saved = save_preset(tmp_path / 'display.json', 'Display brightness', '', settings, parser)
+    assert load_file(saved.path, parser).settings['display_brightness'] == 2
+    options = dict(settings)
+    options['profile_name'] = options.pop('profile')
+    original = convert_file(source, tmp_path / 'bright.png', **options)
+    options['display_brightness'] = 1
+    reference = convert_file(source, tmp_path / 'reference.png', **options)
+    assert original == reference
+    main(['convert', str(source), str(tmp_path / 'preset.png'), '--preset', str(saved.path)])
+    assert (tmp_path / 'preset.png').read_bytes() == (tmp_path / 'bright.png').read_bytes()
+    main(['convert', str(source), str(tmp_path / 'reset.png'), '--preset', str(saved.path), '--display-brightness=1'])
+    assert (tmp_path / 'reset.png').read_bytes() == (tmp_path / 'reference.png').read_bytes()
+    merged = merge_settings(saved.settings, dict(display_effect='none'), default_settings(parser))
+    assert merged['display_brightness'] == 2
+
+
 @pytest.mark.parametrize('palette', ['gameboy', 'gameboy-grey', 'cga'])
 def test_lcd_cells_repeat_and_preserve_centres_and_palette_tint(palette):
     indexed = cells(palette)
@@ -63,6 +123,7 @@ def test_effect_uses_logical_grid_after_aspect_correction(aspect):
 @pytest.mark.parametrize('settings', [
     dict(display_effect='unknown'), dict(effect_strength=.5),
     dict(display_effect='gameboy-lcd', scale=2), dict(display_effect='scanlines', scale=2),
+    dict(display_effect='crt-aperture', scale=2),
     *[dict(display_effect='gameboy-lcd', effect_strength=v)
       for v in (-.1, 1.1, float('inf'), float('nan'), True)],
 ])
@@ -76,7 +137,7 @@ def test_invalid_effects_rejected_by_api_and_presets_before_io(tmp_path, setting
     assert output.read_bytes() == b'keep'
 
 
-@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines'])
+@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines', 'crt-aperture'])
 @pytest.mark.parametrize('profile,mode', [('gameboy', {'gameboy_mode': 'tiles'}), ('cga-320', {})])
 def test_cli_and_python_effects_match_and_return_plain_indexed_data(tmp_path, profile, mode, effect):
     source = tmp_path / 'source.png'
@@ -93,7 +154,7 @@ def test_cli_and_python_effects_match_and_return_plain_indexed_data(tmp_path, pr
     assert (tmp_path / 'effect.png').read_bytes() != (tmp_path / 'plain.png').read_bytes()
 
 
-@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines'])
+@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines', 'crt-aperture'])
 def test_preset_roundtrip_disable_and_cross_platform_experiment(tmp_path, effect):
     parser = build_parser()
     settings = dict(profile='gameboy', gameboy_mode='tiles', scale=6,
@@ -164,8 +225,57 @@ def test_stronger_scanlines_dim_boundaries_more_than_subtle_scanlines():
     assert subtle.tobytes() == render_indexed(indexed, scale=8, display_effect='scanlines').tobytes()
 
 
+@pytest.mark.parametrize('aspect', [.7, 1, 1.3])
+def test_aperture_grille_repeats_in_output_columns_and_retains_scanline_beams(aspect):
+    indexed = IndexedImage(2, 3, get_palette('gameboy-grey'), ((0, 0),) * 3)
+    plain = render_indexed(indexed, scale=5, pixel_aspect=aspect)
+    beams = render_indexed(indexed, scale=5, pixel_aspect=aspect, display_effect='scanlines')
+    output = render_indexed(indexed, scale=5, pixel_aspect=aspect, display_effect='crt-aperture')
+    assert output.size == plain.size
+    for y in range(output.height):
+        for x in range(output.width):
+            colour = output.getpixel((x, y))
+            stripe = x % 3
+            assert colour[stripe] == beams.getpixel((x, y))[stripe]
+            assert all(channel < colour[stripe] for i, channel in enumerate(colour) if i != stripe)
+            if x + 3 < output.width:
+                assert colour == output.getpixel((x + 3, y))
+    assert output.getpixel((0, 0))[0] < output.getpixel((0, 2))[0]
+
+
+def test_aperture_zero_strength_and_black_are_unchanged_and_strong_mask_has_pure_stripes():
+    indexed = IndexedImage(2, 2, get_palette('gameboy-grey'), ((0, 3), (0, 3)))
+    pixels = indexed.pixels
+    plain = render_indexed(indexed, scale=6)
+    neutral = render_indexed(indexed, scale=6, display_effect='crt-aperture', effect_strength=0)
+    strong = render_indexed(indexed, scale=6, display_effect='crt-aperture', effect_strength=1)
+    assert neutral.tobytes() == plain.tobytes()
+    assert strong.crop((6, 0, 12, 12)).getextrema() == ((0, 0),) * 3
+    for x in range(6):
+        colour = strong.getpixel((x, 2))
+        assert colour[x % 3] > 0
+        assert all(channel == 0 for i, channel in enumerate(colour) if i != x % 3)
+    assert indexed.pixels == pixels
+
+
+def test_aperture_strength_dims_the_mask_without_creating_missing_colour_channels():
+    indexed = IndexedImage(2, 2, get_palette('teletext'), ((1, 1),) * 2)  # Pure red.
+    plain = render_indexed(indexed, scale=6)
+    subtle = render_indexed(indexed, scale=6, display_effect='crt-aperture')
+    explicit = render_indexed(indexed, scale=6, display_effect='crt-aperture', effect_strength=.35)
+    strong = render_indexed(indexed, scale=6, display_effect='crt-aperture', effect_strength=.85)
+    assert subtle.tobytes() == explicit.tobytes()
+    for x in range(subtle.width):
+        for y in range(subtle.height):
+            a, b, p = subtle.getpixel((x, y)), strong.getpixel((x, y)), plain.getpixel((x, y))
+            assert a[1:] == b[1:] == (0, 0)
+            assert all(0 <= darker <= lighter <= original for darker, lighter, original in zip(b, a, p))
+    assert strong.getpixel((1, 2))[0] < subtle.getpixel((1, 2))[0]
+
+
 @pytest.mark.parametrize('folder,profile,size', [('display-effects', 'gameboy', (1280, 1152)),
-                                                ('scanlines', 'megadrive-320', (1280, 960))])
+                                                ('scanlines', 'megadrive-320', (1280, 960)),
+                                                ('crt-aperture', 'megadrive-320', (1280, 960))])
 def test_bundled_display_examples_have_valid_hashes_commands_and_unscaled_crops(folder, profile, size):
     from hashlib import sha256
     import json
@@ -178,7 +288,7 @@ def test_bundled_display_examples_have_valid_hashes_commands_and_unscaled_crops(
     source = manifest['source']
     assert source['public'] is True
     assert sha256((root / 'samples/sources' / source['file']).read_bytes()).hexdigest() == source['reference_sha256']
-    assert len(manifest['examples']) == 3
+    assert len(manifest['examples']) == (5 if folder == 'crt-aperture' else 3)
     for example in manifest['examples']:
         assert sha256((directory / example['filename']).read_bytes()).hexdigest() == example['sha256']
         assert sha256((directory / example['crop']).read_bytes()).hexdigest() == example['crop_sha256']

@@ -47,6 +47,9 @@ and selects its default palette unless a palette override is supplied. Changing
 profile or screen mode also resets an inherited screen-colour count when needed.
 An inherited Atari band height is cleared outside playfield conversion.
 Display effects are retained when changing profiles for experimentation.
+`display_brightness` is a separate final preview gain, defaulting to 1. It is
+retained independently of the effect and source `brightness` setting.
+Use `--display-brightness 1` to reset only the display gain.
 `--display-effect none` disables an inherited effect and clears its strength;
 an explicitly supplied strength still requires an active effect.
 Explicitly invalid combinations and incompatible custom dimensions produce an

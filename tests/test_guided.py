@@ -58,7 +58,41 @@ def test_defaults_build_an_ordinary_command_without_writing(paths):
     assert shlex.split(format_command(arguments, platform='posix'))[1:] == arguments
 
 
-@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines'])
+def test_guide_distinguishes_source_and_display_brightness(paths):
+    replies = Replies({'Adjust source': 'yes', 'Brightness': '1.1',
+                       'Choose display effect': 'crt-aperture', 'Display brightness': '2'})
+    arguments = guide(paths, replies)
+    args = build_parser().parse_args(arguments)
+    assert args.brightness == 1.1 and args.display_brightness == 2
+    assert any('Source brightness: 1.1' in message for message in replies.messages)
+    assert any('Display brightness: 2.0 (after display effects)' in message for message in replies.messages)
+    assert any('Display brightness (after effects' in question for question in replies.questions)
+
+
+def test_guide_pixelates_original_colours_without_machine_questions(paths):
+    replies = Replies({'Choose starting point': 'pixelate', 'Pixel block size': '4'})
+    arguments = guide(paths, replies)
+    args = build_parser().parse_args(arguments)
+    assert args.command == 'pixelate' and args.block_size == 4
+    assert not any(q.startswith('Choose machine') for q in replies.questions)
+    main(arguments)
+    with Image.open(paths[0]) as source, Image.open(paths[1]) as result:
+        assert result.size == source.size
+    assert any('original RGB colours' in message for message in replies.messages)
+
+
+def test_guide_pixelation_print_only_and_block_size_revision(paths):
+    replies = Replies({'Choose starting point': 'pixelate', 'Pixel block size': '16'})
+    assert guide(paths, replies, print_only=True) is None
+    assert not paths[1].exists()
+    assert any('--block-size=16' in message for message in replies.messages)
+    replies = Replies({'Choose starting point': 'pixelate', 'Pixel block size': ['4', '8'],
+                       'Choose next action': ['edit', 'convert']})
+    args = build_parser().parse_args(guide(paths, replies))
+    assert args.command == 'pixelate' and args.block_size == 8
+
+
+@pytest.mark.parametrize('effect', ['gameboy-lcd', 'scanlines', 'crt-aperture'])
 @pytest.mark.parametrize('machine', ['gameboy', 'teletext'])
 def test_display_effect_is_explicit_and_available_for_other_machines(paths, machine, effect):
     replies = Replies({'Choose machine': machine, 'Choose display effect': effect,

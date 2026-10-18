@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "source": {
+    "id": "macaws",
+    "file": "macaws.jpg",
+    "title": "Blue-and-yellow macaws",
+    "fit": "cover",
+    "public": true,
+    "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+    "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+    "reference_size": [
+      750,
+      536
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  "examples": [
+    {
+      "filename": "macaws-block4.png",
+      "size": [
+        750,
+        536
+      ],
+      "block_size": 4,
+      "crop": "macaws-block4-crop.png",
+      "crop_box": [
+        192,
+        128,
+        448,
+        384
+      ],
+      "command": "retroimg pixelate /path/to/image.jpg macaws-block4.png --block-size 4",
+      "sha256": "6857b95140ef4123f75172fc224781da3b8aacfea669e336c7b5e4ab4dd0a9c9",
+      "crop_sha256": "7fc6ddfba992b226a81cf844c60f369304cf1222a17b3edeca04d20f865bfb8d"
+    },
+    {
+      "filename": "macaws-block8.png",
+      "size": [
+        750,
+        536
+      ],
+      "block_size": 8,
+      "crop": "macaws-block8-crop.png",
+      "crop_box": [
+        192,
+        128,
+        448,
+        384
+      ],
+      "command": "retroimg pixelate /path/to/image.jpg macaws-block8.png --block-size 8",
+      "sha256": "73202c0c59aa06acc3ff78aebab1581b6023a0de663be81c8b584a4b6ffde848",
+      "crop_sha256": "b8a703ce5db344ed6b1a2d07d4b16be41daefe45766fee5f203f525d791fcf14"
+    },
+    {
+      "filename": "macaws-block16.png",
+      "size": [
+        750,
+        536
+      ],
+      "block_size": 16,
+      "crop": "macaws-block16-crop.png",
+      "crop_box": [
+        192,
+        128,
+        448,
+        384
+      ],
+      "command": "retroimg pixelate /path/to/image.jpg macaws-block16.png --block-size 16",
+      "sha256": "660086ab3e6888e7b6e89dc3fef9c48efbd0ab7130258bccd367b6b0304fa0fd",
+      "crop_sha256": "adee66c311a328875e00e56c19d38a338f92a787ff79ae9678d1aec21de1575f"
+    }
+  ]
+}

@@ -36,6 +36,11 @@ assert 'cpc-mode1' in run('profiles')
 assert 'builtin:cpc-macaws-bayer2' in run('presets', '--presets-dir', 'presets')
 source, output = Path('source image.png'), Path('output image.png')
 Image.new('RGB', (16, 24), (60, 150, 230)).save(source)
+pixelated = Path('pixelated.png')
+run('pixelate', str(source), str(pixelated), '--block-size', '4')
+with Image.open(pixelated) as image:
+    assert image.size == (16, 24)
+    assert image.getpixel((0, 0)) == (60, 150, 230)
 run('convert', str(source), str(output), '--preset', 'builtin:cpc-macaws-bayer2',
     '--width', '16', '--height', '24', '--scale', '1', '--presets-dir', 'presets')
 with Image.open(output) as image:

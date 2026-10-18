@@ -217,7 +217,7 @@ def test_guide_saves_loads_and_edits_tone_controls(paths):
     assert guide(paths, replies) is None
     saved = load_file(paths[2] / 'toned.json', build_parser())
     assert (saved.settings['brightness'], saved.settings['contrast']) == (1.1, 0.8)
-    assert any('Brightness: 1.1; contrast: 0.8' in line for line in replies.messages)
+    assert any('Source brightness: 1.1; contrast: 0.8' in line for line in replies.messages)
     replies = Replies({'Choose next action': ['edit', 'convert']})
     arguments = guide(paths, replies, preset_reference=str(saved.path))
     settings = build_parser().parse_args(arguments)

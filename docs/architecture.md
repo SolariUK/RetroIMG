@@ -244,6 +244,14 @@ uses the generic quantiser, with palette mixing and custom sizes available.
 registry and rejected outside Atari playfield modes. The shared file pipeline
 only forwards it. No timing kernel, native file or executable exporter is planned.
 
+## Original-colour pixelation
+
+Generic original-colour pixelation uses `pixelate.py` independently of indexed
+conversion. Pillow integer reduction averages each source block; nearest-neighbour
+enlargement to whole block dimensions followed by clipping preserves grid spacing
+at partial edges. The `pixelate` command and guided starting point use this RGB
+path without target profiles, palette fitting or dithering.
+
 ## Ordered dithering
 
 `ordered.py` owns Bayer ranks, centered thresholds, and palette-aware ordered
@@ -284,13 +292,25 @@ previous nearest-channel fast path and output. Bayer uses no error buffer.
 
 All dithering belongs to logical conversion. Preview scaling and display
 post-processing remain independent. `display_effects.py` implements the optional
-Game Boy LCD and scanline treatments of enlarged RGB previews and imports no target adapters.
+Game Boy LCD, scanline and CRT aperture-grille treatments of enlarged RGB previews
+and imports no target adapters.
 `render_indexed` supplies the logical grid and the palette's lightest colour;
 `convert_file` still returns the unmodified indexed raster. Future CRT effects
 belong in this presentation layer. See [display effects](display-effects.md).
 Scanline weights are integrated over each output row in logical coordinates,
 then applied with linear-light sRGB lookup tables. They preserve the logical
 beam count through aspect correction, including fractional row heights.
+The CRT aperture effect uses the same row weights with a repeating output-column
+RGB stripe mask. The two attenuations are combined in a shared linear-light
+lookup table before encoding to sRGB once. The existing strength setting controls
+both. Grille phase is fixed to the full image's left edge and does not follow
+source-pixel boundaries; detail crops preserve the rendered pattern.
+`render_indexed` applies `display_brightness` as its final RGB step after the
+display effect, immediately before `convert_file` saves the image. Its linear-
+light lookup clamps to the display range and bypasses processing at gain 1,
+preserving existing output exactly. It is independent of source `brightness`,
+which runs before quantisation. Validation occurs before file conversion reads
+the source, and presets and the guide expose the two stages separately.
 
 ## Console palette banks
 

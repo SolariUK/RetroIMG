@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "source": {
+    "id": "macaws",
+    "file": "macaws.jpg",
+    "title": "Blue-and-yellow macaws",
+    "fit": "cover",
+    "public": true,
+    "credit": "Adrian Pingstone (Arpingstone), July 2004",
+    "rights": "Released into the public domain by the photographer, with an unrestricted-use fallback.",
+    "source": "https://commons.wikimedia.org/wiki/File:Macaw.blueyellow.arp.750pix.jpg",
+    "reference_sha256": "6dcaf4984208e348508570d85667307cd3cb7e143276df3e5637d04cecab8c7e",
+    "reference_size": [
+      750,
+      536
+    ],
+    "rights_checked": "2026-10-16"
+  },
+  "logical_size": [
+    320,
+    224
+  ],
+  "examples": [
+    {
+      "filename": "megadrive-plain.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-plain-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "3c3d98a59baf369b8b80d18c8da4972c73fa8abd0d5197f80b083316b9786080",
+      "crop_sha256": "eb8c41462fab957772f04d1a05005fa07cf4a7cbcac7d03180bcc927ee2916f2",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-plain.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4"
+    },
+    {
+      "filename": "megadrive-scanlines-only.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-scanlines-only-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "99b32a03509d49a80f21a669d862fc4c3002bfe9c46ca077fb808f9d33870678",
+      "crop_sha256": "d4f29abd8505a4e28d21752a6d54fd9c9fd91a8eb2965520caea12cf9583e054",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "scanlines",
+        "effect_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-scanlines-only.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect scanlines --effect-strength 0.35"
+    },
+    {
+      "filename": "megadrive-crt-aperture-subtle.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-aperture-subtle-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "c1fd555827f046ae3c000d73ee37ebae508bcf7d8f437da859c8f1d44bfa5d60",
+      "crop_sha256": "55d37e5321669a94a42ec6d9d1cddbdea78f9c9d142e2191954c7b79f7c9e967",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.35
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-aperture-subtle.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.35"
+    },
+    {
+      "filename": "megadrive-crt-aperture-strong.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-aperture-strong-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "6dc9e95ae80378f29dbe257267f6cbf915d50890ae8b49956b8f7ab08a17ef01",
+      "crop_sha256": "ba4d463611ee1682ea47b1f2deae787100ebc3152f42bb96a12d63aa67d20ae2",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.85
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-aperture-strong.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.85"
+    },
+    {
+      "filename": "megadrive-crt-aperture-strong-brighter.png",
+      "size": [
+        1280,
+        960
+      ],
+      "crop": "megadrive-crt-aperture-strong-brighter-crop.png",
+      "crop_box": [
+        384,
+        288,
+        896,
+        800
+      ],
+      "sha256": "5b9e567ca952a74bfaae667beffd0d6630b626d43d39b157dd222075cb3ac7d1",
+      "crop_sha256": "14c1e093c97bb8f751dc25a717939ea4660dad8ea31b7471f4fb62145a8163e0",
+      "settings": {
+        "profile_name": "megadrive-320",
+        "megadrive_mode": "tiles",
+        "scale": 4,
+        "fit": "cover",
+        "dither": "bayer",
+        "bayer_size": 4,
+        "display_effect": "crt-aperture",
+        "effect_strength": 0.85,
+        "display_brightness": 2.0
+      },
+      "command": "retroimg convert /path/to/image.jpg megadrive-crt-aperture-strong-brighter.png --profile megadrive-320 --megadrive-mode tiles --scale 4 --fit cover --dither bayer --bayer-size 4 --display-effect crt-aperture --effect-strength 0.85 --display-brightness 2.0"
+    }
+  ]
+}

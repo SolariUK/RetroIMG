@@ -16,6 +16,7 @@ from retroimg import __version__
 from retroimg.convert import convert_file
 from retroimg.conversion_modes import CONSTRAINED_QUANTIZERS, MODE_OPTIONS
 from retroimg.profiles import PROFILES
+from retroimg.pixelate import pixelate_file
 
 
 def check(archive: Path) -> None:
@@ -44,6 +45,12 @@ def check(archive: Path) -> None:
         image.putdata([((x * 23 + y * 7) % 256, (x * 7 + y * 41) % 256, (x * 17 + y * 19) % 256)
                        for y in range(24) for x in range(32)])
         image.save(source)
+        reference = directory / 'pixelation-reference.png'
+        actual = directory / 'pixelated.png'
+        pixelate_file(source, reference, block_size=4)
+        run('pixelate', str(source), str(actual), '--block-size=4')
+        with Image.open(reference) as expected, Image.open(actual) as result:
+            assert result.size == expected.size and result.tobytes() == expected.tobytes()
         cases = []
         for name, profile in PROFILES.items():
             cases.append((name, {}))
