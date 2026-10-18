@@ -9,7 +9,7 @@ on:
         description: Existing version tag to build
         required: true
         type: string
-        default: v0.2.0
+        default: v0.2.1
 
 permissions:
   contents: read
@@ -123,5 +123,5 @@ jobs:
           else
             gh release create "$RELEASE_TAG" release-assets/*.zip release-assets/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --verify-tag --draft --prerelease --latest=false \
-              --title "RetroIMG $RELEASE_TAG — preview" --notes-file "$notes"
+              --title "RetroIMG $RELEASE_TAG" --notes-file "$notes"
           fi
