@@ -66,7 +66,8 @@ retroimg-gui
 
 Conversion runs in a cancellable background process. Display-only adjustments
 reuse the indexed conversion. Automatic output enlargement adapts to the profile
-and pixel aspect, with a manual override. Preview zoom includes 100% and integer multiples;
+and pixel aspect, with a manual override. Previews support mouse-wheel zoom,
+drag-to-pan, fit-to-panel and exact 100% and integer zoom choices;
 export always saves the full rendered image. Qt is optional for CLI users.
 See [desktop usage and test builds](docs/gui.md). The **Desktop GUI test builds**
 workflow creates separate native Windows and Linux portable test bundles.

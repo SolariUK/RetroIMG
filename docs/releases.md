@@ -11,9 +11,10 @@ Users download a release ZIP directly and extract it once.
 1. Set the application version in `retroimg/__init__.py`.
 2. Add the matching `docs/releases/VERSION.md` release notes, including download
    names and platform requirements. Keep the changelog accurate.
-3. Commit and push the changes. Create an annotated tag for that exact commit,
-   for example `git tag -a v0.2.0 -m 'RetroIMG 0.2.0 desktop preview'`, then
-   `git push origin v0.2.0`.
+3. Commit and push the changes. Create an annotated tag for that exact commit:
+   `git tag -a vVERSION -m 'RetroIMG VERSION'`, then `git push origin vVERSION`.
+   Replace `VERSION` with the new application version; use a new tag rather than
+   moving an existing release tag.
 
 The tag triggers the release workflow. Its version must exactly match the
 application version, and release notes must exist in the tagged checkout.
@@ -34,6 +35,12 @@ with write access. Review the draft notes and its four downloadable assets,
 and test the applications on the intended desktops. The workflow leaves
 **This is a pre-release** selected; adjust that if appropriate, then click
 **Publish release** when ready. Draft creation does not publish the release.
+For a regular release featured in the repository sidebar, clear the pre-release
+checkbox and select **Set as latest release** before publishing.
+
+After publishing, give that version its own released changelog section and start
+a fresh **Unreleased** section for subsequent work. Keep the application version
+unchanged until preparing the next versioned release.
 
 For an existing tag, the workflow can also be started from **Actions → Prepare
 draft release → Run workflow**, choosing branch **main** and entering the tag.

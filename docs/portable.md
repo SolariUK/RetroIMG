@@ -1,7 +1,7 @@
 # Windows portable application
 
 This page covers the console build. The optional [desktop frontend](gui.md) has
-its own Windows/Linux test bundles and graphical launcher.
+its own Windows/Linux downloads and graphical launcher.
 
 This is a portable build of the CLI, including guided mode and Tab path
 completion. It bundles Python and its dependencies; no separate Python or pip
@@ -61,7 +61,7 @@ With a Python development environment activated on Windows:
 ```powershell
 python -m pip install -e ".[dev,guided,bundle]"
 python scripts/build_portable.py
-python scripts/check_portable.py dist/portable/retroimg-0.2.0-windows-x64-test.zip
+python scripts/check_portable.py dist/portable/retroimg-0.2.1-windows-x64-test.zip
 ```
 
 Use a new output directory for another build, for example

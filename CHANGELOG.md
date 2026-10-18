@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.1 — Unreleased
+## Unreleased
+
+- Updated local-build instructions and release-preparation examples.
+
+## 0.2.1
 
 - Accelerated Teletext mosaics with large RGB-grid palettes using exact small-cell
   partition fitting, avoiding millions of palette pairs per cell while preserving
