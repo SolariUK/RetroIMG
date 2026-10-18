@@ -2,6 +2,8 @@
 
 ## 0.2.0 — Unreleased
 
+- Installed Qt's Linux EGL/OpenGL runtime dependencies in GUI CI jobs, including
+  offscreen package checks, and exposed GUI subprocess errors in package logs.
 - Added independent Source/Display reset buttons and pointer-centred mouse-wheel
   zoom in both desktop previews, with a live percentage and retained fit choices.
 - Made the first hardware-constrained mode the desktop default for new profile

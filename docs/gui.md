@@ -82,9 +82,11 @@ Linux. No separate Python installation is required. If extraction loses the
 Linux executable bit, run `chmod +x retroimg-gui` first.
 
 Linux builds depend on desktop system libraries and are not universal across all
-distributions. CI builds on Ubuntu 22.04 and installs libxcb-cursor0 on the build
-host so PyInstaller can bundle it with the X11 plugin. Local Linux GUI builds
-also need that library (for example, `sudo apt install libxcb-cursor0` on Ubuntu).
+distributions. CI installs the EGL/OpenGL runtime libraries (`libegl1`, `libgl1`)
+even for offscreen GUI tests: Qt's GUI module links to them at import time.
+Portable Linux builds use Ubuntu 22.04 and also install `libxcb-cursor0` so
+PyInstaller can bundle it with the X11 plugin. Local Ubuntu GUI builds need these
+libraries too: `sudo apt install libegl1 libgl1 libxcb-cursor0`.
 Windows and Linux still need hands-on checks
 for display scaling, file dialogs, dragging, panning and desktop integration.
 

@@ -71,9 +71,11 @@ if extra == 'guided':
 if extra == 'gui':
     gui = environment / ('Scripts/retroimg-gui.exe' if sys.platform == 'win32' else 'bin/retroimg-gui')
     report = Path('gui-report.json')
-    subprocess.run([str(gui), '--smoke-test', str(report.resolve())],
-                   env=dict(os.environ, QT_QPA_PLATFORM='offscreen'),
-                   capture_output=True, text=True, check=True, timeout=60)
+    result = subprocess.run([str(gui), '--smoke-test', str(report.resolve())],
+                            env=dict(os.environ, QT_QPA_PLATFORM='offscreen'),
+                            capture_output=True, text=True, timeout=60)
+    if result.returncode:
+        raise RuntimeError(f'Desktop package check failed ({result.returncode})\\n{result.stdout}\\n{result.stderr}')
     information = json.loads(report.read_text(encoding='utf-8'))
     assert information['ok'] and information['reused_conversion']
 print('Installed package checks passed:', retroimg.__version__, extra)
