@@ -2,6 +2,9 @@
 
 ## 0.2.0 — Unreleased
 
+- Accelerated Teletext mosaics with large RGB-grid palettes using exact small-cell
+  partition fitting, avoiding millions of palette pairs per cell while preserving
+  conversion error, palette tie order and all dithering modes.
 - Added version-tagged native builds and draft GitHub releases with validated
   Windows/Linux desktop and Windows CLI ZIPs, shared checksums and release notes.
   Actions application ZIPs now download directly, requiring one extraction.
