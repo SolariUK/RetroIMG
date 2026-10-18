@@ -6,6 +6,16 @@ machine-specific constraints so that Teletext, Commodore 64, ZX Spectrum,
 Amstrad CPC, BBC Micro, Amiga, Atari 2600, Sega Mega Drive, SNES, NES,
 Master System, Game Boy, CGA, EGA and future targets can share the same pipeline.
 
+## Downloads
+
+See [GitHub Releases](https://github.com/SolariUK/RetroIMG/releases) for versioned
+Windows/Linux desktop builds and the Windows command-line application.
+Choose an application ZIP for your system, extract it once and keep the complete
+folder together. Python is included. See the [desktop instructions](docs/gui.md)
+or [command-line instructions](docs/portable.md) for launch details.
+Preview releases are marked on GitHub; temporary development builds are also
+available from the Actions workflows below.
+
 ## Install from a checkout
 
 From the directory containing `pyproject.toml`:
@@ -38,7 +48,7 @@ retroimg palettes
 
 A [Windows x64 test-build workflow](https://github.com/SolariUK/RetroIMG/actions/workflows/windows-portable.yml)
 produces a portable ZIP with Python, Pillow, guided mode and completion bundled.
-Download a successful run's artifact, extract the enclosed test ZIP, then use
+Download a successful run's application ZIP, extract it once, then use
 `retroimg.exe` from PowerShell or double-click `Start guided.cmd`.
 See [portable instructions](docs/portable.md) for download steps and testing.
 

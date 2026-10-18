@@ -1,18 +1,21 @@
-# Windows portable test build
+# Windows portable application
 
 This page covers the console build. The optional [desktop frontend](gui.md) has
 its own Windows/Linux test bundles and graphical launcher.
 
-This is a development test build of the CLI, including guided mode and Tab path
+This is a portable build of the CLI, including guided mode and Tab path
 completion. It bundles Python and its dependencies; no separate Python or pip
 installation is needed. The Windows build targets **Windows 10/11, x64**.
 
 ## Download and run
 
-1. Open [Windows portable test build on GitHub Actions](https://github.com/SolariUK/RetroIMG/actions/workflows/windows-portable.yml).
-2. Select a successful run. Under **Artifacts**, download `retroimg-windows-x64-...`.
-3. Extract that download, then extract the enclosed
-   `retroimg-0.2.0-windows-x64-test.zip` into a writable folder.
+1. Open [GitHub Releases](https://github.com/SolariUK/RetroIMG/releases) and choose
+   `retroimg-VERSION-windows-x64.zip` for a versioned download.
+2. For a development build instead, open
+   [Windows portable test build on GitHub Actions](https://github.com/SolariUK/RetroIMG/actions/workflows/windows-portable.yml),
+   select a successful run and download the `retroimg-...-windows-x64-test.zip`
+   artifact. Its `.zip.sha256` checksum is a separate download.
+3. Extract the application ZIP once into a writable folder.
 4. Keep the complete `retroimg` folder together, including `_internal`.
 5. Double-click **Start guided.cmd**, or open PowerShell in that folder:
 
@@ -35,7 +38,8 @@ current portable working folder instead:
 ```
 
 `BUILD.json` records the version, Git commit and bundled dependency versions.
-`SHA256SUMS.txt` accompanies the downloadable ZIP. The software licence is in
+`SHA256SUMS.txt` accompanies release downloads; Actions test builds provide a
+matching `.zip.sha256` file. The software licence is in
 `LICENSE.txt`; dependency metadata and licence files are retained under `_internal`.
 
 ## What to test
@@ -69,3 +73,5 @@ The GitHub workflow uses a Windows runner to produce the Windows build.
 Test artifacts are retained for 14 days. The workflow can also be started using
 **Run workflow** on its Actions page. These are temporary test downloads; no
 GitHub Release or package-index publication is created.
+The separate [release workflow](releases.md) builds the same application with
+`--release` and prepares a draft GitHub release for review.

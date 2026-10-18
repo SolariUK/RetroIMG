@@ -72,11 +72,17 @@ as the CLI. Apply a listed preset, load a file, or save the current conversion.
 Changing presets updates the available controls. Pixelation does not use retro
 conversion presets. Use `--presets-dir /path/to/presets` for a separate directory.
 
-## Portable test builds
+## Portable downloads
+
+Versioned builds are attached directly to
+[GitHub Releases](https://github.com/SolariUK/RetroIMG/releases). Download
+`retroimg-gui-VERSION-windows-x64.zip` or `retroimg-gui-VERSION-linux-x64.zip`
+and extract it once. A shared `SHA256SUMS.txt` accompanies release downloads.
 
 The **Desktop GUI test builds** GitHub Actions workflow builds Windows x64 and
-Linux x64 bundles natively. Download a successful run's artifact, extract the
-download and the enclosed ZIP, and keep the complete `retroimg-gui` folder
+Linux x64 development bundles natively. Download a successful run's application
+artifact (`retroimg-gui-...-test.zip`) and extract it once. Its `.zip.sha256`
+checksum is a separate download. Keep the complete `retroimg-gui` folder
 together. Double-click `retroimg-gui.exe` on Windows, or run `./retroimg-gui` on
 Linux. No separate Python installation is required. If extraction loses the
 Linux executable bit, run `chmod +x retroimg-gui` first.
@@ -100,8 +106,10 @@ Use a fresh build directory. The archive contains `BUILD.json`, application and
 dependency metadata/licences, a README and the complete Qt runtime needed by the
 application. Qt Widgets is provided by the Essentials package; Qt WebEngine and
 the larger Addons package are not required. Windows GUI builds do not open a
-console window. This remains a development test build, not an installer or a
-published release.
+console window. Local builds default to development test bundles. Add `--release`
+to omit the test suffix and mark release metadata; neither mode uploads anything.
+The [release workflow](releases.md) creates draft releases for review. Portable
+downloads are folders rather than installers.
 
 The automated check starts the extracted application offscreen outside the
 checkout and exercises its actual child process, a CLI-equivalent export,

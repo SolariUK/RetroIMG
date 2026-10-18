@@ -1,4 +1,4 @@
-"""Build a native portable test ZIP with Python, Pillow and completion included."""
+"""Build a native portable ZIP with Python and application dependencies included."""
 from __future__ import annotations
 
 import argparse
@@ -20,7 +20,7 @@ from retroimg import __version__
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(output: Path, *, gui: bool = False) -> Path:
+def build(output: Path, *, gui: bool = False, release: bool = False) -> Path:
     output = output.resolve()
     if output.exists():
         raise ValueError('portable builds require a new output directory')
@@ -74,12 +74,15 @@ def build(output: Path, *, gui: bool = False) -> Path:
     information = dict(version=__version__, commit=result.stdout.strip() if result.returncode == 0 else None,
                        platform=system, architecture=architecture, python=platform.python_version(),
                        built_utc=datetime.now(timezone.utc).isoformat(), dependencies=dependencies,
-                       test_build=True, frontend='gui' if gui else 'cli')
+                       test_build=not release, frontend='gui' if gui else 'cli')
     (bundle / 'BUILD.json').write_text(json.dumps(information, indent=2) + '\n', encoding='utf-8')
-    archive = Path(shutil.make_archive(str(output / f'{application}-{__version__}-{system}-{architecture}-test'),
+    suffix = '' if release else '-test'
+    archive = Path(shutil.make_archive(str(output / f'{application}-{__version__}-{system}-{architecture}{suffix}'),
                                      'zip', root_dir=output, base_dir=application))
-    (output / 'SHA256SUMS.txt').write_text(f'{sha256(archive.read_bytes()).hexdigest()}  {archive.name}\n')
-    print(f'Portable test archive: {archive}', flush=True)
+    checksum = f'{sha256(archive.read_bytes()).hexdigest()}  {archive.name}\n'
+    (output / 'SHA256SUMS.txt').write_text(checksum, encoding='utf-8')
+    (output / f'{archive.name}.sha256').write_text(checksum, encoding='utf-8')
+    print(f'Portable {"release" if release else "test"} archive: {archive}', flush=True)
     return archive
 
 
@@ -87,9 +90,10 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path, default=ROOT / 'dist' / 'portable')
     parser.add_argument('--gui', action='store_true', help='build the optional desktop frontend instead of the console application')
+    parser.add_argument('--release', action='store_true', help='omit the test suffix and mark release build metadata')
     args = parser.parse_args(argv)
     try:
-        build(args.output_dir, gui=args.gui)
+        build(args.output_dir, gui=args.gui, release=args.release)
     except ValueError as exc:
         parser.error(str(exc))
 

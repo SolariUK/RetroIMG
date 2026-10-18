@@ -45,9 +45,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v7
         with:
-          name: retroimg-windows-x64-${{ github.sha }}
-          path: |
-            dist/portable/*.zip
-            dist/portable/SHA256SUMS.txt
+          path: dist/portable/*.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        with:
+          path: dist/portable/*.zip.sha256
+          archive: false
           if-no-files-found: error
           retention-days: 14

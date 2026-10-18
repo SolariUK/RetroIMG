@@ -61,9 +61,13 @@ jobs:
           subprocess.run([sys.executable, 'scripts/check_gui.py', str(archive)], check=True)
       - uses: actions/upload-artifact@v7
         with:
-          name: retroimg-gui-${{ matrix.os }}-${{ github.sha }}
-          path: |
-            dist/gui/*.zip
-            dist/gui/SHA256SUMS.txt
+          path: dist/gui/*.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        with:
+          path: dist/gui/*.zip.sha256
+          archive: false
           if-no-files-found: error
           retention-days: 14

@@ -75,6 +75,10 @@ for the artifact layout and the interactive Windows test checklist.
 
 ## Changes and examples
 
+For versioned desktop/console downloads, see [release preparation](docs/releases.md).
+Version tags trigger native builds and a draft preview release; publication is
+an explicit step after reviewing the draft and downloads.
+
 Keep target rules under `retroimg/targets`, reusable constraints under
 `retroimg/constraints`, and previews separate from logical conversion. See
 [architecture](docs/architecture.md) and [representations](docs/representations.md).

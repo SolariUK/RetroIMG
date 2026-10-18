@@ -2,6 +2,9 @@
 
 ## 0.2.0 — Unreleased
 
+- Added version-tagged native builds and draft GitHub releases with validated
+  Windows/Linux desktop and Windows CLI ZIPs, shared checksums and release notes.
+  Actions application ZIPs now download directly, requiring one extraction.
 - Installed Qt's Linux EGL/OpenGL runtime dependencies in GUI CI jobs, including
   offscreen package checks, and exposed GUI subprocess errors in package logs.
 - Added independent Source/Display reset buttons and pointer-centred mouse-wheel
