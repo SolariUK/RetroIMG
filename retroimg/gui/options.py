@@ -6,7 +6,7 @@ from decimal import Decimal
 from PySide6.QtCore import Qt, Signal, QSignalBlocker
 from PySide6.QtWidgets import (
     QCheckBox, QComboBox, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLabel,
-    QSlider, QSpinBox, QTabWidget, QVBoxLayout, QWidget,
+    QPushButton, QSlider, QSpinBox, QTabWidget, QVBoxLayout, QWidget,
 )
 
 from retroimg.cli import build_parser
@@ -144,6 +144,14 @@ class OptionsPanel(QWidget):
                               'These effects work in full RGB after conversion.')
         display_hint.setWordWrap(True)
         self.forms['Display'].addRow(display_hint)
+        self.reset_buttons = {}
+        for tab in ('Source', 'Display'):
+            button = QPushButton(f'Reset {tab.lower()} to defaults')
+            button.clicked.connect(lambda checked=False, tab=tab: self._reset_tab(tab))
+            self.forms[tab].addRow(button)
+            self.reset_buttons[tab] = button
+        self.reset_buttons['Source'].setToolTip('Restore neutral source adjustments.')
+        self.reset_buttons['Display'].setToolTip('Clear display effects and restore automatic enlargement.')
         self._updating = False
         self.fields['family'].currentIndexChanged.connect(self._family_changed)
         self.fields['profile'].currentIndexChanged.connect(self._profile_changed)
@@ -291,6 +299,26 @@ class OptionsPanel(QWidget):
     def _emit_change(self):
         if not self._updating:
             self.changed.emit()
+
+    def _reset_tab(self, tab):
+        # Apply the complete reset before requesting a new preview.
+        self._updating = True
+        try:
+            for key, widget in self.fields.items():
+                if self.forms[tab].indexOf(widget) < 0 or key == 'scale':
+                    continue
+                value = self.defaults[key]
+                if key == 'effect_strength' and value is None:
+                    value = .35
+                if isinstance(widget, QComboBox):
+                    widget.setCurrentIndex(widget.findData(value))
+                else:
+                    widget.setValue(value)
+            if tab == 'Display':
+                self.auto_scale.setChecked(True)
+        finally:
+            self._updating = False
+        self._context_changed()
 
     def settings(self) -> dict:
         values = {key: self._value(key) for key in self.fields if key not in ('family', 'mode', 'width', 'height', 'colours', 'atari_row_height')}

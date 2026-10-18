@@ -21,8 +21,10 @@ use Qt's offscreen backend; interactive use requires a graphical session.
 
 ## Editing
 
-- Open or drop a local image. Original and result panels support panning,
-  fit-to-panel and 100%, 200%, 400% and 800% zoom.
+- Open or drop a local image. Use the mouse wheel over either preview to zoom
+  around the pointer, and drag to pan. Each panel zooms independently; its zoom
+  selector shows the current percentage and offers fit-to-panel, 100%, 200%,
+  400% and 800%. Wheel zoom ranges from 1% to 3200%.
 - Choose a machine, profile and conversion mode. **Palette only** converts using
   the chosen palette; **Hardware constrained** also applies the system's colour,
   attribute or tile rules. The description beneath the selector explains them.
@@ -39,6 +41,9 @@ use Qt's offscreen backend; interactive use requires a graphical session.
 - Source adjustments run before palette conversion. Display controls follow
   enlargement: RF, chromatic aberration, LCD/CRT treatment, bloom and final display
   brightness. Independent effects remain available for every machine.
+- Source and Display each have a reset button. Source reset restores neutral
+  adjustments. Display reset clears the effects, restores neutral display
+  brightness and enables automatic enlargement. Each reset affects only its tab.
 - Automatic enlargement is enabled initially. It chooses an integer scale for
   roughly a 640-pixel longest edge, accounting for the selected profile, custom
   logical resolution and pixel aspect. Typical defaults are 1× for 640-column

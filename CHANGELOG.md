@@ -2,6 +2,8 @@
 
 ## 0.2.0 — Unreleased
 
+- Added independent Source/Display reset buttons and pointer-centred mouse-wheel
+  zoom in both desktop previews, with a live percentage and retained fit choices.
 - Made the first hardware-constrained mode the desktop default for new profile
   selections, preserving explicit preset modes. Added C64 hires constraints with
   two independent colours per 8x8 cell, retained selectors, CLI/preset integration

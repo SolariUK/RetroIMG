@@ -264,6 +264,100 @@ def test_integer_preview_zoom_accounts_for_hidpi_physical_pixels(app, monkeypatc
     drain_deletions()
 
 
+@pytest.mark.parametrize('tab', ['Source', 'Display'])
+def test_tab_reset_restores_defaults_once_and_preserves_other_settings(panel, tab):
+    from PySide6.QtTest import QSignalSpy
+    panel.set_settings(dict(profile='ega-640', ega_mode='constrained', width=320, height=200,
+                            dither='bayer', bayer_size=2, brightness=1.7, contrast=.8,
+                            saturation=2, hue_shift=42, red_gain=.4, green_gain=1.2, blue_gain=2,
+                            scale=6, display_effect='crt-aperture', effect_strength=.8,
+                            rf_strength=.7, chromatic_strength=.6, bloom_strength=.5,
+                            bloom_radius=3, display_brightness=1.5))
+    before = panel.settings()
+    changed = QSignalSpy(panel.changed)
+    panel.reset_buttons[tab].click()
+    actual = panel.settings()
+    assert changed.count() == 1
+    own_keys = {key for key, widget in panel.fields.items() if panel.forms[tab].indexOf(widget) >= 0}
+    for key in actual:
+        if key not in own_keys:
+            assert actual[key] == before[key], key
+        elif key != 'scale':
+            assert actual[key] == panel.defaults[key], key
+    if tab == 'Display':
+        assert panel.auto_scale.isChecked()
+        assert actual['scale'] == 2
+        assert not panel.forms['Display'].isRowVisible(panel.fields['effect_strength'])
+        assert not panel.forms['Display'].isRowVisible(panel.fields['bloom_radius'])
+        panel.fields['display_effect'].setCurrentIndex(panel.fields['display_effect'].findData('scanlines'))
+        assert panel.settings()['effect_strength'] == .35
+    else:
+        assert not panel.auto_scale.isChecked()
+
+
+@pytest.mark.parametrize('dpr', [1, 2])
+def test_wheel_zoom_preserves_pointer_and_updates_only_its_panel(app, monkeypatch, dpr):
+    from PySide6.QtCore import QPoint, QPointF, Qt
+    from PySide6.QtGui import QImage, QWheelEvent
+    from retroimg.gui.preview import ImagePane
+    pane, other = ImagePane('Original'), ImagePane('Result')
+    monkeypatch.setattr(pane.view, 'devicePixelRatioF', lambda: dpr)
+    pane.resize(700, 500)
+    pane.show()
+    image = QImage(2400, 1800, QImage.Format.Format_RGB32)
+    image.fill(Qt.GlobalColor.white)
+    pane.set_image(image)
+    other.set_image(image)
+    app.processEvents()
+
+    def wheel(delta, *, pixels=False):
+        position = QPointF(pane.view.viewport().rect().center()) + QPointF(35, 20)
+        event = QWheelEvent(position, QPointF(pane.view.viewport().mapToGlobal(position.toPoint())),
+                            QPoint(0, delta) if pixels else QPoint(),
+                            QPoint() if pixels else QPoint(0, delta), Qt.MouseButton.NoButton,
+                            Qt.KeyboardModifier.NoModifier, Qt.ScrollPhase.NoScrollPhase, False)
+        QApplication.sendEvent(pane.view.viewport(), event)
+        app.processEvents()
+        assert event.isAccepted()
+
+    try:
+        fit = pane.view.transform().m11()
+        wheel(120)
+        assert pane.view.transform().m11() == pytest.approx(fit * 1.25)
+        assert pane.view.zoom == pane.zoom_box.currentData()
+        assert other.view.zoom is None
+        pane.zoom_box.setCurrentIndex(pane.zoom_box.findData(1))
+        app.processEvents()
+        point = pane.view.viewport().rect().center() + QPoint(35, 20)
+        before = pane.view.mapToScene(point)
+        wheel(120)
+        after = pane.view.mapToScene(point)
+        assert abs(before.x() - after.x()) < 4
+        assert abs(before.y() - after.y()) < 4
+        assert pane.view.zoom == pytest.approx(1.25)
+        wheel(-120)
+        assert pane.view.zoom == pytest.approx(1)
+        wheel(60, pixels=True)
+        assert pane.view.zoom == pytest.approx(1.25 ** .5)
+        assert pane.zoom_box.count() <= 6
+        for _ in range(3):
+            wheel(12000)
+        assert pane.view.zoom == 32
+        for _ in range(3):
+            wheel(-12000)
+        assert pane.view.zoom == .01
+        pane.set_image(image)
+        assert pane.view.zoom == .01
+        pane.zoom_box.setCurrentIndex(0)
+        assert pane.view.zoom is None
+        assert pane.view.transform().m11() == pytest.approx(fit)
+    finally:
+        for widget in (pane, other):
+            widget.close()
+            widget.deleteLater()
+        drain_deletions()
+
+
 def test_desktop_launcher_closes_cleanly_with_widgets_and_signals():
     script = '''
 from PySide6.QtCore import QTimer
