@@ -2,6 +2,31 @@
 
 ## 0.2.0 — Unreleased
 
+- Made the first hardware-constrained mode the desktop default for new profile
+  selections, preserving explicit preset modes. Added C64 hires constraints with
+  two independent colours per 8x8 cell, retained selectors, CLI/preset integration
+  and gallery recipes, alongside existing unrestricted and multicolour modes.
+- Accelerated SNES palette-bank fitting and indexed modes with exact batched
+  integer error searches, reusable palette-refinement work and spatial nearest
+  searches for diffusion. Improved exact C64 cell searches and Bayer pruning;
+  reference conversion pixels and palette tie order are preserved.
+- Added an optional Windows/Linux Qt Widgets frontend with context-sensitive
+  settings for all profiles/modes, original/result previews, HiDPI-aware integer
+  zoom, shared presets, pixelation and full-size PNG/JPEG export. Rendering runs
+  in a cancellable child process and reuses indexed conversions for display-only
+  changes. Includes native desktop build and extracted-bundle checks.
+- Kept desktop previews stationary during progress/status changes and sorted
+  machine choices by their displayed names. Accelerated exact Atari palette and
+  playfield searches and shared tile-palette fitting/Bayer lookups, preserving
+  conversion pixels and palette tie order.
+- Standardised desktop/guided mode labels as Palette only and Hardware constrained,
+  with separate descriptions and distinct specialised variants. Existing CLI and
+  preset identifiers remain compatible. Accelerated EGA and other 16-colour
+  conversions, including exact floating-point diffusion searches.
+- Made desktop enlargement automatic by default using the guided frontend's
+  conservative size rule, accounting for profile geometry, pixel aspect, custom
+  dimensions and display-treatment minimums. Manual enlargement and loaded
+  preset scales are preserved; the intended output dimensions are shown.
 - Added independent RF-style horizontal colour bleed and trailing smear before
   optical display effects, with separate luma/chroma filtering, CLI/guided/preset
   controls and NES examples combining RF with chromatic aberration, CRT and bloom.

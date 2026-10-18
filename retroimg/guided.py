@@ -11,7 +11,7 @@ from typing import Callable, Sequence
 from PIL import Image
 
 from retroimg.conversion_modes import (
-    COLOUR_COUNT_QUANTIZERS, CONSTRAINED_QUANTIZERS, MODE_OPTIONS,
+    COLOUR_COUNT_QUANTIZERS, MODE_OPTIONS,
     get_profile_quantizer,
 )
 from retroimg.model import TargetProfile
@@ -19,33 +19,16 @@ from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS
-from retroimg.settings import CELL_DIMENSIONS, REQUIRED_PALETTES, CONSTRAINT_PALETTES
+from retroimg.settings import CELL_DIMENSIONS
 from retroimg.display_effects import DEFAULT_BLOOM_RADIUS, DEFAULT_EFFECT_STRENGTH, MINIMUM_EFFECT_SCALES
 from retroimg.presets import list_presets, load_preset, preset_directory, preset_slug, save_preset
 
 # Presentation and input hints only. Target adapters remain the authority on
 # constraints; the wizard does not fit palettes, quantise, render or save images.
-FAMILY_LABELS = {
-    'teletext': 'Teletext', 'spectrum': 'ZX Spectrum', 'c64': 'Commodore 64',
-    'cpc': 'Amstrad CPC', 'bbc': 'BBC Micro', 'amiga': 'Amiga', 'atari2600': 'Atari 2600',
-    'megadrive': 'Sega Mega Drive / Genesis', 'snes': 'Super Nintendo / SNES',
-    'nes': 'Nintendo / NES', 'mastersystem': 'Sega Master System', 'gameboy': 'Original Game Boy',
-    'cga': 'IBM CGA', 'ega': 'IBM EGA',
-}
-MODE_HELP = {
-    'bitmap': 'unrestricted palette conversion',
-    'tiles': '8x8 tiles, each selecting one shared 16-entry palette bank and backdrop',
-    'indexed': 'up to 256 image-selected colours for one 8bpp background layer',
-    'mosaic': 'two colours per 2x3 cell',
-    'attributes': 'ink/paper with shared brightness per 8x8 cell',
-    'multicolour': 'shared background plus three local colours per 4x8 cell',
-    'constrained': 'apply this display mode\'s screen-colour limit',
-    'ehb': '32 base colours and their linked half-bright colours (lores)',
-    'ham': 'HAM6: base colours and changes to the held colour (lores)',
-    'playfield': '40 independent blocks with two colours per band',
-    'repeat': '20 playfield blocks repeated in the right half',
-    'mirror': '20 playfield blocks mirrored in the right half',
-}
+from retroimg.ui_options import (
+    FAMILY_LABELS, MODE_HELP, mode_description, mode_label, palette_choices,
+    profile_families, profile_modes, suggested_scale,
+)
 
 
 class GuidedCancelled(Exception):
@@ -121,26 +104,6 @@ class Prompts:
             self.write(hint)
 
 
-def profile_families() -> dict[str, tuple[TargetProfile, ...]]:
-    families: dict[str, list[TargetProfile]] = {}
-    for profile in PROFILES.values():
-        families.setdefault(profile.name.split('-', 1)[0], []).append(profile)
-    return {name: tuple(profiles) for name, profiles in sorted(families.items())}
-
-
-def profile_modes(profile: TargetProfile) -> tuple[str | None, tuple[str, ...]]:
-    for option, spec in MODE_OPTIONS.items():
-        if profile.constraint_model in spec.constraint_models:
-            modes = tuple(mode for mode in spec.modes if mode == 'bitmap'
-                          or (profile.constraint_model, mode) in CONSTRAINED_QUANTIZERS)
-            return option, modes
-    return None, ('bitmap',)
-
-
-def palette_choices(profile: TargetProfile, mode: str, option: str | None) -> tuple[str, ...]:
-    names = (CONSTRAINT_PALETTES.get(profile.constraint_model, REQUIRED_PALETTES.get(option, tuple(PALETTES))) if mode != 'bitmap'
-             else tuple(PALETTES))
-    return tuple(sorted(names, key=lambda name: (name != profile.default_palette, name)))
 
 
 def _geometry_options(ui: Prompts, profile: TargetProfile, mode: str,
@@ -213,21 +176,10 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
         default_mode = preferred.get(option, 'bitmap')
         if default_mode not in modes:
             default_mode = 'bitmap'
-        help_text = dict(MODE_HELP)
-        if option == 'nes_mode':
-            help_text['attributes'] = 'four shared palettes, three local colours plus backdrop per 16x16 region'
-        elif option == 'mastersystem_mode':
-            help_text['tiles'] = '8x8 tiles selecting either of two 16-colour palettes; all slots usable'
-        elif option == 'gameboy_mode':
-            help_text['tiles'] = 'four luminance shades, retained 2-bit codes; green or grey preview'
-        elif option == 'cga_mode':
-            help_text['constrained'] = 'standard four-colour palettes at 320x200, monochrome at 640x200'
-        elif option == 'ega_mode':
-            help_text['constrained'] = 'sixteen RGBI colours in 200 lines, or sixteen selected RGB6 colours in 350 lines'
-        mode = ui.choice('Conversion mode', [(m, f'{m}: {help_text.get(m, m)}') for m in modes], default_mode)
+        mode = ui.choice('Conversion mode', [(m, f'{mode_label(m)}: {mode_description(option, m)}') for m in modes], default_mode)
         options[option] = mode
     else:
-        ui.write('Conversion mode: bitmap (unrestricted palette conversion).')
+        ui.write('Conversion mode: Palette only (unrestricted palette conversion).')
 
     same_profile = previous.get('profile') == name
     palettes = palette_choices(profile, mode, option)
@@ -282,11 +234,8 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
             valid=lambda n: 0 <= n <= 1, hint='Enter a number between 0 and 1.')
         minimum_scale = MINIMUM_EFFECT_SCALES[effect]
         ui.write(f'{effect} needs scale {minimum_scale} or greater; 6 or 8 is recommended for close inspection.')
-    geometry = profile.geometry
-    width, height = options.get('width', geometry.width), options.get('height', geometry.height)
-    aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1
-    longest = max(width * max(1, aspect), height * max(1, 1 / aspect))
-    suggested = max(minimum_scale, min(defaults['scale'], int(640 // longest)))
+    suggested = suggested_scale(profile, options.get('width'), options.get('height'),
+                                minimum=minimum_scale, maximum=defaults['scale'])
     scale_default = max(minimum_scale, previous.get('scale', suggested)) if same_profile else suggested
     options['scale'] = ui.number('Preview scale (integer enlargement)', scale_default,
                                  integer=True, valid=lambda n: n >= minimum_scale,

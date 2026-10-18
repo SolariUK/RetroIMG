@@ -36,6 +36,12 @@ def _fit_cell(
             unresolved.add(background)
 
     if unresolved:
+        pair_errors = {}
+        def pair_costs(a, b):
+            key = (a, b)
+            if key not in pair_errors:
+                pair_errors[key] = tuple(map(min, errors[a], errors[b]))
+            return pair_errors[key]
         # Each set is scored once and contributes to every background it
         # contains. Enumerating full sets also covers solutions using fewer
         # colours: unused slots cannot increase minimum assignment error.
@@ -43,8 +49,12 @@ def _fit_cell(
             relevant = unresolved.intersection(choice)
             if not relevant:
                 continue
-            score = (sum(errors[choice[0]]) if len(choice) == 1 else
-                     sum(map(min, *(errors[index] for index in choice))))
+            if len(choice) == 4:
+                score = sum([left if left < right else right for left, right in
+                             zip(pair_costs(*choice[:2]), pair_costs(*choice[2:]))])
+            else:
+                score = (sum(errors[choice[0]]) if len(choice) == 1 else
+                         sum(map(min, *(errors[index] for index in choice))))
             for background in relevant:
                 previous = best[background]
                 if previous is None or score < previous[0]:

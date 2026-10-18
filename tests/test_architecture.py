@@ -42,6 +42,7 @@ assert not any(name.startswith('retroimg.targets.') for name in sys.modules)
     ('teletext', 'teletext_mode', 'mosaic'),
     ('spectrum', 'spectrum_mode', 'attributes'),
     ('c64-multicolour', 'c64_mode', 'multicolour'),
+    ('c64-hires', 'c64_mode', 'hires'),
     ('cpc-mode0', 'cpc_mode', 'constrained'),
     ('cpc-mode1', 'cpc_mode', 'constrained'),
     ('cpc-mode2', 'cpc_mode', 'constrained'),

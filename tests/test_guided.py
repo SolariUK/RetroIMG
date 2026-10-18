@@ -172,7 +172,7 @@ def test_every_profile_and_supported_mode_builds_and_runs(paths, name, option, m
 def test_only_applicable_modes_and_palettes_are_offered():
     assert profile_modes(PROFILES['amiga-hires'])[1] == ('bitmap', 'constrained')
     assert profile_modes(PROFILES['amiga-lores'])[1] == ('bitmap', 'constrained', 'ehb', 'ham')
-    assert profile_modes(PROFILES['c64-hires']) == (None, ('bitmap',))
+    assert profile_modes(PROFILES['c64-hires']) == ('c64_mode', ('bitmap', 'hires'))
     cpc = PROFILES['cpc-mode0']
     assert palette_choices(cpc, 'constrained', 'cpc_mode') == ('cpc',)
     assert 'c64' in palette_choices(cpc, 'bitmap', 'cpc_mode')

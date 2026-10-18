@@ -70,6 +70,8 @@ retroimg/
     path_input.py            # Optional cross-platform terminal completion backend
     settings.py              # Portable option validation and shared UI constraint hints
     presets.py               # Versioned JSON presets, built-ins and user storage
+    ui_options.py            # Shared machine/mode/palette presentation choices
+    gui/                     # Optional Qt Widgets frontend and Qt-free render jobs
 ```
 
 Machine modules live only under `targets`, and fitting implementations live
@@ -90,7 +92,9 @@ Shared models, quantisation, fitting algorithms and generic preview rendering
 do not import machine implementations at runtime. A target may use these shared
 building blocks, but it owns its hardware rules and logical representation.
 
-`convert_file` performs the same sequence for each profile:
+`convert_to_indexed` prepares and quantises a source without saving or rendering.
+`convert_file` validates display settings, calls this shared conversion function,
+then renders and saves the result. The combined sequence for each profile is:
 
 1. Resolve a palette and geometry, including optional custom dimensions.
 2. Ask the mode registry to validate target options and choose an adapter.
@@ -106,14 +110,59 @@ scale images, save files or add display effects. `render_indexed` handles the
 generic display step and has no knowledge of ink limits or cell patterns.
 
 For example, Spectrum supplies shared-brightness candidate pairs to the generic
-cell fitter; C64 uses the shared-background fitter; CPC and BBC use whole-image
+cell fitter; C64 hires uses independent two-colour cells, while C64 multicolour
+uses the shared-background fitter; CPC and BBC use whole-image
 palette selection. The hardware rules do not live inside those reusable algorithms.
+
+Large integer palette-error searches run through Pillow's 32-bit image arithmetic
+in bounded batches; smaller inputs and older Pillow versions use the equivalent
+scalar lookup. Fractional diffusion samples use an exact weighted spatial search
+with palette-index tie handling. Palette refinement caches unchanged variance
+and residual errors; these optimisations preserve fitting and dithering results.
 
 Simpler targets remain single modules. Amiga is a subpackage because indexed,
 EHB and HAM have distinct representations and fitting rules. Its public API
 remains `retroimg.targets.amiga`, so existing Python callers keep their imports. There is no plugin framework or mandatory
 base class: the registry's adapter contract is an RGB image, palette and dither
 setting returning an `IndexedImage`.
+
+## Desktop frontend
+
+The optional `gui` extra uses PySide6 Essentials (Qt Widgets), with a separate
+`retroimg-gui` entry point. Importing the GUI entry or its rendering jobs requires
+no Qt; the CLI, converters and models do not import desktop widgets.
+
+`ui_options` supplies family labels, supported modes, legal palette choices and
+the conservative output-enlargement suggestion to
+both the terminal guide and desktop. Settings are validated by the existing
+normaliser and presets use the same versioned JSON format. The desktop only
+shows applicable palette counts, Atari bands, custom cell dimensions, Bayer
+matrices and effect-specific controls. Pixelation has its own minimal editor.
+
+`gui.controller` debounces changes and uses `QProcess` to run one render at a
+time. Requests/results travel through per-window temporary JSON/PNG files rather
+than a shell or console streams, including in windowed Windows bundles. Newer
+requests invalidate older results immediately; superseded jobs are killed when
+the next request is ready. Cancellation and window closing stop owned workers.
+
+`gui.jobs` is Qt-free. It calls `convert_to_indexed`, retains the most recent
+indexed raster in a JSON cache, and calls `render_indexed` for the full requested
+output. The cache key includes source file identity/timestamps and conversion
+settings, excluding output enlargement and display effects. JSON avoids loading
+pickled objects; cache and output files are replaced atomically. A changed
+source or invalid cache forces conversion again.
+
+The preview uses a pannable scene. Integer zoom compensates for device pixel
+ratio so 100% means one output pixel per physical display pixel. Fit-to-panel is
+explicitly a viewing convenience. Export uses the completed full-size RGB PNG,
+never a screen capture or fitted preview. Invalid/pending/cancelled settings
+disable export, and saving cannot overwrite the source image.
+
+Desktop packaging uses the portable builder's `--gui` mode, distinct from the
+console bundle. Its smoke test starts the actual extracted app and child worker
+outside the checkout, verifies export against the shared file converter, and
+checks cached re-rendering and preset round-trips. Offscreen automated checks do
+not replace manual testing of native dialogs and desktop/display integration.
 
 ## Canonical Python imports
 

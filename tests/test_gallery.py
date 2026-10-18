@@ -12,8 +12,8 @@ from retroimg.palettes import get_palette
 
 
 def test_example_matrix_covers_all_modes_and_adjustments():
-    assert sum(len(variants_for(family)) for family in FAMILIES) == 176
-    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 270
+    assert sum(len(variants_for(family)) for family in FAMILIES) == 178
+    assert sum(len(variants_for(family, adjusted=True)) for family in FAMILIES) == 274
     for family in FAMILIES:
         variants = variants_for(family, adjusted=True)
         assert len({variant.slug for variant in variants}) == len(variants)
@@ -31,6 +31,7 @@ def test_c64_check_rejects_locally_legal_cells_without_shared_background():
 
 
 @pytest.mark.parametrize('palette,pixels,settings', [
+    ('c64', ((0, 1, 2, 0, 1, 2, 0, 1),) * 8, dict(c64_mode='hires')),
     ('teletext', ((0, 1), (2, 0), (0, 0)), dict(teletext_mode='mosaic')),
     ('spectrum', ((2, 11) * 4,) * 8, dict(spectrum_mode='attributes')),
     ('cpc', ((0, 1, 2),), dict(profile_name='cpc-mode2', cpc_mode='constrained')),
@@ -217,8 +218,8 @@ def test_catalogue_gallery_totals():
     def output_count(sources):
         return sum(len(variants_for(family, source.get('adjusted', False)))
                    for source in sources for family in FAMILIES)
-    assert output_count(catalog) == 1772
-    assert output_count(PUBLIC_SOURCES) == 1326
+    assert output_count(catalog) == 1794
+    assert output_count(PUBLIC_SOURCES) == 1342
 
 
 def test_dither_comparison_matrix_and_reproducible_options():

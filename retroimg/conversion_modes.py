@@ -9,7 +9,7 @@ from PIL import Image
 
 from retroimg.targets.atari2600 import PLAYFIELD_MODES, quantize_atari_playfield
 from retroimg.targets.teletext import quantize_teletext_mosaic
-from retroimg.targets.c64 import quantize_c64_multicolour
+from retroimg.targets.c64 import quantize_c64_hires, quantize_c64_multicolour
 from retroimg.targets.cpc import quantize_cpc
 from retroimg.targets.amiga import AMIGA_COLOUR_LIMITS, quantize_amiga, quantize_ehb, quantize_ham
 from retroimg.targets.bbc import BBC_COLOUR_LIMITS, quantize_bbc
@@ -51,6 +51,7 @@ CONSTRAINED_QUANTIZERS: dict[tuple[str, str], Quantizer] = {
     ("teletext-mosaic", "mosaic"): quantize_teletext_mosaic,
     ("spectrum-attributes", "attributes"): quantize_spectrum_attributes,
     ("c64-multicolour", "multicolour"): quantize_c64_multicolour,
+    ("c64-hires", "hires"): quantize_c64_hires,
     **{(f"cpc-mode{mode}", "constrained"): partial(quantize_cpc, mode=mode) for mode in range(3)},
 }
 
@@ -95,7 +96,8 @@ MODE_OPTIONS = {
                            "bbc-mode0, bbc-mode1, bbc-mode2, bbc-mode4 or bbc-mode5"),
     "teletext_mode": ModeOption("Teletext", ("bitmap", "mosaic"), ("teletext-mosaic",), "teletext"),
     "spectrum_mode": ModeOption("Spectrum", ("bitmap", "attributes"), ("spectrum-attributes",), "spectrum"),
-    "c64_mode": ModeOption("C64", ("bitmap", "multicolour"), ("c64-multicolour",), "c64-multicolour"),
+    "c64_mode": ModeOption("C64", ("bitmap", "hires", "multicolour"),
+                           ("c64-hires", "c64-multicolour"), "a c64-* profile"),
     "cpc_mode": ModeOption("CPC", ("bitmap", "constrained"), tuple(f"cpc-mode{mode}" for mode in range(3)),
                            "cpc-mode0, cpc-mode1 or cpc-mode2"),
 }

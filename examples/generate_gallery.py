@@ -54,6 +54,8 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
                 add(mode + suffix, f"{mode.title()} / {label}",
                     dict(profile_name="spectrum", spectrum_mode=mode, dither=dither, scale=2), (512, 384))
         elif family == "c64":
+            add('hires' + suffix, f'High resolution / {label}',
+                dict(profile_name='c64-hires', c64_mode='hires', dither=dither, scale=2), (640, 400))
             for mode in ("bitmap", "multicolour"):
                 add(mode + suffix, f"{mode.title()} / {label}",
                     dict(profile_name="c64-multicolour", c64_mode=mode, dither=dither, scale=2), (640, 400))
@@ -182,7 +184,7 @@ def variants_for(family: str, adjusted: bool = False) -> list[Variant]:
             options = variant.options
             constrained = (options.get("teletext_mode") == "mosaic" or
                            options.get("spectrum_mode") == "attributes" or
-                           options.get("c64_mode") == "multicolour" or
+                           options.get("c64_mode") in {"hires", "multicolour"} or
                            options.get("cpc_mode") == "constrained" or
                            options.get("bbc_mode") == "constrained" or
                            options.get("amiga_mode") in {"constrained", "ehb", "ham"} or
@@ -333,6 +335,12 @@ def check_constraints(image: IndexedImage, options: dict) -> None:
         used = {index for row in image.pixels for index in row}
         if len(used) > (16, 4, 2)[mode]:
             raise AssertionError("CPC global ink limit violated")
+    if options.get('c64_mode') == 'hires':
+        for y in range(0, image.height, 8):
+            for x in range(0, image.width, 8):
+                used = {image.pixels[y + dy][x + dx] for dy in range(8) for dx in range(8)}
+                if len(used) > 2:
+                    raise AssertionError('C64 hires cell colour limit violated')
     if options.get("c64_mode") == "multicolour":
         possible_backgrounds = set(range(len(image.palette.colours)))
         for y in range(0, image.height, 8):

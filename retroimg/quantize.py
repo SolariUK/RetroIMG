@@ -5,17 +5,34 @@ from typing import Callable
 from PIL import Image
 
 from retroimg.model import IndexedImage, Palette, RGB
-from retroimg.colour_spaces import RGBGrid, RGB_WEIGHTS, colour_distance
+from retroimg.colour_spaces import RGBGrid, RGBPaletteLookup, RGBPaletteTree, RGB_WEIGHTS, colour_distance
 from retroimg.ordered import bayer_threshold, ordered_lookup, validate_dither
 
 PixelLookup = Callable[[int, int, tuple[float, float, float]], int]
 
 
-def _colour_lookup(palette: Palette) -> Callable[[tuple[float, float, float]], int]:
+def _colour_lookup(palette: Palette, *, integer: bool = False) -> Callable[[tuple[float, float, float]], int]:
     if palette.rgb_levels is not None:
         return RGBGrid(palette.rgb_levels).nearest_index
     values = palette.rgb_values()
-    return lambda rgb: min(range(len(values)), key=lambda i: colour_distance(rgb, values[i]))
+    if integer and len(values) >= 16:
+        integer_lookup = RGBPaletteLookup(values)
+        return lambda rgb: integer_lookup(rgb)[0]
+    if len(values) >= 64:
+        return RGBPaletteTree(values).nearest_index
+    if not values:
+        raise ValueError('palette must contain at least one colour')
+    wr, wg, wb = RGB_WEIGHTS
+    def nearest(rgb):
+        r, g, b = rgb
+        best, error = 0, float('inf')
+        for index, (pr, pg, pb) in enumerate(values):
+            dr, dg, db = r - pr, g - pg, b - pb
+            score = wr * dr * dr + wg * dg * dg + wb * db * db
+            if score < error:
+                best, error = index, score
+        return best
+    return nearest
 
 
 def nearest_index(rgb: tuple[float, float, float], palette: Palette) -> int:
@@ -24,10 +41,11 @@ def nearest_index(rgb: tuple[float, float, float], palette: Palette) -> int:
 
 def quantize_none(image: Image.Image, palette: Palette, *, pixel_lookup: PixelLookup | None = None) -> IndexedImage:
     image = image.convert("RGB")
-    nearest = _colour_lookup(palette)
+    source = image.load()
+    nearest = _colour_lookup(palette, integer=True) if pixel_lookup is None else None
     lookup = pixel_lookup if pixel_lookup is not None else lambda x, y, rgb: nearest(rgb)
     pixels = tuple(
-        tuple(lookup(x, y, image.getpixel((x, y))) for x in range(image.width))
+        tuple(lookup(x, y, source[x, y]) for x in range(image.width))
         for y in range(image.height)
     )
     out = IndexedImage(image.width, image.height, palette, pixels)
@@ -37,8 +55,9 @@ def quantize_none(image: Image.Image, palette: Palette, *, pixel_lookup: PixelLo
 
 def quantize_floyd_steinberg(image: Image.Image, palette: Palette, *, pixel_lookup: PixelLookup | None = None) -> IndexedImage:
     image = image.convert("RGB")
+    source = image.load()
     w, h = image.size
-    work = [[list(map(float, image.getpixel((x, y)))) for x in range(w)] for y in range(h)]
+    work = [[list(map(float, source[x, y])) for x in range(w)] for y in range(h)]
     result = [[0] * w for _ in range(h)]
     values = palette.rgb_values()
     nearest = _colour_lookup(palette)
@@ -46,8 +65,10 @@ def quantize_floyd_steinberg(image: Image.Image, palette: Palette, *, pixel_look
 
     def add_error(x: int, y: int, err: tuple[float, float, float], scale: float) -> None:
         if 0 <= x < w and 0 <= y < h:
+            target = work[y][x]
             for c in range(3):
-                work[y][x][c] = max(0.0, min(255.0, work[y][x][c] + err[c] * scale))
+                value = target[c] + err[c] * scale
+                target[c] = 0.0 if value <= 0.0 else 255.0 if value >= 255.0 else value
 
     for y in range(h):
         for x in range(w):
@@ -72,11 +93,12 @@ def quantize_bayer(image: Image.Image, palette: Palette, *, bayer_size: int = 4,
     """Ordered rounding; custom lookups own their position-aware Bayer choice."""
     validate_dither("bayer", bayer_size)
     source = image.convert("RGB")
-    lookup = ordered_lookup(palette, bayer_size=bayer_size)
+    pixels = source.load()
+    lookup = ordered_lookup(palette, bayer_size=bayer_size) if pixel_lookup is None else None
     ox, oy = bayer_origin
     pixels = tuple(tuple(
-        pixel_lookup(x, y, source.getpixel((x, y))) if pixel_lookup is not None
-        else lookup(source.getpixel((x, y)), bayer_threshold(x + ox, y + oy, bayer_size))
+        pixel_lookup(x, y, pixels[x, y]) if pixel_lookup is not None
+        else lookup(pixels[x, y], bayer_threshold(x + ox, y + oy, bayer_size))
         for x in range(source.width)) for y in range(source.height))
     result = IndexedImage(source.width, source.height, palette, pixels)
     result.validate()

@@ -1,5 +1,8 @@
 # Windows portable test build
 
+This page covers the console build. The optional [desktop frontend](gui.md) has
+its own Windows/Linux test bundles and graphical launcher.
+
 This is a development test build of the CLI, including guided mode and Tab path
 completion. It bundles Python and its dependencies; no separate Python or pip
 installation is needed. The Windows build targets **Windows 10/11, x64**.

@@ -118,13 +118,13 @@ commands are retained in the output manifest and reproduction commands.
 
 ## Comparison matrix
 
-Each source gets the same 176 neutral conversions:
+Each source gets the same 178 neutral conversions:
 
 | Target family | Variants |
 | --- | --- |
 | Teletext | Bitmap/mosaic, each with no dither and Floyd–Steinberg; mosaic C64/Spectrum palette swaps; larger mosaic grid; saturation 1.5 example |
 | Spectrum | Unrestricted bitmap/attribute constraints, each with no dither and Floyd–Steinberg |
-| C64 | Unrestricted bitmap/multicolour constraints, each with no dither and Floyd–Steinberg; unrestricted Teletext/Spectrum palette swaps |
+| C64 | Two-colour hires, unrestricted wide bitmap and multicolour constraints, each with no dither and Floyd–Steinberg; unrestricted Teletext/Spectrum palette swaps |
 | CPC | Modes 0/1/2, unrestricted/constrained, each with no dither and Floyd–Steinberg |
 | BBC Micro | Modes 0/1/2/4/5, unrestricted/constrained, each with no dither and Floyd–Steinberg; unrestricted CPC/Spectrum palette swaps in mode 1 |
 | Amiga | PAL lores 2/4/8/16/32 colours and hires 2/4/8/16, each with no dither and Floyd–Steinberg; unrestricted lores/hires with both dither settings; C64/CPC palette swaps; constrained NTSC lores/hires with dithering; PAL/NTSC EHB and HAM6, each with no dither and Floyd–Steinberg |
@@ -137,12 +137,12 @@ Each source gets the same 176 neutral conversions:
 | CGA | Four 320x200 palettes, 640x200 monochrome and unrestricted RGBI, each with no dither and Floyd–Steinberg |
 | EGA | 320x200, 640x200 and 640x350 bitmap/constrained modes plus classic RGBI in 350 lines, each with no dither and Floyd–Steinberg |
 
-Each source marked `adjusted` in the catalogue also gets 94 constrained examples
+Each source marked `adjusted` in the catalogue also gets 96 constrained examples
 with hue +20 degrees and green gain 1.15. These are labelled separately from
 neutral baselines. Both the local-only mountain landscape and the bundled lush
 landscape have these adjustments. With the current nine-source catalogue, the
-full local run produces 1772 converted PNGs and 126 comparison sheets; the
-public-only run produces 1326 converted PNGs and 98 sheets.
+full local run produces 1794 converted PNGs and 126 comparison sheets; the
+public-only run produces 1342 converted PNGs and 98 sheets.
 
 BBC previews are 640x512; comparison tiles expand to hold all rows without
 cropping. Mode 2's bitmap/constrained results match with the BBC palette because

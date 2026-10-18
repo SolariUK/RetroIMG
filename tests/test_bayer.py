@@ -9,12 +9,26 @@ from examples.generate_gallery import check_constraints
 from retroimg.constraints.cells import quantize_cells
 from retroimg.convert import convert_file
 from retroimg.model import Colour, Palette
-from retroimg.ordered import bayer_matrix, bayer_threshold, ordered_pair
+from retroimg.ordered import bayer_matrix, bayer_threshold, ordered_lookup, ordered_pair
 from retroimg.palettes import get_palette
 from retroimg.quantize import quantize
 from retroimg.targets.amiga import optimise_ham, rasterize_ham
 
 BW = Palette('bw', (Colour('black', (0, 0, 0)), Colour('white', (255, 255, 255))))
+
+
+@pytest.mark.parametrize('size', [2, 4, 8])
+@pytest.mark.parametrize('name', ['atari2600-pal', 'ega-default'])
+def test_cached_palette_choices_keep_integer_and_fractional_samples(size, name):
+    palette = get_palette(name)
+    lookup = ordered_lookup(palette, bayer_size=size)
+    for sample in range(40):
+        rgb = (sample * 19 % 256, sample * 37 % 256, sample * 71 % 256)
+        for source in (rgb, tuple(value + .125 for value in rgb)):
+            a, b, fraction = ordered_pair(source, palette.rgb_values(), bayer_size=size)
+            for x, y in product(range(size), repeat=2):
+                threshold = bayer_threshold(x, y, size)
+                assert lookup(source, threshold) == (b if threshold < fraction else a)
 
 
 def test_known_bayer_matrices():

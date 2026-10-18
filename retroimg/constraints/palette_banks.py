@@ -5,11 +5,11 @@ from functools import lru_cache
 
 from PIL import Image
 
-from retroimg.colour_spaces import RGBGrid, colour_distance
+from retroimg.colour_spaces import RGBGrid, RGBPaletteLookup, colour_distance, palette_errors
 from retroimg.constraints.adaptive_palette import fit_rgb_palette
 from retroimg.constraints.global_palette import select_palette_indices
 from retroimg.model import Colour, IndexedImage, Palette, RGB
-from retroimg.ordered import validate_dither
+from retroimg.ordered import bayer_threshold, ordered_lookup, validate_dither
 from retroimg.quantize import quantize
 
 
@@ -91,9 +91,13 @@ def fit_palette_banks(image: Image.Image, grid: RGBGrid | None, bank_count: int,
     tile_pixels = [tuple(tile.getpixel((x, y)) for y in range(tile_size) for x in range(tile_size))
                    for tile in tiles]
     histograms = [tile.getcolors(tile_size ** 2) for tile in tiles]
+    samples = tuple(dict.fromkeys(rgb for histogram in histograms for _, rgb in histogram))
+    sample_indices = {rgb: index for index, rgb in enumerate(samples)}
+    indexed_histograms = [tuple((count, sample_indices[rgb]) for count, rgb in histogram)
+                          for histogram in histograms]
     counts = Counter()
     if grid is not None:
-        snap = grid.snap
+        snap = lru_cache(maxsize=65536)(grid.snap)
     else:
         candidate_values = palette.rgb_values()
         @lru_cache(maxsize=None)
@@ -131,12 +135,9 @@ def fit_palette_banks(image: Image.Image, grid: RGBGrid | None, bank_count: int,
         return tuple(banks)
 
     def assign(banks):
-        unique = [tuple(dict.fromkeys(bank)) for bank in banks]
-        @lru_cache(maxsize=None)
-        def errors(rgb):
-            return tuple(min(colour_distance(rgb, v) for v in bank) for bank in unique)
-        scores = [tuple(sum(n * errors(rgb)[b] for n, rgb in hist) for b in range(len(banks)))
-                  for hist in histograms]
+        errors = [palette_errors(samples, tuple(dict.fromkeys(bank))) for bank in banks]
+        scores = [tuple(sum(n * table[index] for n, index in hist) for table in errors)
+                  for hist in indexed_histograms]
         chosen = [min(range(len(banks)), key=score.__getitem__) for score in scores]
         return chosen, sum(score[b] for score, b in zip(scores, chosen))
 
@@ -149,11 +150,9 @@ def fit_palette_banks(image: Image.Image, grid: RGBGrid | None, bank_count: int,
         bank = fit_members([seed])
         seeds.append(bank)
         values = tuple(dict.fromkeys(bank))
-        @lru_cache(maxsize=None)
-        def distance(rgb):
-            return min(colour_distance(rgb, value) for value in values)
-        residuals = [min(old, sum(n * distance(rgb) for n, rgb in hist))
-                     for old, hist in zip(residuals, histograms)]
+        errors = palette_errors(samples, values)
+        residuals = [min(old, sum(n * errors[index] for n, index in hist))
+                     for old, hist in zip(residuals, indexed_histograms)]
     assignments, _ = assign(seeds)
     best = None
     for _ in range(4):
@@ -166,9 +165,18 @@ def fit_palette_banks(image: Image.Image, grid: RGBGrid | None, bank_count: int,
         assignments = updated
     _, banks, assignments = best
     pixels = [[0] * image.width for _ in range(image.height)]
+    palettes = [Palette('bank', tuple(Colour(str(i), rgb) for i, rgb in enumerate(bank)))
+                for bank in banks]
+    lookups = [RGBPaletteLookup(bank) for bank in banks] if dither == 'none' else None
+    ordered = ([ordered_lookup(palette, bayer_size=bayer_size) for palette in palettes]
+               if dither == 'bayer' else None)
     for tile, (x, y), bank in zip(tiles, positions, assignments):
-        palette = Palette('bank', tuple(Colour(str(i), rgb) for i, rgb in enumerate(banks[bank])))
-        indexed = quantize(tile, palette, dither, bayer_size=bayer_size, bayer_origin=(x, y))
+        palette = palettes[bank]
+        lookup = (lambda x, y, rgb: lookups[bank](rgb)[0]) if lookups is not None else None
+        if ordered is not None:
+            lookup = lambda dx, dy, rgb: ordered[bank](rgb, bayer_threshold(x + dx, y + dy, bayer_size))
+        indexed = quantize(tile, palette, dither, bayer_size=bayer_size, bayer_origin=(x, y),
+                           pixel_lookup=lookup)
         for dy, row in enumerate(indexed.pixels):
             pixels[y + dy][x:x + tile_size] = row
     columns = image.width // tile_size

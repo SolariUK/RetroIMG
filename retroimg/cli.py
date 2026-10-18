@@ -73,9 +73,9 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
     )
     convert.add_argument(
         "--c64-mode",
-        choices=("bitmap", "multicolour"),
+        choices=("bitmap", "hires", "multicolour"),
         default="bitmap",
-        help="C64 constraint: bitmap uses unrestricted palette colours; multicolour fits one shared background plus three local colours per 4x8 cell (requires c64-multicolour profile)",
+        help="C64 constraint: bitmap uses unrestricted palette colours; hires fits two colours per 8x8 cell (c64-hires profile); multicolour fits a shared background plus three local colours per 4x8 cell (c64-multicolour profile)",
     )
     convert.add_argument(
         "--cpc-mode",

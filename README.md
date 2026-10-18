@@ -42,6 +42,25 @@ Download a successful run's artifact, extract the enclosed test ZIP, then use
 `retroimg.exe` from PowerShell or double-click `Start guided.cmd`.
 See [portable instructions](docs/portable.md) for download steps and testing.
 
+## Desktop frontend for Windows and Linux
+
+An optional desktop frontend provides original/result previews, context-sensitive
+machine settings, source and display-effect controls, shared presets and PNG/JPEG
+export. Pixelation has its own simpler workflow. Run it on a desktop with:
+
+```bash
+python -m pip install -e ".[gui]"
+retroimg-gui
+# Or: python -m retroimg.gui photo.jpg
+```
+
+Conversion runs in a cancellable background process. Display-only adjustments
+reuse the indexed conversion. Automatic output enlargement adapts to the profile
+and pixel aspect, with a manual override. Preview zoom includes 100% and integer multiples;
+export always saves the full rendered image. Qt is optional for CLI users.
+See [desktop usage and test builds](docs/gui.md). The **Desktop GUI test builds**
+workflow creates separate native Windows and Linux portable test bundles.
+
 ## Quick start
 
 ```bash
@@ -156,7 +175,7 @@ The versioned JSON format, naming and override rules are described in
 | --- | --- | --- |
 | Teletext | Two colours per 2×3 mosaic cell | [Teletext](docs/targets/teletext.md) |
 | ZX Spectrum | Ink/paper and shared BRIGHT per 8×8 cell | [Spectrum](docs/targets/spectrum.md) |
-| Commodore 64 | Multicolour cells with a shared background | [C64](docs/targets/c64.md) |
+| Commodore 64 | Two-colour hires cells, or multicolour cells with a shared background | [C64](docs/targets/c64.md) |
 | Amstrad CPC | Modes 0/1/2 with 16/4/2 screen colours | [CPC](docs/targets/cpc.md) |
 | BBC Micro | Modes 0/1/2/4/5 with steady colours | [BBC Micro](docs/targets/bbc.md) |
 | Amiga OCS/ECS | Indexed 2–32 colours, EHB and HAM6 | [Amiga](docs/targets/amiga.md) |

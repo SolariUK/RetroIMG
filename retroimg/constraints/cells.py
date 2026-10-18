@@ -56,16 +56,18 @@ def quantize_cells(
     for y0 in range(0, source.height, cell_height):
         for x0 in range(0, source.width, cell_width):
             cell = source.crop((x0, y0, x0 + cell_width, y0 + cell_height))
+            samples = cell.load()
             # Calculate each sample-to-colour distance once, rather than for
             # every candidate pair. Search all colours, including absent ones.
-            errors = [
+            errors = tuple(zip(*[
                 tuple(colour_distance(sample, value) for value in values)
-                for sample in (cell.getpixel((x, y))
+                for sample in (samples[x, y]
                                for y in range(cell_height) for x in range(cell_width))
-            ]
+            ]))
             pair = min(
                 pairs,
-                key=lambda pair: sum(min(row[pair[0]], row[pair[1]]) for row in errors),
+                key=lambda pair: sum([left if left < right else right for left, right in
+                                      zip(errors[pair[0]], errors[pair[1]])]),
             )
             local_palette = Palette(
                 name=palette.name,

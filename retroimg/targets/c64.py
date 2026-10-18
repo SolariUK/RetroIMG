@@ -1,4 +1,4 @@
-"""C64 multicolour bitmap cells; no video-memory encoding or raster tricks."""
+"""C64 hires and multicolour bitmap cells, without memory packing or raster tricks."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -8,6 +8,7 @@ from PIL import Image
 from retroimg.ordered import validate_dither
 
 from retroimg.constraints.shared_background import fit_shared_background
+from retroimg.constraints.cells import quantize_cells
 from retroimg.model import IndexedImage, Palette
 from retroimg.palettes.c64 import C64
 from retroimg.quantize import quantize
@@ -15,6 +16,75 @@ from retroimg.quantize import quantize
 
 def _valid_colour(index: int) -> bool:
     return type(index) is int and 0 <= index < 16
+
+
+@dataclass(frozen=True)
+class C64HiresCell:
+    """Two local palette indices and 64 logical bits, left to right then down."""
+
+    paper: int
+    ink: int
+    pattern: int
+
+    def __post_init__(self):
+        if any(not _valid_colour(index) for index in (self.paper, self.ink)):
+            raise ValueError('C64 hires colours must be palette indices 0..15')
+        if type(self.pattern) is not int or not 0 <= self.pattern < (1 << 64):
+            raise ValueError('C64 hires pattern must be a 64-bit integer')
+
+
+@dataclass(frozen=True)
+class C64HiresImage:
+    cells: tuple[tuple[C64HiresCell, ...], ...]
+    columns: int = 40
+    rows: int = 25
+    palette: Palette = C64
+
+    def __post_init__(self):
+        if self.palette != C64:
+            raise ValueError('C64 hires mode requires the c64 palette')
+        if any(type(size) is not int or size <= 0 for size in (self.columns, self.rows)):
+            raise ValueError('C64 hires cell-grid dimensions must be positive integers')
+        if len(self.cells) != self.rows or any(len(row) != self.columns for row in self.cells):
+            raise ValueError('C64 hires cell grid does not match dimensions')
+        if any(not isinstance(cell, C64HiresCell) for row in self.cells for cell in row):
+            raise ValueError('C64 hires cell grid must contain C64HiresCell values')
+
+
+def optimise_c64_hires(image: Image.Image, palette: Palette = C64, dither='none', *, bayer_size=4):
+    """Exactly fit two independent colours per 8x8 cell before optional dithering."""
+    if palette != C64:
+        raise ValueError('C64 hires mode requires the c64 palette')
+    if image.width <= 0 or image.height <= 0 or image.width % 8 or image.height % 8:
+        raise ValueError('C64 hires mode requires positive dimensions divisible by 8')
+    indexed = quantize_cells(image, palette, cell_width=8, cell_height=8,
+                             dither=dither, bayer_size=bayer_size)
+    rows = []
+    for y in range(0, image.height, 8):
+        cells = []
+        for x in range(0, image.width, 8):
+            samples = [indexed.pixels[y + dy][x + dx] for dy in range(8) for dx in range(8)]
+            paper, ink = min(samples), max(samples)
+            pattern = sum(1 << bit for bit, index in enumerate(samples) if ink != paper and index == ink)
+            cells.append(C64HiresCell(paper, ink, pattern))
+        rows.append(tuple(cells))
+    return C64HiresImage(tuple(rows), image.width // 8, image.height // 8, palette)
+
+
+def rasterize_c64_hires(image: C64HiresImage) -> IndexedImage:
+    pixels = []
+    for cells in image.cells:
+        for dy in range(8):
+            row = []
+            for cell in cells:
+                row.extend(cell.ink if cell.pattern & (1 << (dy * 8 + dx)) else cell.paper
+                           for dx in range(8))
+            pixels.append(tuple(row))
+    return IndexedImage(image.columns * 8, image.rows * 8, image.palette, tuple(pixels))
+
+
+def quantize_c64_hires(image: Image.Image, palette: Palette, dither='none', *, bayer_size=4):
+    return rasterize_c64_hires(optimise_c64_hires(image, palette, dither, bayer_size=bayer_size))
 
 
 @dataclass(frozen=True)

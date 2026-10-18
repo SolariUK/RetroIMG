@@ -1,4 +1,4 @@
-from itertools import combinations
+from itertools import combinations, combinations_with_replacement
 import subprocess
 import sys
 
@@ -15,6 +15,7 @@ from retroimg.palettes import get_palette
 from retroimg.profiles import get_profile
 from retroimg.quantize import colour_distance, quantize
 from retroimg.targets.c64 import rasterize_c64_multicolour
+from retroimg.targets.c64 import C64HiresCell, C64HiresImage, optimise_c64_hires, rasterize_c64_hires
 from retroimg.render import render_indexed
 
 PALETTE = get_palette("c64")
@@ -26,6 +27,59 @@ def source_image(width=8, height=8):
     image.putdata([((i * 43) % 256, (i * 97) % 256, (i * 19) % 256)
                    for i in range(width * height)])
     return image
+
+
+def test_hires_bit_order_and_independent_cell_colours():
+    pattern = (1 << 0) | (1 << 7) | (1 << 8) | (1 << 63)
+    frame = C64HiresImage(((C64HiresCell(2, 5, pattern), C64HiresCell(6, 14, pattern)),), 2, 1)
+    indexed = rasterize_c64_hires(frame)
+    assert indexed.pixels[0] == (5, 2, 2, 2, 2, 2, 2, 5, 14, 6, 6, 6, 6, 6, 6, 14)
+    assert indexed.pixels[1][0] == 5 and indexed.pixels[7][7] == 5
+    assert optimise_c64_hires(render_indexed(indexed)) == frame
+
+
+def test_hires_undithered_fit_matches_exhaustive_source_error():
+    source = source_image()
+    samples = [source.getpixel((x, y)) for y in range(8) for x in range(8)]
+    optimum = min(sum(min(colour_distance(rgb, VALUES[a]), colour_distance(rgb, VALUES[b]))
+                      for rgb in samples) for a, b in combinations_with_replacement(range(16), 2))
+    indexed = rasterize_c64_hires(optimise_c64_hires(source))
+    actual = sum(colour_distance(rgb, VALUES[index])
+                 for rgb, index in zip(samples, sum(indexed.pixels, ())))
+    assert actual == optimum
+
+
+@pytest.mark.parametrize('dither', ['none', 'bayer', 'floyd-steinberg'])
+def test_hires_constraints_and_dithering_reset_per_cell(tmp_path, dither):
+    source = source_image(16, 16)
+    frame = optimise_c64_hires(source, dither=dither)
+    indexed = rasterize_c64_hires(frame)
+    for y in (0, 8):
+        for x in (0, 8):
+            pixels = tuple(row[x:x + 8] for row in indexed.pixels[y:y + 8])
+            assert len({i for row in pixels for i in row}) <= 2
+            expected = rasterize_c64_hires(optimise_c64_hires(source.crop((x, y, x + 8, y + 8)), dither=dither))
+            assert pixels == expected.pixels
+    path = tmp_path / 'source.png'
+    source.save(path)
+    assert convert_file(path, tmp_path / 'result.png', profile_name='c64-hires', c64_mode='hires',
+                        width=16, height=16, scale=1, fit='stretch', dither=dither) == indexed
+
+
+@pytest.mark.parametrize('kwargs,match', [
+    (dict(palette=get_palette('spectrum')), 'c64 palette'),
+    (dict(image=Image.new('RGB', (7, 8))), 'divisible'),
+    (dict(dither='invalid'), 'dither'),
+])
+def test_hires_rejects_incompatible_input(kwargs, match):
+    with pytest.raises(ValueError, match=match):
+        optimise_c64_hires(**(dict(image=source_image()) | kwargs))
+
+
+@pytest.mark.parametrize('kwargs', [dict(paper=-1), dict(ink=16), dict(pattern=True), dict(pattern=1 << 64)])
+def test_hires_cells_reject_invalid_registers_and_pattern(kwargs):
+    with pytest.raises(ValueError):
+        C64HiresCell(**(dict(paper=0, ink=1, pattern=0) | kwargs))
 
 
 def test_selector_bit_order_and_shared_background():
@@ -194,7 +248,7 @@ def test_cli_multicolour_with_adjustments(tmp_path, dither):
 @pytest.mark.parametrize("kwargs,match", [
     (dict(c64_mode="invalid"), "unknown C64"),
     (dict(c64_mode="multicolour"), "only valid"),
-    (dict(profile_name="c64-hires", c64_mode="multicolour"), "only valid"),
+    (dict(profile_name="c64-hires", c64_mode="multicolour"), "unsupported mode"),
     (dict(profile_name="c64-multicolour", c64_mode="multicolour", palette_name="spectrum"), "c64 palette"),
     (dict(profile_name="c64-multicolour", c64_mode="multicolour", width=7, height=8), "divisible"),
 ])

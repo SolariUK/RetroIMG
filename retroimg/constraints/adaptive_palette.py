@@ -1,7 +1,7 @@
 """Fit a small palette within a regular RGB grid, without target rules."""
 from PIL import Image
 
-from retroimg.colour_spaces import RGBGrid
+from retroimg.colour_spaces import RGBGrid, RGBPaletteLookup
 from retroimg.constraints.histogram import rgb_histogram
 from retroimg.model import RGB
 from retroimg.quantize import RGB_WEIGHTS, colour_distance
@@ -41,13 +41,14 @@ def fit_rgb_palette(
                      for c, weight in enumerate(RGB_WEIGHTS))
 
     boxes = [samples]
+    scores = [variance(samples)]
     while len(boxes) < colour_limit:
-        scores = [variance(box) for box in boxes]
         index = max(range(len(boxes)), key=lambda i: (sum(scores[i]), -i))
         if sum(scores[index]) == 0:
             break
         channel = max(range(3), key=lambda c: (scores[index][c], -c))
         box = sorted(boxes.pop(index), key=lambda item: (item[1][channel], item[1]))
+        scores.pop(index)
         total, cumulative, split = sum(n for n, _ in box), 0, 1
         for split, (n, _) in enumerate(box, 1):
             cumulative += n
@@ -55,29 +56,37 @@ def fit_rgb_palette(
                 break
         split = min(split, len(box) - 1)
         boxes.extend((box[:split], box[split:]))
+        scores.extend((variance(box[:split]), variance(box[split:])))
     colours = tuple(sorted({grid.snap(centre(box)) for box in boxes}))
     # Snapping median-cut centres may merge them. Recover useful free slots
     # from the highest weighted residuals before refinement.
+    snapped = [grid.snap(rgb) for _, rgb in samples]
+    lookup = RGBPaletteLookup(colours)
+    residuals = [lookup(rgb)[1] for _, rgb in samples]
     while len(colours) < colour_limit:
-        candidates = [(n * min(colour_distance(rgb, value) for value in colours), grid.snap(rgb))
-                      for n, rgb in samples if grid.snap(rgb) not in colours]
+        candidates = [(n * error, snap) for (n, _), error, snap in zip(samples, residuals, snapped)
+                      if snap not in colours]
         if not candidates:
             break
         _, extra = max(candidates, key=lambda item: (item[0], tuple(-v for v in item[1])))
         colours = tuple(sorted((*colours, extra)))
+        residuals = [min(error, colour_distance(rgb, extra))
+                     for (_, rgb), error in zip(samples, residuals)]
 
-    def score(values):
-        return sum(n * min(colour_distance(rgb, value) for value in values) for n, rgb in samples)
+    def score(nearest):
+        return sum(n * nearest(rgb)[1] for n, rgb in samples)
 
-    error = score(colours)
+    lookup = RGBPaletteLookup(colours)
+    error = score(lookup)
     for _ in range(max_iterations):
         clusters = [[] for _ in colours]
         for sample in samples:
-            index = min(range(len(colours)), key=lambda i: colour_distance(sample[1], colours[i]))
+            index = lookup(sample[1])[0]
             clusters[index].append(sample)
         updated = tuple(sorted({grid.snap(centre(cluster)) for cluster in clusters if cluster}))
-        updated_error = score(updated)
+        updated_lookup = RGBPaletteLookup(updated)
+        updated_error = score(updated_lookup)
         if updated_error >= error:
             break
-        colours, error = updated, updated_error
+        colours, error, lookup = updated, updated_error, updated_lookup
     return colours

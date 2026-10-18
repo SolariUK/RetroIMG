@@ -16,6 +16,8 @@ import venv
 PROBE = '''
 import importlib.metadata
 import importlib.util
+import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -66,6 +68,14 @@ if extra == 'guided':
     matches = list(DirectoryPathCompleter().get_completions(
         Document('source im'), CompleteEvent(completion_requested=True)))
     assert any('source im' + match.text == str(source) for match in matches)
+if extra == 'gui':
+    gui = environment / ('Scripts/retroimg-gui.exe' if sys.platform == 'win32' else 'bin/retroimg-gui')
+    report = Path('gui-report.json')
+    subprocess.run([str(gui), '--smoke-test', str(report.resolve())],
+                   env=dict(os.environ, QT_QPA_PLATFORM='offscreen'),
+                   capture_output=True, text=True, check=True, timeout=60)
+    information = json.loads(report.read_text(encoding='utf-8'))
+    assert information['ok'] and information['reused_conversion']
 print('Installed package checks passed:', retroimg.__version__, extra)
 '''
 
@@ -73,7 +83,7 @@ print('Installed package checks passed:', retroimg.__version__, extra)
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dist-dir', type=Path, default=Path('dist'))
-    parser.add_argument('--extra', choices=('base', 'guided'), default='base')
+    parser.add_argument('--extra', choices=('base', 'guided', 'gui'), default='base')
     args = parser.parse_args(argv)
     wheels = list(args.dist_dir.glob('retroimg-*.whl'))
     sources = list(args.dist_dir.glob('retroimg-*.tar.gz'))
@@ -88,7 +98,7 @@ def main(argv: list[str] | None = None) -> None:
             environment = work / 'environment'
             venv.EnvBuilder(with_pip=True).create(environment)
             python = environment / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
-            requirement = str(artifact.resolve()) + ('[guided]' if args.extra == 'guided' else '')
+            requirement = str(artifact.resolve()) + (f'[{args.extra}]' if args.extra != 'base' else '')
             subprocess.run([str(python), '-m', 'pip', 'install', requirement],
                            cwd=work, env=clean_env, check=True)
             subprocess.run([str(python), '-I', '-c', PROBE, str(environment), args.extra],

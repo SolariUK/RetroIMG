@@ -29,7 +29,7 @@ CONSTRAINT_PALETTES = {
     'ega-350': ('ega', 'ega-default'),
 }
 CELL_DIMENSIONS = {
-    'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-multicolour': (4, 8),
+    'teletext-mosaic': (2, 3), 'spectrum-attributes': (8, 8), 'c64-hires': (8, 8), 'c64-multicolour': (4, 8),
     'megadrive-tiles': (8, 8), 'snes-background': (8, 8),
     'nes-attributes': (16, 16), 'mastersystem-tiles': (8, 8), 'gameboy-tiles': (8, 8),
 }

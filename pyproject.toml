@@ -14,6 +14,7 @@ dependencies = ["Pillow>=10.0"]
 
 [project.optional-dependencies]
 guided = ["prompt-toolkit>=3.0.43,<4"]
+gui = ["PySide6-Essentials>=6.8,<7"]
 dev = ["pytest>=8", "build>=1.2"]
 bundle = ["pyinstaller>=6,<7"]
 
@@ -22,6 +23,9 @@ version = {attr = "retroimg.__version__"}
 
 [project.scripts]
 retroimg = "retroimg.cli:main"
+
+[project.gui-scripts]
+retroimg-gui = "retroimg.gui:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
