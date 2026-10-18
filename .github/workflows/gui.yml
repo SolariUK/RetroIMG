@@ -59,7 +59,7 @@ jobs:
           import sys
           archive = next(Path('dist/gui').glob('*.zip'))
           subprocess.run([sys.executable, 'scripts/check_gui.py', str(archive)], check=True)
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: retroimg-gui-${{ matrix.os }}-${{ github.sha }}
           path: |
