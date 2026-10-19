@@ -13,6 +13,8 @@ from retroimg.cli import build_parser
 from retroimg.adjustments import MAX_SHARPEN
 from retroimg.conversion_modes import COLOUR_COUNT_QUANTIZERS
 from retroimg.display_effects import DISPLAY_EFFECTS, MINIMUM_EFFECT_SCALES
+from retroimg.geometry import match_source_geometry
+from retroimg.model import Geometry
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.profiles import PROFILES
 from retroimg.settings import CELL_DIMENSIONS, default_settings, normalize_settings
@@ -67,6 +69,7 @@ class OptionsPanel(QWidget):
         super().__init__()
         self.defaults = default_settings(build_parser())
         self._updating = True
+        self.source_size: tuple[int, int] | None = None
         self.fields: dict[str, QWidget] = {}
         self.forms: dict[str, QFormLayout] = {}
         self.families = profile_families()
@@ -107,8 +110,10 @@ class OptionsPanel(QWidget):
         self.forms['Machine'].addRow(self.description)
         self._combo('colours', 'Screen colours', 'Machine', [])
         self._field('atari_row_height', 'Band height', 'Machine', self._spin(1, 1024, 2))
-        self.custom = QCheckBox('Custom logical resolution')
-        self.forms['Machine'].addRow(self.custom)
+        self.geometry_mode = QComboBox()
+        self.forms['Machine'].addRow('Output geometry', self.geometry_mode)
+        self.geometry_mode.setToolTip('Match source aspect preserves the complete image using a custom '
+                                     'Teletext canvas. Colour and cell constraints remain active.')
         self._field('width', 'Logical width', 'Machine', self._spin(1, 16384, 80))
         self._field('height', 'Logical height', 'Machine', self._spin(1, 16384, 75))
         self.geometry_hint = QLabel()
@@ -162,7 +167,7 @@ class OptionsPanel(QWidget):
         self.fields['profile'].currentIndexChanged.connect(self._profile_changed)
         self.fields['mode'].currentIndexChanged.connect(self._mode_changed)
         self.kind.currentIndexChanged.connect(self._context_changed)
-        self.custom.toggled.connect(self._context_changed)
+        self.geometry_mode.currentIndexChanged.connect(self._context_changed)
         self.auto_scale.toggled.connect(self._context_changed)
         self.block_size.valueChanged.connect(self._emit_change)
         self.set_settings({})
@@ -215,6 +220,7 @@ class OptionsPanel(QWidget):
         if self._updating:
             return
         profile = PROFILES[self._value('profile')]
+        self._fill_geometry_modes(profile, self.geometry_mode.currentData())
         option, modes = profile_modes(profile)
         self._fill(self.fields['mode'], [(mode_label(mode), mode) for mode in modes], preferred_mode(modes))
         choices = palette_choices(profile, self._value('mode'), option)
@@ -223,6 +229,29 @@ class OptionsPanel(QWidget):
             with QSignalBlocker(self.fields[key]):
                 self.fields[key].setValue(value)
         self._mode_changed()
+
+    def _fill_geometry_modes(self, profile, preferred):
+        choices = [('Native dimensions', 'native')]
+        if profile.name == 'teletext':
+            choices.append(('Match source aspect', 'source'))
+        choices.append(('Custom dimensions', 'custom'))
+        self._fill(self.geometry_mode, choices, preferred)
+
+    def set_source_size(self, size: tuple[int, int]):
+        self.source_size = size
+        self._context_changed()
+
+    def _resolved_geometry(self):
+        profile = PROFILES[self._value('profile')]
+        mode = self.geometry_mode.currentData()
+        if mode == 'custom':
+            return Geometry(self._value('width'), self._value('height'),
+                            profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1)
+        if mode == 'source' and self.source_size is not None:
+            return match_source_geometry(self.source_size, profile.geometry,
+                                         (2, 3) if self._value('mode') == 'mosaic' else (1, 1))
+        return Geometry(profile.geometry.width, profile.geometry.height,
+                        profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1)
 
     def _mode_changed(self):
         if self._updating:
@@ -264,13 +293,27 @@ class OptionsPanel(QWidget):
             widget.setSingleStep(step)
             if widget.value() % step:
                 widget.setValue(max(step, widget.value() // step * step))
-            form.setRowVisible(widget, self.custom.isChecked())
+            form.setRowVisible(widget, self.geometry_mode.currentData() == 'custom')
         self.fields['width'].setEnabled(not fixed)
         if fixed:
             self.fields['width'].setValue(160)
         self.description.setText(profile.description + f'\nPalette: {self._value("palette")}')
         self.geometry_hint.setText(f'Native: {profile.geometry.width} × {profile.geometry.height}. '
                                    + (f'Custom dimensions use multiples of {multiples[0]} × {multiples[1]}.' if mode != 'bitmap' else ''))
+        if self.geometry_mode.currentData() == 'source':
+            if self.source_size is None:
+                self.geometry_hint.setText('Open an image to calculate its Teletext canvas.')
+            else:
+                try:
+                    geometry = self._resolved_geometry()
+                    detail = (f' ({geometry.width // 2} × {geometry.height // 3} cells)'
+                              if mode == 'mosaic' else '')
+                    self.geometry_hint.setText(f'Canvas: {geometry.width} × {geometry.height}{detail}. '
+                                               'Custom canvas; source proportions preserved. '
+                                               'Pixel shape may adjust by up to 2%.')
+                except ValueError as exc:
+                    self.geometry_hint.setText(str(exc))
+        form.setRowVisible(self.fields['fit'], self.geometry_mode.currentData() != 'source')
         form.setRowVisible(self.fields['bayer_size'], self._value('dither') == 'bayer')
         display = self._value('display_effect')
         self._update_scale()
@@ -281,15 +324,18 @@ class OptionsPanel(QWidget):
 
     def _update_scale(self):
         profile = PROFILES[self._value('profile')]
-        width, height = ((self._value('width'), self._value('height')) if self.custom.isChecked()
-                         else (profile.geometry.width, profile.geometry.height))
+        try:
+            geometry = self._resolved_geometry()
+        except ValueError as exc:
+            self.output_hint.setText(str(exc))
+            return
+        width, height, aspect = geometry.width, geometry.height, geometry.pixel_aspect
         scale = self.fields['scale']
         minimum = MINIMUM_EFFECT_SCALES[self._value('display_effect')]
         scale.setMinimum(minimum)
         scale.setEnabled(not self.auto_scale.isChecked())
         if self.auto_scale.isChecked():
-            scale.setValue(suggested_scale(profile, width, height, minimum=minimum))
-        aspect = profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1
+            scale.setValue(suggested_scale(profile, width, height, minimum=minimum, pixel_aspect=aspect))
         output_width = max(1, round(width * scale.value() * max(1, aspect)))
         output_height = max(1, round(height * scale.value() * max(1, 1 / aspect)))
         self.output_hint.setText(f'Output: {output_width} × {output_height} pixels.')
@@ -332,7 +378,10 @@ class OptionsPanel(QWidget):
         mode = self._value('mode')
         if option is not None:
             values[option] = mode
-        if self.custom.isChecked():
+        values['aspect_mode'] = 'source' if self.geometry_mode.currentData() == 'source' else 'native'
+        if values['aspect_mode'] == 'source' and self.source_size is not None:
+            self._resolved_geometry()  # Surface unsupported extreme ratios before submitting a job.
+        if self.geometry_mode.currentData() == 'custom':
             values.update(width=self._value('width'), height=self._value('height'))
         if (profile.constraint_model, mode) in COLOUR_COUNT_QUANTIZERS:
             values['colours'] = self._value('colours')
@@ -364,7 +413,8 @@ class OptionsPanel(QWidget):
         self._fill(self.fields['palette'], [(name, name) for name in palette_choices(profile, mode, option)], values['palette'])
         limit = AMIGA_COLOUR_LIMITS.get(profile.constraint_model.removeprefix('amiga-'), 32)
         self._fill(self.fields['colours'], [(str(2**n), 2**n) for n in range(1, limit.bit_length())], values.get('colours') or limit)
-        self.custom.setChecked(values['width'] is not None)
+        self._fill_geometry_modes(profile, 'source' if values['aspect_mode'] == 'source' else
+                                   'custom' if values['width'] is not None else 'native')
         for key, widget in self.fields.items():
             if key in ('family', 'profile', 'mode', 'palette', 'colours'):
                 continue

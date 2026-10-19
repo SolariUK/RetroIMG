@@ -13,7 +13,7 @@ from retroimg.display_effects import (
 
 
 def render_indexed(
-    image: IndexedImage, scale: int = 1, *, nearest: bool = True, pixel_aspect: float = 1.0,
+    image: IndexedImage, scale: int = 1, *, nearest: bool = True, pixel_aspect: float | None = None,
     display_effect: str = 'none', effect_strength: float | None = None,
     display_brightness: float = 1.0,
     bloom_strength: float = 0.0, bloom_radius: float = DEFAULT_BLOOM_RADIUS,
@@ -27,6 +27,8 @@ def render_indexed(
     Optional display effects modify only the enlarged RGB result, after scaling.
     """
     image.validate()
+    if pixel_aspect is None:
+        pixel_aspect = image.pixel_aspect if image.pixel_aspect is not None else 1.0
     if scale <= 0:
         raise ValueError("scale must be positive")
     if not math.isfinite(pixel_aspect) or pixel_aspect <= 0:

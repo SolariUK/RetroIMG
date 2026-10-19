@@ -41,6 +41,15 @@ use Qt's offscreen backend; interactive use requires a graphical session.
 - Source adjustments run before palette conversion. Display controls follow
   enlargement: RF, chromatic aberration, LCD/CRT treatment, bloom and final display
   brightness. Independent effects remain available for every machine.
+- **Output geometry** offers Native dimensions and Custom dimensions. Teletext
+  also offers **Match source aspect**, which uses the complete input without
+  cropping or padding. Hardware constrained retains two colours per 2×3 cell;
+  the calculated raster and cell counts appear below the selector. For example,
+  a 16:9 input uses 128×72 logical pixels / 64×24 cells. This is a custom canvas,
+  rather than a standard 40×25-cell page. Cover/Contain/Stretch are hidden while
+  matching; pixel shape may adjust by up to 2% to preserve source proportions.
+  Automatic enlargement uses the calculated canvas. Presets save the matching
+  intent, so opening another image recalculates the dimensions.
 - Source and Display each have a reset button. Source reset restores neutral
   adjustments. Display reset clears the effects, restores neutral display
   brightness and enables automatic enlargement. Each reset affects only its tab.
@@ -103,7 +112,7 @@ for display scaling, file dialogs, dragging, panning and desktop integration.
 ```bash
 python -m pip install -e ".[dev,gui,bundle]"
 python scripts/build_portable.py --gui --output-dir dist/gui
-python scripts/check_gui.py dist/gui/retroimg-gui-0.3.0-linux-x64-test.zip
+python scripts/check_gui.py dist/gui/retroimg-gui-0.4.0-linux-x64-test.zip
 ```
 
 Use a fresh build directory. The archive contains `BUILD.json`, application and

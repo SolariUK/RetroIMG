@@ -103,6 +103,15 @@ then renders and saves the result. The combined sequence for each profile is:
 4. Call the adapter to obtain an `IndexedImage`.
 5. Render and save the preview with the profile's preview aspect policy.
 
+Teletext's optional `aspect_mode=source` resolves a bounded whole-cell canvas
+from the input dimensions before resizing. It samples the complete source and
+attaches the resolved `pixel_aspect` to the returned `IndexedImage`. The renderer
+and GUI conversion cache retain this optional metadata, so display-only changes
+and exports use the same proportions without reopening the input for geometry.
+Ordinary indexed results leave it unset and preserve the existing profile policy.
+The geometry search is shared with frontend hints; presets store the matching
+intent instead of dimensions derived from a particular source.
+
 Unrestricted bitmap mode calls the generic quantiser directly. Constrained
 adapters optimise a target-specific representation and then rasterise it.
 `rasterize_*` functions expand logical data into palette indices; they do not

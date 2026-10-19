@@ -58,6 +58,20 @@ def test_defaults_build_an_ordinary_command_without_writing(paths):
     assert shlex.split(format_command(arguments, platform='posix'))[1:] == arguments
 
 
+def test_guide_source_aspect_uses_resolved_dimensions_and_preserves_intent_on_edit(paths):
+    Image.new('RGB', (1920, 1080), 'red').save(paths[0])
+    replies = Replies({'Match source aspect': 'yes', 'Choose conversion mode': 'mosaic',
+                       'Choose next action': ['edit', 'convert']})
+    arguments = guide(paths, replies)
+    args = build_parser().parse_args(arguments)
+    assert args.aspect_mode == 'source' and args.teletext_mode == 'mosaic'
+    assert args.width is args.height is None
+    assert args.scale == 5
+    assert not any(q.startswith('Choose image fitting') for q in replies.questions)
+    assert any('Logical image: 128x72; fitting: match source aspect' in m for m in replies.messages)
+    assert any('Preview: 640x360' in m for m in replies.messages)
+
+
 def test_guide_distinguishes_source_and_display_brightness(paths):
     replies = Replies({'Adjust source': 'yes', 'Brightness': '1.1',
                        'Choose display effect': 'crt-aperture', 'Display brightness': '2'})

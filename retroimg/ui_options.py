@@ -54,7 +54,7 @@ def mode_description(option: str | None, mode: str) -> str:
 
 
 def suggested_scale(profile: TargetProfile, width: int | None = None, height: int | None = None,
-                    *, minimum: int = 1, maximum: int = 8) -> int:
+                    *, minimum: int = 1, maximum: int = 8, pixel_aspect: float | None = None) -> int:
     """Choose integer enlargement toward a 640-pixel, aspect-correct output.
 
     Never shrink the logical raster. Surface effects can require a minimum
@@ -63,7 +63,7 @@ def suggested_scale(profile: TargetProfile, width: int | None = None, height: in
     geometry = profile.geometry
     width = geometry.width if width is None else width
     height = geometry.height if height is None else height
-    aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1
+    aspect = (geometry.pixel_aspect if profile.aspect_correct_preview else 1) if pixel_aspect is None else pixel_aspect
     longest = max(width * max(1, aspect), height * max(1, 1 / aspect))
     return max(minimum, min(maximum, int(640 // longest)))
 

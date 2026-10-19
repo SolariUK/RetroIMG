@@ -208,6 +208,10 @@ resizing and before palette conversion; the default is 0 (off).
 For example, add `--brightness 1.1 --contrast 1.2` for a
 10% brightness boost and stronger contrast. Both default to `1.0` (neutral),
 and the guide includes them under **Adjust source colours**.
+Teletext can also match the input image's aspect ratio on an automatic custom
+canvas, retaining its mosaic colour rules: choose **Match source aspect** in
+the GUI or use `--aspect-mode source`. See [source matching](docs/conversion.md#match-the-source-aspect-teletext).
+
 Resolution, fitting, palettes and preview scaling are configurable. See
 [conversion options and comparison commands](docs/conversion.md) for details.
 Optional [display effects](docs/display-effects.md) add Game Boy LCD cells and

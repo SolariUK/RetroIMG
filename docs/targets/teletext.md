@@ -41,4 +41,14 @@ This is currently a *visual* mosaic constraint.  Historical Teletext row
 control codes, held/separated graphics and background-control behaviour are a
 future layer rather than being baked into the image converter.
 
+### Source aspect and custom canvases
+
+Select **Match source aspect** under Output geometry in the desktop frontend,
+or add `--aspect-mode source` to either Teletext mode. The complete composition
+is retained on an automatically sized canvas. A 16:9 input uses 128×72 logical
+pixels / 64×24 mosaic cells, retaining two colours per cell in mosaic mode.
+Native dimensions remain the default; this option does not claim a standard
+broadcast page. See [source matching](../conversion.md#match-the-source-aspect-teletext)
+for rounding, pixel-shape and size limits.
+
 [All targets](README.md) · [Project README](../../README.md)

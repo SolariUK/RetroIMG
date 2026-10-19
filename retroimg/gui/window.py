@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
         self.original.set_image(view)
         self.file_label.setText(source.name)
         self.file_label.setToolTip(str(source))
-        self.update_preview()
+        self.options.set_source_size(image.size)
 
     def update_preview(self):
         retro = self.options.kind.currentData() == 'retro'

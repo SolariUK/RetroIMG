@@ -9,6 +9,7 @@ from retroimg.convert import convert_file
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
+from retroimg.geometry import ASPECT_MODES
 from retroimg.display_effects import DEFAULT_BLOOM_RADIUS, DEFAULT_EFFECT_STRENGTH, DISPLAY_EFFECTS
 
 
@@ -31,6 +32,9 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
     convert.add_argument("--width", type=int)
     convert.add_argument("--height", type=int)
     convert.add_argument("--fit", choices=("cover", "contain", "stretch"), default="cover")
+    convert.add_argument('--aspect-mode', choices=ASPECT_MODES, default='native',
+                         help='source: match input proportions using an automatic canvas (Teletext only; '
+                              'replaces fitting and cannot be combined with --width/--height)')
     convert.add_argument("--dither", choices=DITHER_MODES, default="none")
     convert.add_argument("--bayer-size", type=int, choices=BAYER_SIZES,
                          help="Bayer matrix size (default: 4; requires --dither bayer)")
@@ -212,6 +216,7 @@ def main(argv: list[str] | None = None) -> None:
             width=args.width,
             height=args.height,
             fit=args.fit,
+            aspect_mode=args.aspect_mode,
             dither=args.dither,
             bayer_size=args.bayer_size,
             brightness=args.brightness,

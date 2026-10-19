@@ -120,6 +120,75 @@ def test_hardware_defaults_follow_profile_but_explicit_preset_modes_survive(pane
     assert panel.settings()['snes_mode'] == 'indexed'
 
 
+def test_teletext_source_canvas_controls_follow_image_and_profile(panel):
+    panel.geometry_mode.setCurrentIndex(panel.geometry_mode.findData('source'))
+    assert 'Open an image' in panel.geometry_hint.text()
+    panel.set_source_size((1920, 1080))
+    settings = panel.settings()
+    assert settings['aspect_mode'] == 'source'
+    assert settings['teletext_mode'] == 'mosaic'
+    assert settings['width'] is settings['height'] is None
+    assert '128 × 72' in panel.geometry_hint.text()
+    assert '64 × 24 cells' in panel.geometry_hint.text()
+    assert '640 × 360' in panel.output_hint.text()
+    assert not panel.forms['Machine'].isRowVisible(panel.fields['fit'])
+    panel.set_source_size((1080, 1920))
+    assert '76 × 135' in panel.geometry_hint.text()
+    assert panel.settings()['aspect_mode'] == 'source'
+    panel.fields['family'].setCurrentIndex(panel.fields['family'].findData('gameboy'))
+    assert panel.geometry_mode.findData('source') == -1
+    assert panel.settings()['aspect_mode'] == 'native'
+    assert panel.forms['Machine'].isRowVisible(panel.fields['fit'])
+
+
+def test_teletext_source_preset_restores_geometry_without_pinning_image_size(panel):
+    panel.set_source_size((1920, 1080))
+    panel.set_settings(dict(aspect_mode='source', teletext_mode='mosaic', scale=3))
+    assert panel.geometry_mode.currentData() == 'source'
+    assert '384 × 216' in panel.output_hint.text()
+    panel.set_source_size((1000, 1000))
+    assert '234 × 234' in panel.output_hint.text()
+    assert panel.settings()['scale'] == 3
+    panel.geometry_mode.setCurrentIndex(panel.geometry_mode.findData('custom'))
+    assert panel.settings()['aspect_mode'] == 'native'
+    assert panel.forms['Machine'].isRowVisible(panel.fields['width'])
+
+
+def test_extreme_source_ratio_is_shown_as_a_settings_error(panel):
+    panel.set_source_size((100000, 1))
+    panel.geometry_mode.setCurrentIndex(panel.geometry_mode.findData('source'))
+    assert 'too extreme' in panel.geometry_hint.text()
+    with pytest.raises(ValueError, match='too extreme'):
+        panel.settings()
+
+
+def test_window_source_aspect_export_matches_cli_and_recomputes_for_new_image(app, tmp_path):
+    source = tmp_path / 'wide.png'
+    portrait = tmp_path / 'portrait.png'
+    Image.new('RGB', (1920, 1080), 'red').save(source)
+    Image.new('RGB', (1080, 1920), 'blue').save(portrait)
+    window = MainWindow(presets_dir=tmp_path / 'presets')
+    window.options.set_settings(dict(aspect_mode='source', teletext_mode='mosaic', scale=5))
+    try:
+        window.open_image(source)
+        wait_for(app, lambda: window.export_button.isEnabled())
+        actual, expected = tmp_path / 'actual.png', tmp_path / 'expected.png'
+        window.export_to(actual)
+        convert_file(source, expected, aspect_mode='source', teletext_mode='mosaic', scale=5)
+        with Image.open(actual) as a, Image.open(expected) as b:
+            assert a.size == b.size == (640, 360)
+            assert a.tobytes() == b.tobytes()
+        window.open_image(portrait)
+        wait_for(app, lambda: window.export_button.isEnabled())
+        with Image.open(window.result_path) as result:
+            assert result.height > result.width
+            assert abs(result.width / result.height / (9 / 16) - 1) < .002
+    finally:
+        window.close()
+        window.deleteLater()
+        drain_deletions()
+
+
 @pytest.mark.parametrize('size', [(980, 640), (1380, 850)])
 def test_processing_and_status_messages_do_not_resize_previews(app, tmp_path, size):
     window = MainWindow(presets_dir=tmp_path)
@@ -182,7 +251,7 @@ def test_automatic_scale_tracks_machine_resolution_and_effect_requirements(panel
     assert panel.settings()['scale'] == 3
     panel.fields['display_effect'].setCurrentIndex(panel.fields['display_effect'].findData('none'))
     assert panel.settings()['scale'] == 1
-    panel.custom.setChecked(True)
+    panel.geometry_mode.setCurrentIndex(panel.geometry_mode.findData('custom'))
     panel.fields['width'].setValue(320)
     panel.fields['height'].setValue(200)
     assert panel.settings()['scale'] == 2

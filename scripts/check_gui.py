@@ -28,6 +28,7 @@ def check(archive: Path) -> None:
                                + (report.read_text(encoding='utf-8') if report.exists() else 'No report'))
         information = json.loads(report.read_text(encoding='utf-8'))
         assert information['ok'] and information['reused_conversion']
+        assert information['source_aspect']
         assert information['size'] == [48, 48]
         assert json.loads((bundle / 'BUILD.json').read_text())['frontend'] == 'gui'
         assert (bundle / 'LICENSE.txt').exists()

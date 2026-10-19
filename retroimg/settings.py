@@ -2,6 +2,7 @@
 import math
 
 from retroimg.adjustments import validate_sharpen
+from retroimg.geometry import validate_aspect_mode
 
 from retroimg.conversion_modes import (
     COLOUR_COUNT_QUANTIZERS, CONSTRAINED_QUANTIZERS, MODE_OPTIONS, get_profile_quantizer,
@@ -99,6 +100,7 @@ def normalize_settings(raw: dict, defaults: dict) -> dict:
         if values[name] < 0:
             raise ValueError(f'{name} must be non-negative')
     width, height = values['width'], values['height']
+    validate_aspect_mode(profile, values['aspect_mode'], width, height)
     if (width is None) != (height is None):
         raise ValueError('preset width and height must be supplied together')
     mode = 'bitmap'
@@ -134,6 +136,7 @@ def compact_settings(values: dict) -> dict:
     active = {key for key, spec in MODE_OPTIONS.items() if profile.constraint_model in spec.constraint_models}
     return {key: value for key, value in values.items() if value is not None
             and not (key == 'sharpen' and value == 0)
+            and not (key == 'aspect_mode' and value == 'native')
             and not (key == 'display_effect' and value == 'none')
             and not (key == 'display_brightness' and value == 1)
             and not (key == 'bloom_strength' and value == 0)
@@ -160,10 +163,18 @@ def merge_settings(saved: dict, overrides: dict, defaults: dict) -> dict:
             if not supported and flag not in overrides:
                 values[flag] = 'bitmap'
         if 'profile' in overrides:
+            if profile.name != 'teletext' and 'aspect_mode' not in overrides:
+                values['aspect_mode'] = 'native'
             if 'palette' not in overrides:
                 values['palette'] = profile.default_palette
             if 'colours' not in overrides:
                 values['colours'] = None
+        if overrides.get('aspect_mode') == 'source':
+            for key in ('width', 'height'):
+                if key not in overrides:
+                    values[key] = None
+        elif ('width' in overrides or 'height' in overrides) and 'aspect_mode' not in overrides:
+            values['aspect_mode'] = 'native'
         mode = next((values.get(key, 'bitmap') for key in active), 'bitmap')
         if (profile.constraint_model, mode) not in COLOUR_COUNT_QUANTIZERS and 'colours' not in overrides:
             values['colours'] = None

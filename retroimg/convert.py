@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from dataclasses import replace
 
 from PIL import Image
 
@@ -8,7 +9,7 @@ from retroimg.adjustments import adjust_colours, validate_sharpen
 from retroimg.ordered import validate_dither
 
 from retroimg.conversion_modes import get_profile_quantizer
-from retroimg.geometry import resize_to_geometry
+from retroimg.geometry import match_source_geometry, resize_to_geometry, validate_aspect_mode
 from retroimg.model import Geometry, IndexedImage
 from retroimg.palettes import get_palette
 from retroimg.profiles import get_profile
@@ -28,6 +29,7 @@ def convert_to_indexed(
     width: int | None = None,
     height: int | None = None,
     fit: str = "cover",
+    aspect_mode: str = "native",
     dither: str = "none",
     bayer_size: int | None = None,
     brightness: float = 1.0,
@@ -57,10 +59,13 @@ def convert_to_indexed(
 ) -> IndexedImage:
     """Prepare and quantise a source file without rendering, scaling or saving."""
     validate_sharpen(sharpen)
+    if fit not in {'cover', 'contain', 'stretch'}:
+        raise ValueError(f'unknown fit mode: {fit}')
     validate_dither(dither, 4 if bayer_size is None else bayer_size)
     if bayer_size is not None and dither != "bayer":
         raise ValueError("--bayer-size requires --dither bayer")
     profile = get_profile(profile_name)
+    validate_aspect_mode(profile, aspect_mode, width, height)
     palette = get_palette(palette_name or profile.default_palette)
 
     geometry = profile.geometry
@@ -82,7 +87,12 @@ def convert_to_indexed(
     )
 
     with Image.open(input_path) as source:
-        prepared = resize_to_geometry(source, geometry, fit=fit)
+        if aspect_mode == 'source':
+            geometry = match_source_geometry(source.size, geometry,
+                                             (2, 3) if teletext_mode == 'mosaic' else (1, 1))
+        # Source matching samples the entire image. Its resolved pixel shape
+        # restores source proportions when rendered; no crop or padding stage.
+        prepared = resize_to_geometry(source, geometry, fit='stretch' if aspect_mode == 'source' else fit)
         prepared = adjust_colours(
             prepared, brightness=brightness, contrast=contrast,
             saturation=saturation, hue_shift=hue_shift,
@@ -90,6 +100,8 @@ def convert_to_indexed(
             sharpen=sharpen,
         )
         indexed = quantizer(prepared, palette, dither)
+        if aspect_mode == 'source':
+            indexed = replace(indexed, pixel_aspect=geometry.pixel_aspect)
 
     return indexed
 
@@ -103,6 +115,7 @@ def convert_file(
     width: int | None = None,
     height: int | None = None,
     fit: str = "cover",
+    aspect_mode: str = "native",
     dither: str = "none",
     bayer_size: int | None = None,
     brightness: float = 1.0,
@@ -145,7 +158,7 @@ def convert_file(
     validate_rf_strength(rf_strength)
     indexed = convert_to_indexed(
         input_path, profile_name=profile_name, palette_name=palette_name,
-        width=width, height=height, fit=fit, dither=dither, bayer_size=bayer_size,
+        width=width, height=height, fit=fit, aspect_mode=aspect_mode, dither=dither, bayer_size=bayer_size,
         brightness=brightness, contrast=contrast, saturation=saturation, hue_shift=hue_shift,
         red_gain=red_gain, green_gain=green_gain, blue_gain=blue_gain,
         sharpen=sharpen,
@@ -158,6 +171,8 @@ def convert_file(
     profile = get_profile(profile_name)
     geometry = profile.geometry
     preview_aspect = geometry.pixel_aspect if profile.aspect_correct_preview else 1.0
+    if indexed.pixel_aspect is not None:
+        preview_aspect = indexed.pixel_aspect
     render_indexed(indexed, scale=scale, pixel_aspect=preview_aspect,
                    display_effect=display_effect, effect_strength=effect_strength,
                    display_brightness=display_brightness,

@@ -20,6 +20,33 @@ retroimg convert photo.jpg custom.png --profile teletext --width 160 --height 15
 
 For `--teletext-mode mosaic`, width must be divisible by 2 and height by 3.
 
+## Match the source aspect (Teletext)
+
+```bash
+retroimg convert photo.jpg wide-teletext.png --profile teletext \
+    --teletext-mode mosaic --aspect-mode source --scale 5
+```
+
+This uses the complete source image without cropping or borders. A 16:9 input
+uses a 128×72 logical raster (64×24 mosaic cells); scale 5 produces 640×360.
+Portrait, square and other ratios are calculated from the input. Both Teletext
+modes and all dithering/palette choices are supported; mosaic mode retains its
+two-colour-per-cell rule. The result is a custom canvas, not a standard page.
+
+The calculation starts near native height for landscape images and native width
+for portraits, then searches nearby whole-cell sizes. It prefers exact ratios
+and otherwise adjusts rendered pixel shape by at most 2%. This adjustment is
+accounted for during input sampling and output rendering, preserving the image's
+proportions. Integer output dimensions can introduce subpixel rounding error.
+Display effects follow enlargement as usual, using the calculated logical grid.
+
+The canvas is limited to twice the native pixel count and 512 pixels per edge.
+Unsupported extreme ratios produce an error instead of a huge conversion or
+large pixel-shape changes. The option is currently Teletext-only, replaces
+`--fit`, and cannot be combined with `--width`/`--height`. Use
+`--aspect-mode native` for the existing profile geometry and fitting behaviour.
+Source-aspect presets recalculate their dimensions for each input image.
+
 ## Compare modes with the same source
 
 After activating the virtual environment, run these commands from the project

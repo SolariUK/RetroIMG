@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from itertools import product
+import math
 from typing import Callable
 
 RGB = tuple[int, int, int]
@@ -66,8 +67,13 @@ class IndexedImage:
     height: int
     palette: Palette
     pixels: tuple[tuple[int, ...], ...]
+    # Optional resolved display geometry for source-aspect matching. Ordinary
+    # conversions retain their existing profile-based rendering behaviour.
+    pixel_aspect: float | None = None
 
     def validate(self) -> None:
+        if self.pixel_aspect is not None and (not math.isfinite(self.pixel_aspect) or self.pixel_aspect <= 0):
+            raise ValueError('pixel aspect must be finite and positive')
         if len(self.pixels) != self.height:
             raise ValueError("row count does not match image height")
         limit = len(self.palette.colours)

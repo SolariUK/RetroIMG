@@ -15,6 +15,7 @@ from retroimg.conversion_modes import (
     get_profile_quantizer,
 )
 from retroimg.model import TargetProfile
+from retroimg.geometry import match_source_geometry
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
 from retroimg.palettes import PALETTES
 from retroimg.profiles import PROFILES
@@ -112,6 +113,9 @@ def _geometry_options(ui: Prompts, profile: TargetProfile, mode: str,
     dimensions: dict = {}
     geometry = profile.geometry
     ui.write(f'Logical resolution: {geometry.width}x{geometry.height}.')
+    if profile.name == 'teletext' and ui.yes_no('Match source aspect with an automatic Teletext canvas?',
+                                             same_profile and previous.get('aspect_mode') == 'source'):
+        return {'aspect_mode': 'source'}
     if ui.yes_no('Use a custom logical resolution?', same_profile and 'width' in previous):
         multiples = CELL_DIMENSIONS.get(profile.constraint_model, (1, 1)) if mode != 'bitmap' else (1, 1)
         fixed_width = 160 if option == 'atari_mode' and mode != 'bitmap' else None
@@ -157,7 +161,8 @@ def _adjustment_options(ui: Prompts, defaults: dict, preferred: dict) -> dict:
     return result
 
 
-def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -> dict:
+def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None,
+                    *, source_size: tuple[int, int] | None = None) -> dict:
     previous = {} if previous is None else previous
     preferred = dict(defaults, **previous)
     families = profile_families()
@@ -210,7 +215,7 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
             integer=True, valid=lambda n: n > 0, hint='Enter a positive whole number.')
 
     options.update(_geometry_options(ui, profile, mode, option, previous))
-    options['fit'] = ui.choice('Image fitting', [
+    options['fit'] = 'cover' if options.get('aspect_mode') == 'source' else ui.choice('Image fitting', [
         ('cover', 'cover: fill the image and crop overflow'),
         ('contain', 'contain: keep the whole image, with black padding'),
         ('stretch', 'stretch: fill without preserving source proportions'),
@@ -239,6 +244,12 @@ def collect_options(ui: Prompts, defaults: dict, previous: dict | None = None) -
         ui.write(f'{effect} needs scale {minimum_scale} or greater; 6 or 8 is recommended for close inspection.')
     suggested = suggested_scale(profile, options.get('width'), options.get('height'),
                                 minimum=minimum_scale, maximum=defaults['scale'])
+    if options.get('aspect_mode') == 'source' and source_size is not None:
+        geometry = match_source_geometry(source_size, profile.geometry,
+                                         (2, 3) if mode == 'mosaic' else (1, 1))
+        suggested = suggested_scale(profile, geometry.width, geometry.height,
+                                     pixel_aspect=geometry.pixel_aspect,
+                                     minimum=minimum_scale, maximum=defaults['scale'])
     scale_default = max(minimum_scale, previous.get('scale', suggested)) if same_profile else suggested
     options['scale'] = ui.number('Preview scale (integer enlargement)', scale_default,
                                  integer=True, valid=lambda n: n >= minimum_scale,
@@ -333,6 +344,11 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     profile = PROFILES[options['profile']]
     width, height = options.get('width', profile.geometry.width), options.get('height', profile.geometry.height)
     aspect = profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1
+    if options.get('aspect_mode') == 'source':
+        with Image.open(source) as image:
+            geometry = match_source_geometry(image.size, profile.geometry,
+                                             (2, 3) if options.get('teletext_mode') == 'mosaic' else (1, 1))
+        width, height, aspect = geometry.width, geometry.height, geometry.pixel_aspect
     scale = options['scale']
     preview = (round(width * scale * max(1, aspect)), round(height * scale * max(1, 1 / aspect)))
     ui.write('\nSettings summary')
@@ -343,7 +359,8 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
         if key in MODE_OPTIONS or key in labels:
             label = MODE_OPTIONS[key].label + ' mode' if key in MODE_OPTIONS else labels[key]
             ui.write(f'  {label}: {value}')
-    ui.write(f'  Logical image: {width}x{height}; fitting: {options["fit"]}')
+    fitting = 'match source aspect (custom canvas)' if options.get('aspect_mode') == 'source' else options['fit']
+    ui.write(f'  Logical image: {width}x{height}; fitting: {fitting}')
     ui.write(f'  Dithering: {options["dither"]}' + (f'; matrix: {options["bayer_size"]}x{options["bayer_size"]}'
                                                        if 'bayer_size' in options else ''))
     ui.write(f'  Source brightness: {options.get("brightness", defaults["brightness"])}; '
@@ -436,7 +453,9 @@ def run_guided(input_path: Path | None, output_path: Path | None, *,
                 selected = ui.choice('Preset', [(entry.identifier, f'{entry.name} [{entry.identifier}] - {entry.description}')
                                                 for entry in entries], entries[0].identifier)
                 loaded = next(entry for entry in entries if entry.identifier == selected)
-        options = dict(loaded.settings) if loaded else collect_options(ui, defaults)
+        with Image.open(source) as image:
+            source_size = image.size
+        options = dict(loaded.settings) if loaded else collect_options(ui, defaults, source_size=source_size)
         if loaded:
             ui.write(f'Loaded preset: {loaded.name}. {loaded.description}')
         while True:
@@ -458,7 +477,7 @@ def run_guided(input_path: Path | None, output_path: Path | None, *,
                 actions.append(('update', f'Update loaded preset: {loaded.name}'))
             action = ui.choice('Next action', actions, 'convert')
             if action == 'edit':
-                options = collect_options(ui, defaults, options)
+                options = collect_options(ui, defaults, options, source_size=source_size)
                 continue
             if action == 'save':
                 saved = _save_new_preset(ui, directory, options, parser, loaded)

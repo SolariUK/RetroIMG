@@ -42,6 +42,7 @@ def _fingerprint(source: Path) -> tuple:
 
 def _encode_indexed(indexed: IndexedImage) -> dict:
     return dict(width=indexed.width, height=indexed.height, pixels=indexed.pixels,
+                pixel_aspect=indexed.pixel_aspect,
                 palette=dict(name=indexed.palette.name, description=indexed.palette.description,
                              rgb_levels=indexed.palette.rgb_levels,
                              colours=[dict(name=c.name, rgb=c.rgb) for c in indexed.palette.colours]))
@@ -53,7 +54,7 @@ def _decode_indexed(data: dict) -> IndexedImage:
     result = IndexedImage(data['width'], data['height'],
                           Palette(palette['name'], tuple(Colour(c['name'], tuple(c['rgb'])) for c in palette['colours']),
                                   palette['description'], tuple(levels) if levels is not None else None),
-                          tuple(tuple(row) for row in data['pixels']))
+                          tuple(tuple(row) for row in data['pixels']), data.get('pixel_aspect'))
     result.validate()
     return result
 
@@ -94,6 +95,8 @@ def render_job(job: dict) -> dict:
             reused = True
         profile = get_profile(settings['profile'])
         aspect = profile.geometry.pixel_aspect if profile.aspect_correct_preview else 1
+        if indexed.pixel_aspect is not None:
+            aspect = indexed.pixel_aspect
         result = render_indexed(indexed, pixel_aspect=aspect, **{key: settings[key] for key in DISPLAY_OPTIONS})
         logical_size = (indexed.width, indexed.height)
         palette_size = len(indexed.palette.colours)
