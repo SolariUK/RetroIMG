@@ -6,6 +6,8 @@ machine-specific constraints so that Teletext, Commodore 64, ZX Spectrum,
 Amstrad CPC, BBC Micro, Amiga, Atari 2600, Sega Mega Drive, SNES, NES,
 Master System, Game Boy, CGA, EGA and future targets can share the same pipeline.
 
+![GUI](samples/gui/retroimg-gui.png)
+
 ## Downloads
 
 See [GitHub Releases](https://github.com/SolariUK/RetroIMG/releases) for versioned
