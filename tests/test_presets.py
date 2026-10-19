@@ -82,6 +82,8 @@ BAD_SETTINGS = [
     {'hue_shift': float('nan')}, {'green_gain': -1}, {'saturation': 0}, {'saturation': None},
     {'brightness': -0.1}, {'contrast': -1}, {'brightness': float('inf')},
     {'contrast': float('nan')}, {'brightness': True}, {'contrast': '1.2'},
+    {'sharpen': -1}, {'sharpen': 4.1}, {'sharpen': float('nan')},
+    {'sharpen': True}, {'sharpen': '1'}, {'sharpen': None},
     {'dither': 'missing'}, {'fit': 'missing'}, {'width': 16}, {'width': 0, 'height': 8},
     {'bayer_size': 4}, {'dither': 'bayer', 'bayer_size': 3},
     {'teletext_mode': 'mosaic', 'width': 15, 'height': 24},
@@ -202,10 +204,10 @@ def test_tone_preset_round_trip_and_explicit_neutral_cli_override(paths):
     source, output, directory = paths
     parser = build_parser()
     saved = save_preset(directory / 'toned.json', 'Toned', '',
-                        dict(brightness=1.1, contrast=1.4, width=16, height=24, scale=1), parser)
+                        dict(brightness=1.1, contrast=1.4, sharpen=1.5, width=16, height=24, scale=1), parser)
     assert load_file(saved.path, parser).settings == saved.settings
     main(['convert', str(source), str(output), '--preset', str(saved.path),
-          '--brightness=1.0', '--contrast=1.0'])
+          '--brightness=1.0', '--contrast=1.0', '--sharpen=0'])
     baseline = output.with_name('baseline.png')
     main(['convert', str(source), str(baseline), '--width=16', '--height=24', '--scale=1'])
     assert output.read_bytes() == baseline.read_bytes()
@@ -213,15 +215,18 @@ def test_tone_preset_round_trip_and_explicit_neutral_cli_override(paths):
 
 def test_guide_saves_loads_and_edits_tone_controls(paths):
     replies = Replies({'Adjust source': 'yes', 'Brightness': '1.1', 'Contrast': '0.8',
+                       'Sharpen': '1.25',
                        'Choose next action': ['save', 'command'], 'Preset name': 'Toned'})
     assert guide(paths, replies) is None
     saved = load_file(paths[2] / 'toned.json', build_parser())
     assert (saved.settings['brightness'], saved.settings['contrast']) == (1.1, 0.8)
+    assert saved.settings['sharpen'] == 1.25
     assert any('Source brightness: 1.1; contrast: 0.8' in line for line in replies.messages)
     replies = Replies({'Choose next action': ['edit', 'convert']})
     arguments = guide(paths, replies, preset_reference=str(saved.path))
     settings = build_parser().parse_args(arguments)
     assert (settings.brightness, settings.contrast) == (1.1, 0.8)
+    assert settings.sharpen == 1.25
     assert any(question.startswith('Brightness') for question in replies.questions)
     assert '--brightness=1.1' in arguments and '--contrast=0.8' in arguments
 

@@ -203,7 +203,9 @@ The versioned JSON format, naming and override rules are described in
 
 All targets offer no dithering, Floyd–Steinberg and Bayer (2×2, 4×4 or 8×8).
 Source controls include brightness, contrast, saturation, hue shift and
-red/green/blue gains. For example, add `--brightness 1.1 --contrast 1.2` for a
+red/green/blue gains, plus sharpening. Try `--sharpen 1` to strengthen edges after
+resizing and before palette conversion; the default is 0 (off).
+For example, add `--brightness 1.1 --contrast 1.2` for a
 10% brightness boost and stronger contrast. Both default to `1.0` (neutral),
 and the guide includes them under **Adjust source colours**.
 Resolution, fitting, palettes and preview scaling are configurable. See

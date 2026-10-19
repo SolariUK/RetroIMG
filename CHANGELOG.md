@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added source sharpening after resizing and colour adjustments, before palette
+  conversion and dithering, with a default-off amount control in the GUI, CLI,
+  guided workflow and shared presets. Source reset disables it.
 - Updated local-build instructions and release-preparation examples.
 
 ## 0.2.1

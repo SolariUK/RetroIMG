@@ -1,10 +1,18 @@
-"""Optional source-colour adjustments, independent of palettes and targets."""
+"""Optional source-image adjustments, independent of palettes and targets."""
 from __future__ import annotations
 
 import colorsys
 import math
 
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageFilter
+
+
+MAX_SHARPEN = 4.0
+
+
+def validate_sharpen(value: float) -> None:
+    if not math.isfinite(value) or not 0 <= value <= MAX_SHARPEN:
+        raise ValueError('sharpen must be finite and between 0 and 4')
 
 
 def adjust_colours(
@@ -17,12 +25,14 @@ def adjust_colours(
     red_gain: float = 1.0,
     green_gain: float = 1.0,
     blue_gain: float = 1.0,
+    sharpen: float = 0.0,
 ) -> Image.Image:
-    """Apply brightness, contrast, saturation, HSV hue rotation, then RGB gains.
+    """Apply tone/colour controls, then optional sharpening at the working size.
 
     Gains multiply channel values and clip to 0..255. Neutral settings bypass
     colour-space round trips, preserving existing conversion output exactly.
     """
+    validate_sharpen(sharpen)
     for name, value in (('brightness', brightness), ('contrast', contrast)):
         if not math.isfinite(value) or value < 0:
             raise ValueError(f"{name} must be finite and non-negative")
@@ -56,4 +66,6 @@ def adjust_colours(
         channels = [channel.point([round(min(255, value * gain)) for value in range(256)])
                     for channel, gain in zip(result.split(), gains)]
         result = Image.merge("RGB", channels)
+    if sharpen:
+        result = result.filter(ImageFilter.UnsharpMask(radius=1, percent=round(100 * sharpen), threshold=3))
     return result

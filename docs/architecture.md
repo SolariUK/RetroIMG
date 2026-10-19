@@ -61,7 +61,7 @@ retroimg/
     ordered.py               # Bayer matrices and palette-aware ordered selection
     quantize.py              # Palette quantisation and Floyd–Steinberg diffusion
     geometry.py              # Fitting and resizing
-    adjustments.py           # Source brightness, contrast, saturation, hue and RGB gains
+    adjustments.py           # Source tone/colour controls and logical-resolution sharpening
     render.py                # Generic indexed preview rendering, scaling and aspect
     conversion_modes.py      # Mode metadata, validation and adapter registry
     convert.py               # Shared file conversion pipeline

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from retroimg.adjustments import adjust_colours
+from retroimg.adjustments import adjust_colours, validate_sharpen
 from retroimg.ordered import validate_dither
 
 from retroimg.conversion_modes import get_profile_quantizer
@@ -37,6 +37,7 @@ def convert_to_indexed(
     red_gain: float = 1.0,
     green_gain: float = 1.0,
     blue_gain: float = 1.0,
+    sharpen: float = 0.0,
     teletext_mode: str = "bitmap",
     spectrum_mode: str = "bitmap",
     c64_mode: str = "bitmap",
@@ -55,6 +56,7 @@ def convert_to_indexed(
     colours: int | None = None,
 ) -> IndexedImage:
     """Prepare and quantise a source file without rendering, scaling or saving."""
+    validate_sharpen(sharpen)
     validate_dither(dither, 4 if bayer_size is None else bayer_size)
     if bayer_size is not None and dither != "bayer":
         raise ValueError("--bayer-size requires --dither bayer")
@@ -85,6 +87,7 @@ def convert_to_indexed(
             prepared, brightness=brightness, contrast=contrast,
             saturation=saturation, hue_shift=hue_shift,
             red_gain=red_gain, green_gain=green_gain, blue_gain=blue_gain,
+            sharpen=sharpen,
         )
         indexed = quantizer(prepared, palette, dither)
 
@@ -109,6 +112,7 @@ def convert_file(
     red_gain: float = 1.0,
     green_gain: float = 1.0,
     blue_gain: float = 1.0,
+    sharpen: float = 0.0,
     scale: int = 8,
     display_effect: str = 'none',
     effect_strength: float | None = None,
@@ -144,6 +148,7 @@ def convert_file(
         width=width, height=height, fit=fit, dither=dither, bayer_size=bayer_size,
         brightness=brightness, contrast=contrast, saturation=saturation, hue_shift=hue_shift,
         red_gain=red_gain, green_gain=green_gain, blue_gain=blue_gain,
+        sharpen=sharpen,
         teletext_mode=teletext_mode, spectrum_mode=spectrum_mode, c64_mode=c64_mode,
         cpc_mode=cpc_mode, bbc_mode=bbc_mode, amiga_mode=amiga_mode, atari_mode=atari_mode,
         megadrive_mode=megadrive_mode, snes_mode=snes_mode, nes_mode=nes_mode,

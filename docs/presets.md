@@ -108,6 +108,10 @@ non-finite numbers, and image-path settings are rejected. Description is optiona
 Brightness and contrast must be non-negative; both default to `1.0` when omitted,
 so existing version-1 presets retain their previous output. Explicit CLI values
 of `1.0` reset either saved adjustment to neutral.
+`sharpen` accepts a finite number from 0 to 4, default 0/off. Older presets
+that omit it keep their previous output. `--sharpen 0` explicitly disables
+sharpening inherited from a preset.
+Sharpening is omitted from saved settings when off, preserving existing neutral recipes.
 The format stores data only; it cannot execute commands or reference other presets.
 
 Independent `bloom_strength` (0 to 1, default 0/off) and `bloom_radius` (0.25 to 8

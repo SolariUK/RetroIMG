@@ -20,7 +20,7 @@ def smoke_test(app, report: Path) -> int:
         image.save(source)
         window = MainWindow(presets_dir=directory / 'presets')
         window.options.set_settings(dict(profile='gameboy', gameboy_mode='tiles', width=16, height=16,
-                                         scale=3, display_effect='crt-aperture'))
+                                         scale=3, display_effect='crt-aperture', sharpen=1.25))
         state = {'stage': 0, 'ok': False}
 
         def finish(error=None):
@@ -53,6 +53,7 @@ def smoke_test(app, report: Path) -> int:
                     window.options.set_settings({})
                     window.load_preset_path(preset)
                     assert window.options.settings()['bloom_strength'] == .25
+                    assert window.options.settings()['sharpen'] == 1.25
                     state.update(ok=True, size=response['size'], reused_conversion=True)
                     finish()
             except Exception as exc:

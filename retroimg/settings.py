@@ -1,6 +1,8 @@
 """CLI settings validation and presentation hints, separate from conversion."""
 import math
 
+from retroimg.adjustments import validate_sharpen
+
 from retroimg.conversion_modes import (
     COLOUR_COUNT_QUANTIZERS, CONSTRAINED_QUANTIZERS, MODE_OPTIONS, get_profile_quantizer,
 )
@@ -36,7 +38,7 @@ CELL_DIMENSIONS = {
 INTEGER_OPTIONS = {'width', 'height', 'scale', 'bayer_size', 'colours', 'atari_row_height'}
 FLOAT_OPTIONS = {'brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain',
                  'effect_strength', 'display_brightness', 'bloom_strength', 'bloom_radius', 'chromatic_strength',
-                 'rf_strength'}
+                 'rf_strength', 'sharpen'}
 OPTIONAL_OPTIONS = {'palette', 'width', 'height', 'bayer_size', 'colours', 'atari_row_height', 'effect_strength'}
 NON_SETTINGS = {'command', 'input', 'output', 'preset', 'presets_dir', 'print_only'}
 
@@ -69,6 +71,7 @@ def normalize_settings(raw: dict, defaults: dict) -> dict:
             valid = type(value) is str
         if not valid:
             raise ValueError(f'invalid value for preset setting {key}')
+    validate_sharpen(values['sharpen'])
     validate_display_effect(values['display_effect'], values['effect_strength'], values['scale'])
     validate_display_brightness(values['display_brightness'])
     validate_bloom(values['bloom_strength'], values['bloom_radius'])
@@ -130,6 +133,7 @@ def compact_settings(values: dict) -> dict:
     profile = PROFILES[values['profile']]
     active = {key for key, spec in MODE_OPTIONS.items() if profile.constraint_model in spec.constraint_models}
     return {key: value for key, value in values.items() if value is not None
+            and not (key == 'sharpen' and value == 0)
             and not (key == 'display_effect' and value == 'none')
             and not (key == 'display_brightness' and value == 1)
             and not (key == 'bloom_strength' and value == 0)

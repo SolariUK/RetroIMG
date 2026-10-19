@@ -142,15 +142,25 @@ with every profile and combines with all the other display controls.
 
 Optional adjustments apply after resizing and before palette/cell optimisation
 for every profile. Processing order is **brightness → contrast → saturation →
-hue shift → RGB gains**. Each stage works on 8-bit RGB values and clips results
+hue shift → RGB gains → sharpen**. Each stage works on 8-bit RGB values and clips results
 to 0–255 before the next stage.
 Neutral defaults preserve existing conversion output.
+
+`--sharpen` is an amount from **0 to 4**, default **0/off**. Try `--sharpen 1`
+for moderate edge enhancement. It uses Pillow's unsharp mask with a fixed radius
+of one logical pixel and threshold of three RGB levels; the amount controls the
+strength (1 means 100%). It runs after the other source adjustments at the
+resized logical resolution, before palette fitting, hardware constraints and
+dithering. The output still obeys the selected palette and cell/tile rules.
+Higher values can emphasise noise or create light/dark halos around edges.
+Use `--sharpen 0` to disable a value inherited from a preset. Pixelation remains
+an independent original-colour workflow and does not use this control.
 
 ```bash
 # Lift a dark source and strengthen contrast before fitting CPC screen colours
 retroimg convert /path/to/image.jpg output-toned.png \
     --profile cpc-mode0 --cpc-mode constrained --dither bayer \
-    --brightness 1.1 --contrast 1.2 --scale 2
+    --brightness 1.1 --contrast 1.2 --sharpen 1 --scale 2
 
 # Boost green by 15%
 retroimg convert /path/to/image.jpg output-green.png \
@@ -178,7 +188,7 @@ shadows or highlights. These operations precede quantisation: the output still
 obeys its palette and constraints, and subtle changes may map to identical
 colours in a limited palette. Both controls work with every target and dither.
 
-The guide asks for them under **Adjust source colours**, retains them when
+The guide asks for them under **Adjust source image**, retains them when
 editing, and includes them in the summary, generated command and saved presets.
 Existing presets that omit them use neutral defaults. Use explicit
 `--brightness 1 --contrast 1` to reset values inherited from a preset.

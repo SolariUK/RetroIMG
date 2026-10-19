@@ -38,6 +38,8 @@ def build_parser(*, conversion_defaults: dict | None = None) -> argparse.Argumen
         convert.add_argument(f"--{name}", type=float, default=1.0,
                              help=f"finite non-negative source {name} multiplier before palette conversion (default: 1)")
     convert.add_argument("--saturation", type=float, default=1.0)
+    convert.add_argument('--sharpen', type=float, default=0.0,
+                         help='source sharpening from 0 to 4, after resizing and before palette conversion (default: 0/off; try 1)')
     convert.add_argument("--hue-shift", type=float, default=0.0,
                          help="hue rotation in degrees; +120 maps red to green (default: 0)")
     for channel in ("red", "green", "blue"):
@@ -215,6 +217,7 @@ def main(argv: list[str] | None = None) -> None:
             brightness=args.brightness,
             contrast=args.contrast,
             saturation=args.saturation,
+            sharpen=args.sharpen,
             hue_shift=args.hue_shift,
             red_gain=args.red_gain,
             green_gain=args.green_gain,

@@ -37,7 +37,8 @@ def test_extracted_conversion_and_worker_match_file_pipeline(job, tmp_path):
         assert actual.tobytes() == expected.tobytes()
 
 
-def test_display_changes_reuse_indexed_cache_but_source_changes_reconvert(job, monkeypatch):
+@pytest.mark.parametrize('source_option', ['contrast', 'sharpen'])
+def test_display_changes_reuse_indexed_cache_but_source_changes_reconvert(job, monkeypatch, source_option):
     original = jobs.convert_to_indexed
     calls = []
     def convert(*args, **kwargs):
@@ -49,7 +50,7 @@ def test_display_changes_reuse_indexed_cache_but_source_changes_reconvert(job, m
                             rf_strength=.35, chromatic_strength=.25, display_brightness=1.2)
     assert jobs.render_job(job)['reused_conversion']
     assert len(calls) == 1
-    job['settings']['contrast'] = 1.2
+    job['settings'][source_option] = 1.2
     assert not jobs.render_job(job)['reused_conversion']
     assert len(calls) == 2
     Image.new('RGB', (13, 11), (255, 0, 0)).save(job['source'])

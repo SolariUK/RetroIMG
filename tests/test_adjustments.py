@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 import pytest
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageFilter
 
 from retroimg.adjustments import adjust_colours
 from retroimg.convert import convert_file
@@ -77,9 +77,34 @@ def test_neutral_tone_controls_bypass_enhancement(monkeypatch):
     assert adjust_colours(source, brightness=1, contrast=1).tobytes() == source.tobytes()
 
 
+def test_sharpen_strengthens_soft_edges_without_changing_flat_regions_or_source():
+    source = Image.new('RGB', (24, 12), (96, 96, 96))
+    source.paste((160, 160, 160), (12, 0, 24, 12))
+    source = source.filter(ImageFilter.GaussianBlur(.8))
+    before = source.tobytes()
+    actual = adjust_colours(source, sharpen=1)
+    assert actual.size == source.size and actual.mode == 'RGB'
+    assert actual.getpixel((12, 6))[0] - actual.getpixel((11, 6))[0] > (
+        source.getpixel((12, 6))[0] - source.getpixel((11, 6))[0])
+    assert actual.getpixel((0, 6)) == source.getpixel((0, 6))
+    assert actual.getpixel((23, 6)) == source.getpixel((23, 6))
+    assert source.tobytes() == before
+    flat = Image.new('RGB', (12, 12), (90, 140, 180))
+    assert adjust_colours(flat, sharpen=4).tobytes() == flat.tobytes()
+
+
+def test_zero_sharpen_bypasses_filter(monkeypatch):
+    def unexpected(*args, **kwargs):
+        pytest.fail('zero sharpening must bypass the filter')
+    monkeypatch.setattr(ImageFilter, 'UnsharpMask', unexpected)
+    source = sample()
+    assert adjust_colours(source, sharpen=0).tobytes() == source.tobytes()
+
+
 @pytest.mark.parametrize('kwargs', [dict(hue_shift=float('nan')), dict(hue_shift=float('inf')),
     dict(red_gain=-1), dict(green_gain=float('inf')), dict(blue_gain=float('nan')),
     dict(saturation=float('nan')),
+    *[dict(sharpen=value) for value in (-.1, 4.1, float('nan'), float('inf'), -float('inf'))],
     *[{key: value} for key in ('brightness', 'contrast')
       for value in (-0.1, float('nan'), float('inf'), -float('inf'))]])
 def test_invalid_adjustments(kwargs):
@@ -97,11 +122,36 @@ def test_cli_adjusts_before_quantisation(tmp_path, mode, dither):
                     '--width', '2', '--height', '3', '--scale', '1',
                     '--teletext-mode', mode, '--dither', dither, '--hue-shift', '10',
                     '--brightness', '1.1', '--contrast', '1.2',
+                    '--sharpen', '1.25',
                     '--red-gain', '0.9', '--green-gain', '1.15', '--blue-gain', '1.05'], check=True)
-    prepared = adjust_colours(source, brightness=1.1, contrast=1.2, hue_shift=10,
+    prepared = adjust_colours(source, brightness=1.1, contrast=1.2, hue_shift=10, sharpen=1.25,
                               red_gain=0.9, green_gain=1.15, blue_gain=1.05)
     palette = get_palette('teletext')
     expected = (quantize if mode == 'bitmap' else quantize_teletext_mosaic)(prepared, palette, dither)
     values = palette.rgb_values()
     with Image.open(dst) as actual:
         assert [actual.getpixel((x, y)) for y in range(3) for x in range(2)] == [values[i] for row in expected.pixels for i in row]
+
+
+def test_sharpen_runs_at_logical_resolution_after_colour_adjustments(tmp_path):
+    from retroimg.geometry import resize_to_geometry
+    from retroimg.model import Geometry
+    source = Image.new('RGB', (48, 36))
+    source.putdata([((x * 19 + y * 7) % 256, (x * 11) % 256, (y * 29) % 256)
+                    for y in range(36) for x in range(48)])
+    src, dst = tmp_path / 'input.png', tmp_path / 'output.png'
+    source.save(src)
+    resized = resize_to_geometry(source, Geometry(16, 12))
+    toned = adjust_colours(resized, brightness=1.1, red_gain=.9)
+    reference = toned.filter(ImageFilter.UnsharpMask(radius=1, percent=150, threshold=3))
+    expected = quantize_teletext_mosaic(reference, get_palette('amiga'))
+    actual = convert_file(src, dst, width=16, height=12, teletext_mode='mosaic',
+                          palette_name='amiga', brightness=1.1, red_gain=.9, sharpen=1.5, scale=1)
+    assert actual == expected
+    plain = quantize_teletext_mosaic(toned, get_palette('amiga'))
+    assert actual.pixels != plain.pixels
+
+
+def test_invalid_sharpen_is_rejected_before_opening_source(tmp_path):
+    with pytest.raises(ValueError, match='sharpen'):
+        convert_file(tmp_path / 'missing.png', tmp_path / 'output.png', sharpen=-1)

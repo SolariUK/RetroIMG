@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 )
 
 from retroimg.cli import build_parser
+from retroimg.adjustments import MAX_SHARPEN
 from retroimg.conversion_modes import COLOUR_COUNT_QUANTIZERS
 from retroimg.display_effects import DISPLAY_EFFECTS, MINIMUM_EFFECT_SCALES
 from retroimg.ordered import BAYER_SIZES, DITHER_MODES
@@ -124,6 +125,10 @@ class OptionsPanel(QWidget):
             low, high, step = ((-180, 180, 1) if key == 'hue_shift' else
                                (.01, 4, .01) if key == 'saturation' else (0, 4, .05))
             self._field(key, label, 'Source', NumberControl(low, high, self.defaults[key], step))
+        sharpen = self._field('sharpen', 'Sharpen', 'Source', NumberControl(0, MAX_SHARPEN, 0, .05))
+        sharpen.spin.setMaximum(MAX_SHARPEN)
+        sharpen.setToolTip('0 = off; try 1. Sharpens the resized logical image after colour adjustments, '
+                           'before palette conversion and dithering.')
         self.auto_scale = QCheckBox('Automatic enlargement')
         self.auto_scale.setToolTip('Choose an integer enlargement for roughly 640 pixels on the longest edge. '
                                   'LCD and CRT treatments require at least 3×.')

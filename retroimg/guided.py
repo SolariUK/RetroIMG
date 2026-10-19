@@ -138,9 +138,9 @@ def _geometry_options(ui: Prompts, profile: TargetProfile, mode: str,
 
 def _adjustment_options(ui: Prompts, defaults: dict, preferred: dict) -> dict:
     result: dict = {}
-    adjustments = ('brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain')
+    adjustments = ('brightness', 'contrast', 'saturation', 'hue_shift', 'red_gain', 'green_gain', 'blue_gain', 'sharpen')
     adjusted = any(preferred[key] != defaults[key] for key in adjustments)
-    if ui.yes_no('Adjust source colours?', adjusted):
+    if ui.yes_no('Adjust source image?', adjusted):
         for key in ('brightness', 'contrast'):
             result[key] = ui.number(f'{key.title()} (source, before palette conversion; 1=neutral)', preferred[key], valid=lambda n: n >= 0,
                                     hint='Enter a finite non-negative number.')
@@ -151,6 +151,9 @@ def _adjustment_options(ui: Prompts, defaults: dict, preferred: dict) -> dict:
             key = channel + '_gain'
             result[key] = ui.number(f'{channel.title()} gain (1=neutral)', preferred[key], valid=lambda n: n >= 0,
                                      hint='Enter a finite non-negative number.')
+        result['sharpen'] = ui.number('Sharpen (after resizing, before palette conversion; 0=off)',
+                                     preferred['sharpen'], valid=lambda n: 0 <= n <= 4,
+                                     hint='Enter a finite number from 0 to 4; try 1.')
     return result
 
 
@@ -348,6 +351,7 @@ def _summary(ui: Prompts, source: Path, output: Path, options: dict, defaults: d
     ui.write(f'  Saturation: {options.get("saturation", defaults["saturation"])}; '
              f'hue shift: {options.get("hue_shift", defaults["hue_shift"])} degrees')
     ui.write('  RGB gains: ' + ', '.join(str(options.get(c + '_gain', defaults[c + '_gain'])) for c in ('red', 'green', 'blue')))
+    ui.write(f'  Sharpen: {options.get("sharpen", defaults["sharpen"])} (before palette conversion)')
     ui.write(f'  Preview: {preview[0]}x{preview[1]} (scale {scale})')
     ui.write(f'  RF colour bleed: {options.get("rf_strength", 0)} (before optical effects)')
     ui.write(f'  Chromatic aberration: {options.get("chromatic_strength", 0)} (before display treatment)')

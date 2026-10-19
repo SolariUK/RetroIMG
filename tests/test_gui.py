@@ -269,7 +269,7 @@ def test_tab_reset_restores_defaults_once_and_preserves_other_settings(panel, ta
     from PySide6.QtTest import QSignalSpy
     panel.set_settings(dict(profile='ega-640', ega_mode='constrained', width=320, height=200,
                             dither='bayer', bayer_size=2, brightness=1.7, contrast=.8,
-                            saturation=2, hue_shift=42, red_gain=.4, green_gain=1.2, blue_gain=2,
+                            saturation=2, hue_shift=42, red_gain=.4, green_gain=1.2, blue_gain=2, sharpen=1.75,
                             scale=6, display_effect='crt-aperture', effect_strength=.8,
                             rf_strength=.7, chromatic_strength=.6, bloom_strength=.5,
                             bloom_radius=3, display_brightness=1.5))

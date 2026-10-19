@@ -44,6 +44,10 @@ use Qt's offscreen backend; interactive use requires a graphical session.
 - Source and Display each have a reset button. Source reset restores neutral
   adjustments. Display reset clears the effects, restores neutral display
   brightness and enables automatic enlargement. Each reset affects only its tab.
+- **Sharpen**, on the Source tab, ranges from 0 (off, the default) to 4. Try 1
+  for moderate sharpening. It follows the colour controls on the resized logical
+  image, before palette conversion and dithering. It is saved in presets and
+  Source reset turns it off. Changing it recomputes the conversion.
 - Automatic enlargement is enabled initially. It chooses an integer scale for
   roughly a 640-pixel longest edge, accounting for the selected profile, custom
   logical resolution and pixel aspect. Typical defaults are 1× for 640-column
