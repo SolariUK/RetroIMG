@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — Unreleased
 
 - Added source sharpening after resizing and colour adjustments, before palette
   conversion and dithering, with a default-off amount control in the GUI, CLI,

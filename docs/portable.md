@@ -61,7 +61,7 @@ With a Python development environment activated on Windows:
 ```powershell
 python -m pip install -e ".[dev,guided,bundle]"
 python scripts/build_portable.py
-python scripts/check_portable.py dist/portable/retroimg-0.2.1-windows-x64-test.zip
+python scripts/check_portable.py dist/portable/retroimg-0.3.0-windows-x64-test.zip
 ```
 
 Use a new output directory for another build, for example

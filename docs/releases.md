@@ -39,8 +39,10 @@ For a regular release featured in the repository sidebar, clear the pre-release
 checkbox and select **Set as latest release** before publishing.
 
 After publishing, give that version its own released changelog section and start
-a fresh **Unreleased** section for subsequent work. Keep the application version
-unchanged until preparing the next versioned release.
+a fresh **Unreleased** section for subsequent work. When starting the next feature
+or fix, choose its next version and update the application version, matching notes
+and build examples together. This keeps development artifact names distinct from
+the published release. Finalise the notes before tagging that version.
 
 For an existing tag, the workflow can also be started from **Actions → Prepare
 draft release → Run workflow**, choosing branch **main** and entering the tag.

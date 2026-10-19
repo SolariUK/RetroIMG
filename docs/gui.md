@@ -103,7 +103,7 @@ for display scaling, file dialogs, dragging, panning and desktop integration.
 ```bash
 python -m pip install -e ".[dev,gui,bundle]"
 python scripts/build_portable.py --gui --output-dir dist/gui
-python scripts/check_gui.py dist/gui/retroimg-gui-0.2.1-linux-x64-test.zip
+python scripts/check_gui.py dist/gui/retroimg-gui-0.3.0-linux-x64-test.zip
 ```
 
 Use a fresh build directory. The archive contains `BUILD.json`, application and
